@@ -9,6 +9,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 import android.media.MediaPlayer
+import android.widget.ProgressBar
+import android.view.View
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,6 +32,8 @@ class MainActivity : AppCompatActivity() {
         val buttonVolDown: Button = findViewById(R.id.buttonVolumeDown)
         var statusPlay: Boolean = false // статус проигрывания текущей станции
 
+        val progressBar: ProgressBar = findViewById(R.id.progressBar)
+
         buttonVolUp.setOnClickListener{
             statusRadio.text = "VOLUME UP"
         }
@@ -43,15 +47,7 @@ class MainActivity : AppCompatActivity() {
                 statusRadio.text = "STOP PLAY RADIO"
                 buttonPlay.text = "Play"
                 statusPlay = false
-
-                mediaPlayer?.let {
-                    if (it.isPlaying) {
-                        it.stop()
-                        it.reset() // Сброс MediaPlayer для повторного использования
-                        it.release()
-                        mediaPlayer = null // Освобождаем ссылку
-                    }
-                }
+                stopMusic()
             }
             else {
                 statusRadio.text = "PLAY RADIO"
@@ -60,14 +56,41 @@ class MainActivity : AppCompatActivity() {
 
                 // Инициализация MediaPlayer
                 mediaPlayer = MediaPlayer().apply {
+
                     setDataSource("http://cfm.jazzandclassic.ru:14536/rcstream.mp3") // URL на поток
+
                     setOnPreparedListener {
-                        start() // Начало воспроизведения после подготовки
+                        progressBar.visibility = View.GONE
+                        start()
+                    }
+
+                    setOnBufferingUpdateListener { _, percent ->
+                        if (percent < 100) {
+                            progressBar.visibility = View.VISIBLE
+                        } else {
+                            progressBar.visibility = View.GONE
+                        }
+                    }
+
+                    setOnErrorListener { _, _, _ ->
+                        progressBar.visibility = View.GONE
+                        true
                     }
                     prepareAsync() // Асинхронная подготовка MediaPlayer
                 }
             }
 
+        }
+    }
+
+    private fun stopMusic() {
+        mediaPlayer?.let {
+            if (it.isPlaying) {
+                it.stop()
+                it.reset()
+                it.release()
+                mediaPlayer = null
+            }
         }
     }
 
