@@ -12,6 +12,9 @@ import android.media.MediaPlayer
 import android.widget.ProgressBar
 import android.view.View
 
+// Определение радиостанций
+data class RadioStation(val name: String, val url: String)
+
 class MainActivity : AppCompatActivity() {
 
     private var mediaPlayer: MediaPlayer? = null
@@ -26,13 +29,42 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        // Создание списка радиостанций
+        val radioStations = mutableListOf<RadioStation>()
+
         val statusRadio = findViewById<TextView>(R.id.statusRadio)
         val buttonPlay: Button = findViewById(R.id.buttonPlay)
         val buttonVolUp: Button = findViewById(R.id.buttonVolumeUp)
         val buttonVolDown: Button = findViewById(R.id.buttonVolumeDown)
+        val buttonForward: Button = findViewById(R.id.buttonForward)
+        val buttonPrev: Button = findViewById(R.id.buttonPrev)
         var statusPlay: Boolean = false // статус проигрывания текущей станции
-
         val progressBar: ProgressBar = findViewById(R.id.progressBar)
+
+        var currentRadioStation: Int = 0
+
+        // Добавление новых радиостанций
+        radioStations.add(RadioStation(name = "Классик ФМ", url = "http://cfm.jazzandclassic.ru:14536/rcstream.mp3"))
+        radioStations.add(RadioStation(name = "Bolgar Radiosi", url = "http://stream.tatarradio.ru:2068/;stream/1"))
+        radioStations.add(RadioStation(name = "Детское радио (Дети ФМ)", url = "http://ic5.101.ru:8000/v14_1"))
+        radioStations.add(RadioStation(name = "Монте Карло", url = "https://montecarlo.hostingradio.ru/montecarlo128.mp3"))
+        radioStations.add(RadioStation(name = "Saf Radiosi", url = "https://c7.radioboss.fm:18335/stream"))
+
+        buttonForward.setOnClickListener{
+            currentRadioStation += 1
+            if (radioStations.size<=currentRadioStation)
+                currentRadioStation = 0
+            statusRadio.text = currentRadioStation.toString()
+
+        }
+
+        buttonPrev.setOnClickListener{
+            currentRadioStation -= 1
+            if (currentRadioStation<0)
+                currentRadioStation = radioStations.size-1
+            statusRadio.text = currentRadioStation.toString()
+        }
+
 
         buttonVolUp.setOnClickListener{
             statusRadio.text = "VOLUME UP"
@@ -50,14 +82,14 @@ class MainActivity : AppCompatActivity() {
                 stopMusic()
             }
             else {
-                statusRadio.text = "PLAY RADIO"
                 buttonPlay.text = "Stop"
                 statusPlay = true
 
+                statusRadio.text = radioStations[currentRadioStation].name
                 // Инициализация MediaPlayer
                 mediaPlayer = MediaPlayer().apply {
 
-                    setDataSource("http://cfm.jazzandclassic.ru:14536/rcstream.mp3") // URL на поток
+                    setDataSource(radioStations[currentRadioStation].url) // URL на поток
 
                     setOnPreparedListener {
                         progressBar.visibility = View.GONE
