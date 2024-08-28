@@ -8,7 +8,7 @@
     tools:context=".MainActivity">
 
     <Button
-        android:id="@+id/buttonPlay."
+        android:id="@+id/buttonPlay"
         android:layout_width="119dp"
         android:layout_height="106dp"
         android:layout_marginStart="147dp"
@@ -29,7 +29,7 @@
         android:layout_marginEnd="162dp"
         android:layout_marginBottom="28dp"
         android:text="VOL+"
-        app:layout_constraintBottom_toTopOf="@+id/buttonPlay."
+        app:layout_constraintBottom_toTopOf="@+id/buttonPlay"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -43,7 +43,7 @@
         android:text="VOL-"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonPlay." />
+        app:layout_constraintTop_toBottomOf="@+id/buttonPlay" />
 
     <Button
         android:id="@+id/buttonPrev"
@@ -52,7 +52,7 @@
         android:layout_marginTop="313dp"
         android:layout_marginEnd="19dp"
         android:text="PREV"
-        app:layout_constraintEnd_toStartOf="@+id/buttonPlay."
+        app:layout_constraintEnd_toStartOf="@+id/buttonPlay"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
@@ -62,7 +62,7 @@
         android:layout_marginStart="19dp"
         android:layout_marginTop="313dp"
         android:text="FORW"
-        app:layout_constraintStart_toEndOf="@+id/buttonPlay."
+        app:layout_constraintStart_toEndOf="@+id/buttonPlay"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
@@ -99,5 +99,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toEndOf="@+id/buttonFav2" />
+
+    <TextView
+        android:id="@+id/statusRadio"
+        android:layout_width="264dp"
+        android:layout_height="22dp"
+        android:layout_marginStart="72dp"
+        android:layout_marginEnd="73dp"
+        android:layout_marginBottom="52dp"
+        android:text="Статус программы"
+        android:textAlignment="center"
+        app:layout_constraintBottom_toTopOf="@+id/buttonVolumeUp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
