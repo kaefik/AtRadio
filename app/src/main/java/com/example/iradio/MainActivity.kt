@@ -43,6 +43,15 @@ class MainActivity : AppCompatActivity() {
                 statusRadio.text = "STOP PLAY RADIO"
                 buttonPlay.text = "Play"
                 statusPlay = false
+
+                mediaPlayer?.let {
+                    if (it.isPlaying) {
+                        it.stop()
+                        it.reset() // Сброс MediaPlayer для повторного использования
+                        it.release()
+                        mediaPlayer = null // Освобождаем ссылку
+                    }
+                }
             }
             else {
                 statusRadio.text = "PLAY RADIO"
