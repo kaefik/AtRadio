@@ -57,15 +57,18 @@ class MainActivity : AppCompatActivity() {
             currentRadioStation += 1
             if (radioStations.size<=currentRadioStation)
                 currentRadioStation = 0
-            statusRadio.text = currentRadioStation.toString()
-
+            stopMusic()
+            statusRadio.text = radioStations[currentRadioStation].name
+            startMusic(radioStations[currentRadioStation], progressBar)
         }
 
         buttonPrev.setOnClickListener{
             currentRadioStation -= 1
             if (currentRadioStation<0)
                 currentRadioStation = radioStations.size-1
-            statusRadio.text = currentRadioStation.toString()
+            stopMusic()
+            statusRadio.text = radioStations[currentRadioStation].name
+            startMusic(radioStations[currentRadioStation], progressBar)
         }
 
 
@@ -91,32 +94,34 @@ class MainActivity : AppCompatActivity() {
                 statusPlay = true
 
                 statusRadio.text = radioStations[currentRadioStation].name
-                // Инициализация MediaPlayer
-                mediaPlayer = MediaPlayer().apply {
+                startMusic(radioStations[currentRadioStation], progressBar)
+            }
 
-                    setDataSource(radioStations[currentRadioStation].url) // URL на поток
+        }
+    }
 
-                    setOnPreparedListener {
-                        progressBar.visibility = View.GONE
-                        start()
-                    }
+    private fun startMusic(radioStation: RadioStation, progressBar: ProgressBar) {
+        mediaPlayer = MediaPlayer().apply {
+            setDataSource(radioStation.url) // URL на поток
 
-                    setOnBufferingUpdateListener { _, percent ->
-                        if (percent < 100) {
-                            progressBar.visibility = View.VISIBLE
-                        } else {
-                            progressBar.visibility = View.GONE
-                        }
-                    }
+            setOnPreparedListener {
+                progressBar.visibility = View.GONE
+                start()
+            }
 
-                    setOnErrorListener { _, _, _ ->
-                        progressBar.visibility = View.GONE
-                        true
-                    }
-                    prepareAsync() // Асинхронная подготовка MediaPlayer
+            setOnBufferingUpdateListener { _, percent ->
+                if (percent < 100) {
+                    progressBar.visibility = View.VISIBLE
+                } else {
+                    progressBar.visibility = View.GONE
                 }
             }
 
+            setOnErrorListener { _, _, _ ->
+                progressBar.visibility = View.GONE
+                true
+            }
+            prepareAsync() // Асинхронная подготовка MediaPlayer
         }
     }
 
