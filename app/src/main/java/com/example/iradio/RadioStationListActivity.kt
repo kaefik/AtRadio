@@ -1,40 +1,41 @@
 package com.example.iradio
 
 import android.os.Bundle
-import android.widget.ArrayAdapter
-import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
-import android.content.Intent
-import android.app.Activity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 class RadioStationListActivity : AppCompatActivity() {
+
+    private lateinit var radioStationAdapter: RadioStationAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_radio_station_list)
 
         // Получение списка радиостанций из Intent
-        val radioStations: List<RadioStation>? = intent.getParcelableArrayListExtra("radioStations")
+        val radioStations = intent.getParcelableArrayListExtra<RadioStation>("radioStations")?.toMutableList()
+            ?: mutableListOf()
 
-        // Преобразование списка радиостанций в список имен для отображения
-        val stationNames = radioStations?.map { it.name } ?: listOf()
-
-        // Получение ListView и установка адаптера для отображения списка радиостанций
-        val listView: ListView = findViewById(R.id.listViewRadioStations)
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, stationNames)
-        listView.adapter = adapter
-
-        listView.setOnItemClickListener { _, _, position, _ ->
-            // Действие при выборе радиостанции из списка
-            val selectedStation = radioStations?.get(position)
-            if (selectedStation != null) {
-                val resultIntent = Intent()
-                resultIntent.putExtra("selectedStation", selectedStation)
-                setResult(Activity.RESULT_OK, resultIntent)
-                finish() // Закрытие активности после выбора станции
-            }
+        radioStationAdapter = RadioStationAdapter(this, radioStations) { position ->
+            radioStations.removeAt(position)
+            radioStationAdapter.notifyItemRemoved(position)
+            saveRadioStations(radioStations)
         }
 
+        val recyclerView: RecyclerView = findViewById(R.id.recyclerViewRadioStations)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = radioStationAdapter
+    }
+
+    private fun saveRadioStations(radioStations: List<RadioStation>) {
+        val sharedPreferences = getSharedPreferences("RadioPreferences", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        val gson = Gson()
+        val json = gson.toJson(radioStations)
+        editor.putString("RadioStations", json)
+        editor.apply()
     }
 }
-
