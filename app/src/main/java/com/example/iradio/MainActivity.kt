@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
         var statusPlay: Boolean = false // статус проигрывания текущей станции
         val progressBar: ProgressBar = findViewById(R.id.progressBar)
 
-        var currentRadioStation: Int = 0
+        var currentRadioStation: Int = loadLastRadioStation()
 
         // Добавление новых радиостанций
         radioStations.add(RadioStation(name = "Классик ФМ", url = "http://cfm.jazzandclassic.ru:14536/rcstream.mp3"))
@@ -58,6 +58,7 @@ class MainActivity : AppCompatActivity() {
             if (radioStations.size<=currentRadioStation)
                 currentRadioStation = 0
             stopMusic()
+            saveCurrentRadioStation(currentRadioStation)
             statusRadio.text = radioStations[currentRadioStation].name
             startMusic(radioStations[currentRadioStation], progressBar)
         }
@@ -67,6 +68,7 @@ class MainActivity : AppCompatActivity() {
             if (currentRadioStation<0)
                 currentRadioStation = radioStations.size-1
             stopMusic()
+            saveCurrentRadioStation(currentRadioStation)
             statusRadio.text = radioStations[currentRadioStation].name
             startMusic(radioStations[currentRadioStation], progressBar)
         }
@@ -135,6 +137,21 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    // сохранение текущей радиостанции
+    private fun saveCurrentRadioStation(index: Int) {
+        val sharedPreferences = getSharedPreferences("RadioPreferences", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putInt("LastRadioStationIndex", index)
+        editor.commit() // если необходимо сразу же сохранить данные
+    }
+
+    //  получение из настроек текущую радиостанцию
+    private fun loadLastRadioStation(): Int {
+        val sharedPreferences = getSharedPreferences("RadioPreferences", MODE_PRIVATE)
+        return sharedPreferences.getInt("LastRadioStationIndex", 0) // 0 - значение по умолчанию, если данных нет
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
