@@ -140,27 +140,38 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startMusic(radioStation: RadioStation, progressBar: ProgressBar) {
-        mediaPlayer = MediaPlayer().apply {
-            setDataSource(radioStation.url) // URL на поток
 
-            setOnPreparedListener {
-                progressBar.visibility = View.GONE
-                start()
-            }
+        try {
+            mediaPlayer = MediaPlayer().apply {
+                setDataSource(radioStation.url) // URL на поток
 
-            setOnBufferingUpdateListener { _, percent ->
-                if (percent < 100) {
-                    progressBar.visibility = View.VISIBLE
-                } else {
+                setOnPreparedListener {
                     progressBar.visibility = View.GONE
+                    start()
                 }
-            }
 
-            setOnErrorListener { _, _, _ ->
-                progressBar.visibility = View.GONE
-                true
+                setOnBufferingUpdateListener { _, percent ->
+                    if (percent < 100) {
+                        progressBar.visibility = View.VISIBLE
+                    } else {
+                        progressBar.visibility = View.GONE
+                    }
+                }
+
+                // Логика обработки ошибок во время воспроизведения
+                setOnErrorListener { _, _, _ ->
+                    progressBar.visibility = View.GONE
+                    true
+                }
+                prepareAsync() // Асинхронная подготовка MediaPlayer
             }
-            prepareAsync() // Асинхронная подготовка MediaPlayer
+        } catch (e: Exception) {
+            // Логирование ошибки для отладки
+            e.printStackTrace()
+            // Показ сообщения пользователю о том, что произошла ошибка
+            Toast.makeText(this, "Ошибка: не удалось воспроизвести радио. Проверьте URL.", Toast.LENGTH_LONG).show()
+            // Дополнительная логика, например, сброс состояния или выключение проигрывателя
+            stopMusic()
         }
     }
 
