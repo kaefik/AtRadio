@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity() {
                 currentRadioStation = 0
             stopMusic()
             saveCurrentRadioStation(currentRadioStation)
-            statusRadio.text = radioStations[currentRadioStation].name
+            statusRadio.text = radioStations[currentRadioStation].name + "в эфире"
             startMusic(radioStations[currentRadioStation], progressBar)
         }
 
@@ -99,7 +99,7 @@ class MainActivity : AppCompatActivity() {
                 currentRadioStation = radioStations.size-1
             stopMusic()
             saveCurrentRadioStation(currentRadioStation)
-            statusRadio.text = radioStations[currentRadioStation].name
+            statusRadio.text = radioStations[currentRadioStation].name + "в эфире"
             startMusic(radioStations[currentRadioStation], progressBar)
         }
 
@@ -116,7 +116,7 @@ class MainActivity : AppCompatActivity() {
 
         buttonPlay.setOnClickListener{
             if (statusPlay) {
-                statusRadio.text = "STOP PLAY RADIO"
+                statusRadio.text = radioStations[currentRadioStation].name + " выкл"
                 buttonPlay.text = "Play"
                 statusPlay = false
                 stopMusic()
@@ -125,7 +125,8 @@ class MainActivity : AppCompatActivity() {
                 buttonPlay.text = "Stop"
                 statusPlay = true
 
-                statusRadio.text = radioStations[currentRadioStation].name
+                stopMusic()
+                statusRadio.text = radioStations[currentRadioStation].name + "в эфире"
                 startMusic(radioStations[currentRadioStation], progressBar)
             }
 
@@ -139,7 +140,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun startMusic(radioStation: RadioStation, progressBar: ProgressBar) {
+    private fun startMusic(radioStation: RadioStation, progressBar: ProgressBar, buttonPlay: Button) {
 
         try {
             mediaPlayer = MediaPlayer().apply {
