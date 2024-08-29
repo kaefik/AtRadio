@@ -11,6 +11,8 @@ import androidx.core.view.WindowInsetsCompat
 import android.media.MediaPlayer
 import android.widget.ProgressBar
 import android.view.View
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 // Определение радиостанций
 data class RadioStation(val name: String, val url: String)
@@ -32,8 +34,8 @@ class MainActivity : AppCompatActivity() {
 
         volumeControl = VolumeControl(this)
 
-        // Создание списка радиостанций
-        val radioStations = mutableListOf<RadioStation>()
+        // Загружаем список радиостанций
+        val radioStations = loadRadioStations()
 
         val statusRadio = findViewById<TextView>(R.id.statusRadio)
         val buttonPlay: Button = findViewById(R.id.buttonPlay)
@@ -46,12 +48,18 @@ class MainActivity : AppCompatActivity() {
 
         var currentRadioStation: Int = loadLastRadioStation()
 
-        // Добавление новых радиостанций
-        radioStations.add(RadioStation(name = "Классик ФМ", url = "http://cfm.jazzandclassic.ru:14536/rcstream.mp3"))
-        radioStations.add(RadioStation(name = "Bolgar Radiosi", url = "http://stream.tatarradio.ru:2068/;stream/1"))
-        radioStations.add(RadioStation(name = "Детское радио (Дети ФМ)", url = "http://ic5.101.ru:8000/v14_1"))
-        radioStations.add(RadioStation(name = "Монте Карло", url = "https://montecarlo.hostingradio.ru/montecarlo128.mp3"))
-        radioStations.add(RadioStation(name = "Saf Radiosi", url = "https://c7.radioboss.fm:18335/stream"))
+        // Если список пустой, добавляем радиостанции по умолчанию
+        if (radioStations.isEmpty()) {
+            radioStations.addAll(listOf(
+                RadioStation(name = "Классик ФМ", url = "http://cfm.jazzandclassic.ru:14536/rcstream.mp3"),
+                RadioStation(name = "Bolgar Radiosi", url = "http://stream.tatarradio.ru:2068/;stream/1"),
+                RadioStation(name = "Детское радио (Дети ФМ)", url = "http://ic5.101.ru:8000/v14_1"),
+                RadioStation(name = "Монте Карло", url = "https://montecarlo.hostingradio.ru/montecarlo128.mp3"),
+                RadioStation(name = "Saf Radiosi", url = "https://c7.radioboss.fm:18335/stream")
+            ))
+            // Сохраняем новый список
+            saveRadioStations(radioStations)
+        }
 
         buttonForward.setOnClickListener{
             currentRadioStation += 1
@@ -153,6 +161,27 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    private fun saveRadioStations(radioStations: List<RadioStation>) {
+        val sharedPreferences = getSharedPreferences("RadioPreferences", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        val gson = Gson()
+        val json = gson.toJson(radioStations)
+        editor.putString("RadioStations", json)
+        editor.apply()
+    }
+
+    private fun loadRadioStations(): MutableList<RadioStation> {
+        val sharedPreferences = getSharedPreferences("RadioPreferences", MODE_PRIVATE)
+        val gson = Gson()
+        val json = sharedPreferences.getString("RadioStations", null)
+        return if (json != null) {
+            val type = object : TypeToken<MutableList<RadioStation>>() {}.type
+            gson.fromJson(json, type)
+        } else {
+            mutableListOf()
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         // Освобождение ресурсов MediaPlayer при завершении активности
@@ -160,3 +189,4 @@ class MainActivity : AppCompatActivity() {
         mediaPlayer = null
     }
 }
+

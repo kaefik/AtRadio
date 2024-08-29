@@ -44,6 +44,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     testImplementation(libs.junit)
     implementation("com.intuit.sdp:sdp-android:1.1.0") // для построения адаптивного макета окна
+    implementation("com.google.code.gson:gson:2.8.8")
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
