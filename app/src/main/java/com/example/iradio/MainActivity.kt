@@ -18,6 +18,7 @@ data class RadioStation(val name: String, val url: String)
 class MainActivity : AppCompatActivity() {
 
     private var mediaPlayer: MediaPlayer? = null
+    private lateinit var volumeControl: VolumeControl
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +29,8 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        volumeControl = VolumeControl(this)
 
         // Создание списка радиостанций
         val radioStations = mutableListOf<RadioStation>()
@@ -67,11 +70,13 @@ class MainActivity : AppCompatActivity() {
 
 
         buttonVolUp.setOnClickListener{
-            statusRadio.text = "VOLUME UP"
+//            statusRadio.text = "VOLUME UP"
+            volumeControl.increaseVolume()
         }
 
         buttonVolDown.setOnClickListener{
-            statusRadio.text = "VOLUME DOWN"
+//            statusRadio.text = "VOLUME DOWN"
+            volumeControl.decreaseVolume()
         }
 
         buttonPlay.setOnClickListener{
