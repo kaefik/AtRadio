@@ -1,5 +1,6 @@
 package com.example.iradio
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
 import android.widget.Button
@@ -17,15 +18,42 @@ import com.google.gson.reflect.TypeToken
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContracts
 import android.widget.Toast
+import android.os.Parcel
+import android.os.Parcelable
 
 // Определение радиостанций
-data class RadioStation(val name: String, val url: String)
+data class RadioStation(val name: String, val url: String) : Parcelable {
+    constructor(parcel: Parcel) : this(
+        parcel.readString() ?: "",
+        parcel.readString() ?: ""
+    )
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(name)
+        parcel.writeString(url)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<RadioStation> {
+        override fun createFromParcel(parcel: Parcel): RadioStation {
+            return RadioStation(parcel)
+        }
+
+        override fun newArray(size: Int): Array<RadioStation?> {
+            return arrayOfNulls(size)
+        }
+    }
+}
 
 class MainActivity : AppCompatActivity() {
 
     private var mediaPlayer: MediaPlayer? = null
     private lateinit var volumeControl: VolumeControl
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -54,6 +82,26 @@ class MainActivity : AppCompatActivity() {
         val progressBar: ProgressBar = findViewById(R.id.progressBar)
 
         var currentRadioStation: Int = loadLastRadioStation()
+
+        val listRadioStationLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val selectedStation = result.data?.getParcelableExtra<RadioStation>("selectedStation")
+                if (selectedStation != null) {
+                    currentRadioStation = radioStations.indexOf(selectedStation)
+                    stopMusic()
+                    saveCurrentRadioStation(currentRadioStation)
+                    statusRadio.text = "${radioStations[currentRadioStation].name} в эфире"
+                    startMusic(radioStations[currentRadioStation], progressBar)
+                }
+            }
+        }
+
+        // Внутри onCreate
+        buttonListRadioStations.setOnClickListener {
+            val intent = Intent(this, RadioStationListActivity::class.java)
+            intent.putParcelableArrayListExtra("radioStations", ArrayList(radioStations))
+            listRadioStationLauncher.launch(intent)
+        }
 
         // Регистрация callback для обработки результата из AddRadioStationActivity
         val addRadioStationLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->

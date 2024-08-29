@@ -28,6 +28,8 @@
         </activity>
 
         <activity android:name=".AddRadioStationActivity" />
+        <activity android:name=".RadioStationListActivity" />
+
 
 
 
