@@ -47,6 +47,7 @@ class MainActivity : AppCompatActivity() {
         val buttonVolDown: Button = findViewById(R.id.buttonVolumeDown)
         val buttonForward: Button = findViewById(R.id.buttonForward)
         val buttonPrev: Button = findViewById(R.id.buttonPrev)
+        val buttonListRadioStations: Button = findViewById(R.id.buttonListRadioStations)
         // Кнопка добавления новой радиостанции
         val buttonAddRadioStation: Button = findViewById(R.id.buttonAddRadioStation)
         var statusPlay: Boolean = false // статус проигрывания текущей станции
@@ -139,6 +140,13 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, AddRadioStationActivity::class.java)
             addRadioStationLauncher.launch(intent)
         }
+
+        buttonListRadioStations.setOnClickListener{
+            val intent = Intent(this, RadioStationListActivity::class.java)
+            intent.putExtra("radioStations", ArrayList(radioStations))
+            startActivity(intent)
+        }
+
 
     }
 
