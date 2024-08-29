@@ -83,6 +83,8 @@ class MainActivity : AppCompatActivity() {
             saveRadioStations(radioStations)
         }
 
+        statusRadio.text = radioStations[currentRadioStation].name + "выкл"
+
         buttonForward.setOnClickListener{
             currentRadioStation += 1
             if (radioStations.size<=currentRadioStation)
@@ -140,7 +142,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private fun startMusic(radioStation: RadioStation, progressBar: ProgressBar, buttonPlay: Button) {
+    private fun startMusic(radioStation: RadioStation, progressBar: ProgressBar) {
 
         try {
             mediaPlayer = MediaPlayer().apply {
