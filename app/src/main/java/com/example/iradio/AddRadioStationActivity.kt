@@ -20,6 +20,7 @@ class AddRadioStationActivity : AppCompatActivity() {
         val editTextRadioName: EditText = findViewById(R.id.editTextRadioName)
         val editTextRadioUrl: EditText = findViewById(R.id.editTextRadioUrl)
         val buttonSave: Button = findViewById(R.id.buttonSaveRadioStation)
+        val buttonCancel: Button = findViewById(R.id.buttonCancel)
 
         // Установка слушателя на кнопку "Сохранить"
         buttonSave.setOnClickListener {
@@ -50,5 +51,12 @@ class AddRadioStationActivity : AppCompatActivity() {
                 Toast.makeText(this, "Введите название и URL радиостанции", Toast.LENGTH_SHORT).show()
             }
         }
+
+        buttonCancel.setOnClickListener {
+            // Завершить активность без возврата результата
+            setResult(Activity.RESULT_CANCELED)
+            finish()
+        }
+
     }
 }
