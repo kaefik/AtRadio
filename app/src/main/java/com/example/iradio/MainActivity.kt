@@ -1,5 +1,6 @@
 package com.example.iradio
 
+import android.app.Activity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
@@ -13,6 +14,9 @@ import android.widget.ProgressBar
 import android.view.View
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import android.content.Intent
+import androidx.activity.result.contract.ActivityResultContracts
+import android.widget.Toast
 
 // Определение радиостанций
 data class RadioStation(val name: String, val url: String)
@@ -43,10 +47,28 @@ class MainActivity : AppCompatActivity() {
         val buttonVolDown: Button = findViewById(R.id.buttonVolumeDown)
         val buttonForward: Button = findViewById(R.id.buttonForward)
         val buttonPrev: Button = findViewById(R.id.buttonPrev)
+        // Кнопка добавления новой радиостанции
+        val buttonAddRadioStation: Button = findViewById(R.id.buttonAddRadioStation)
         var statusPlay: Boolean = false // статус проигрывания текущей станции
         val progressBar: ProgressBar = findViewById(R.id.progressBar)
 
         var currentRadioStation: Int = loadLastRadioStation()
+
+        // Регистрация callback для обработки результата из AddRadioStationActivity
+        val addRadioStationLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val name = result.data?.getStringExtra("radioName")
+                val url = result.data?.getStringExtra("radioUrl")
+
+                if (name != null && url != null) {
+                    val newStation = RadioStation(name, url)
+                    radioStations.add(newStation)
+                    saveRadioStations(radioStations)
+                    Toast.makeText(this, "Радиостанция добавлена", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
 
         // Если список пустой, добавляем радиостанции по умолчанию
         if (radioStations.isEmpty()) {
@@ -108,6 +130,13 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
+
+        // Открытие нового окна для добавления радиостанции
+        buttonAddRadioStation.setOnClickListener {
+            val intent = Intent(this, AddRadioStationActivity::class.java)
+            addRadioStationLauncher.launch(intent)
+        }
+
     }
 
     private fun startMusic(radioStation: RadioStation, progressBar: ProgressBar) {
