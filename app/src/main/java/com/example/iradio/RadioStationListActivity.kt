@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import android.app.AlertDialog
 
 class RadioStationListActivity : AppCompatActivity() {
 
@@ -20,14 +20,31 @@ class RadioStationListActivity : AppCompatActivity() {
             ?: mutableListOf()
 
         radioStationAdapter = RadioStationAdapter(this, radioStations) { position ->
-            radioStations.removeAt(position)
-            radioStationAdapter.notifyItemRemoved(position)
-            saveRadioStations(radioStations)
+            showDeleteConfirmationDialog(position, radioStations)
         }
 
         val recyclerView: RecyclerView = findViewById(R.id.recyclerViewRadioStations)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = radioStationAdapter
+    }
+
+    private fun showDeleteConfirmationDialog(position: Int, radioStations: MutableList<RadioStation>) {
+        val alertDialog = AlertDialog.Builder(this)
+            .setTitle("Удаление радиостанции")
+            .setMessage("Вы уверены, что хотите удалить эту радиостанцию?")
+            .setPositiveButton("Удалить") { dialog, which ->
+                // Удаляем радиостанцию и уведомляем адаптер об изменении
+                radioStations.removeAt(position)
+                radioStationAdapter.notifyItemRemoved(position)
+                saveRadioStations(radioStations)
+            }
+            .setNegativeButton("Отмена") { dialog, which ->
+                // Отменяем удаление
+                dialog.dismiss()
+            }
+            .create()
+
+        alertDialog.show()
     }
 
     private fun saveRadioStations(radioStations: List<RadioStation>) {
