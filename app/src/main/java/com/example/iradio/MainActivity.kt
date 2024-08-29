@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity() {
                     currentRadioStation = radioStations.indexOf(selectedStation)
                     stopMusic()
                     saveCurrentRadioStation(currentRadioStation)
-                    statusRadio.text = "${radioStations[currentRadioStation].name} в эфире"
+                    statusRadio.text = "${radioStations[currentRadioStation].name} "
                     startMusic(radioStations[currentRadioStation], progressBar)
                 }
             }
@@ -136,26 +136,38 @@ class MainActivity : AppCompatActivity() {
             saveRadioStations(radioStations)
         }
 
-        statusRadio.text = radioStations[currentRadioStation].name + "выкл"
+        statusRadio.text = radioStations[currentRadioStation].name
 
         buttonForward.setOnClickListener{
             currentRadioStation += 1
             if (radioStations.size<=currentRadioStation)
                 currentRadioStation = 0
-            stopMusic()
             saveCurrentRadioStation(currentRadioStation)
-            statusRadio.text = radioStations[currentRadioStation].name + "в эфире"
-            startMusic(radioStations[currentRadioStation], progressBar)
+            statusRadio.text = radioStations[currentRadioStation].name
+            if (statusPlay) {
+                stopMusic()
+                startMusic(radioStations[currentRadioStation], progressBar)
+            }
+            else{
+                stopMusic()
+            }
         }
 
         buttonPrev.setOnClickListener{
             currentRadioStation -= 1
             if (currentRadioStation<0)
                 currentRadioStation = radioStations.size-1
-            stopMusic()
+
             saveCurrentRadioStation(currentRadioStation)
-            statusRadio.text = radioStations[currentRadioStation].name + "в эфире"
-            startMusic(radioStations[currentRadioStation], progressBar)
+            statusRadio.text = radioStations[currentRadioStation].name
+
+            if (statusPlay) {
+                stopMusic()
+                startMusic(radioStations[currentRadioStation], progressBar)
+            }
+            else{
+                stopMusic()
+            }
         }
 
 
@@ -181,7 +193,7 @@ class MainActivity : AppCompatActivity() {
                 statusPlay = true
 
                 stopMusic()
-                statusRadio.text = radioStations[currentRadioStation].name + "в эфире"
+                statusRadio.text = radioStations[currentRadioStation].name + " в эфире"
                 startMusic(radioStations[currentRadioStation], progressBar)
             }
 
