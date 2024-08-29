@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         volumeControl = VolumeControl(this)
 
         // Загружаем список радиостанций
-        val radioStations = loadRadioStations()
+        var radioStations = loadRadioStations()
 
         val statusRadio = findViewById<TextView>(R.id.statusRadio)
         val buttonPlay: Button = findViewById(R.id.buttonPlay)
@@ -83,6 +83,10 @@ class MainActivity : AppCompatActivity() {
 
         var currentRadioStation: Int = loadLastRadioStation()
 
+        if (radioStations.size<=currentRadioStation){
+            currentRadioStation = 0
+        }
+
         val listRadioStationLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val selectedStation = result.data?.getParcelableExtra<RadioStation>("selectedStation")
@@ -96,7 +100,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Внутри onCreate
+
         buttonListRadioStations.setOnClickListener {
             val intent = Intent(this, RadioStationListActivity::class.java)
             intent.putParcelableArrayListExtra("radioStations", ArrayList(radioStations))
@@ -193,6 +197,7 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, RadioStationListActivity::class.java)
             intent.putExtra("radioStations", ArrayList(radioStations))
             startActivity(intent)
+            radioStations = loadRadioStations()
         }
 
 
