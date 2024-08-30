@@ -74,8 +74,7 @@ class MainActivity : AppCompatActivity() {
         val buttonForward: Button = findViewById(R.id.buttonForward)
         val buttonPrev: Button = findViewById(R.id.buttonPrev)
         val buttonListRadioStations: Button = findViewById(R.id.buttonListRadioStations)
-        // Кнопка добавления новой радиостанции
-        val buttonAddRadioStation: Button = findViewById(R.id.buttonAddRadioStation)
+
         var statusPlay: Boolean = false // статус проигрывания текущей станции
         val progressBar: ProgressBar = findViewById(R.id.progressBar)
 
@@ -86,19 +85,6 @@ class MainActivity : AppCompatActivity() {
         if (radioStations.size<=currentRadioStation){
             currentRadioStation = 0
         }
-
-//        val listRadioStationLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-//            if (result.resultCode == Activity.RESULT_OK) {
-//                val selectedStation = result.data?.getParcelableExtra<RadioStation>("selectedStation")
-//                if (selectedStation != null) {
-//                    currentRadioStation = radioStations.indexOf(selectedStation)
-//                    stopMusic()
-//                    saveCurrentRadioStation(currentRadioStation)
-//                    statusRadio.text = "${radioStations[currentRadioStation].name} "
-//                    startMusic(radioStations[currentRadioStation], progressBar)
-//                }
-//            }
-//        }
 
         val listRadioStationLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -136,22 +122,6 @@ class MainActivity : AppCompatActivity() {
             intent.putParcelableArrayListExtra("radioStations", ArrayList(radioStations))
             listRadioStationLauncher.launch(intent)
         }
-
-//        // Регистрация callback для обработки результата из AddRadioStationActivity
-//        val addRadioStationLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-//            if (result.resultCode == Activity.RESULT_OK) {
-//                val name = result.data?.getStringExtra("radioName")
-//                val url = result.data?.getStringExtra("radioUrl")
-//
-//                if (name != null && url != null) {
-//                    val newStation = RadioStation(name, url)
-//                    radioStations.add(newStation)
-//                    saveRadioStations(radioStations)
-//                    Toast.makeText(this, "Радиостанция добавлена", Toast.LENGTH_SHORT).show()
-//                }
-//            }
-//        }
-
 
         // Если список пустой, добавляем радиостанции по умолчанию
         if (radioStations.isEmpty()) {
@@ -202,12 +172,10 @@ class MainActivity : AppCompatActivity() {
 
 
         buttonVolUp.setOnClickListener{
-//            statusRadio.text = "VOLUME UP"
             volumeControl.increaseVolume()
         }
 
         buttonVolDown.setOnClickListener{
-//            statusRadio.text = "VOLUME DOWN"
             volumeControl.decreaseVolume()
         }
 
@@ -229,20 +197,11 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-//        // Открытие нового окна для добавления радиостанции
-//        buttonAddRadioStation.setOnClickListener {
-//            val intent = Intent(this, AddRadioStationActivity::class.java)
-//            addRadioStationLauncher.launch(intent)
-//        }
-
         buttonListRadioStations.setOnClickListener{
             val intent = Intent(this, RadioStationListActivity::class.java)
             intent.putExtra("radioStations", ArrayList(radioStations))
             startActivity(intent)
-//            radioStations = loadRadioStations()
         }
-
-
     }
 
     private fun startMusic(radioStation: RadioStation, progressBar: ProgressBar) {
@@ -332,24 +291,6 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         radioStations = loadRadioStations()
     }
-//
-//    private fun updateRadioStations() {
-//        val radioStations = loadRadioStations()
-//        if (radioStations.isEmpty()) {
-//            stopMusic()
-//            findViewById<TextView>(R.id.statusRadio).text = "Нет доступных радиостанций"
-//            findViewById<Button>(R.id.buttonPlay).isEnabled = false
-//            findViewById<Button>(R.id.buttonForward).isEnabled = false
-//            findViewById<Button>(R.id.buttonPrev).isEnabled = false
-//        } else {
-//            val currentRadioStation = loadLastRadioStation()
-//            findViewById<TextView>(R.id.statusRadio).text = radioStations[currentRadioStation].name
-//            findViewById<Button>(R.id.buttonPlay).isEnabled = true
-//            findViewById<Button>(R.id.buttonForward).isEnabled = true
-//            findViewById<Button>(R.id.buttonPrev).isEnabled = true
-//        }
-//    }
-
 
     override fun onDestroy() {
         super.onDestroy()

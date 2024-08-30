@@ -119,19 +119,6 @@
         app:layout_constraintTop_toBottomOf="@+id/buttonVolumeDown" />
 
     <Button
-        android:id="@+id/buttonAddRadioStation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:text="+"
-        app:layout_constraintBottom_toTopOf="@+id/statusRadio"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.91"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.4" />
-
-    <Button
         android:id="@+id/buttonListRadioStations"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -139,9 +126,9 @@
         android:text="list"
         app:layout_constraintBottom_toTopOf="@+id/statusRadio"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.09"
+        app:layout_constraintHorizontal_bias="0.91"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.4" />
+        app:layout_constraintVertical_bias="0.4"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
