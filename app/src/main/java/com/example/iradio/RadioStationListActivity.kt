@@ -1,11 +1,16 @@
 package com.example.iradio
 
+import android.app.Activity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import android.app.AlertDialog
+import android.content.Intent
+import android.widget.Button
+import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 
 class RadioStationListActivity : AppCompatActivity() {
 
@@ -14,6 +19,9 @@ class RadioStationListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_radio_station_list)
+
+        val buttonAddStation: Button = findViewById(R.id.buttonAddStation)
+
 
         // Получение списка радиостанций из Intent
         val radioStations = intent.getParcelableArrayListExtra<RadioStation>("radioStations")?.toMutableList()
@@ -26,6 +34,29 @@ class RadioStationListActivity : AppCompatActivity() {
         val recyclerView: RecyclerView = findViewById(R.id.recyclerViewRadioStations)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = radioStationAdapter
+
+        // Регистрация callback для обработки результата из AddRadioStationActivity
+        val addRadioStationLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                val name = result.data?.getStringExtra("radioName")
+                val url = result.data?.getStringExtra("radioUrl")
+
+                if (name != null && url != null) {
+                    val newStation = RadioStation(name, url)
+                    radioStations.add(newStation)
+                    saveRadioStations(radioStations)
+                    radioStationAdapter.notifyDataSetChanged()  // Уведомляем адаптер об изменении данных
+                    Toast.makeText(this, "Радиостанция добавлена", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+
+        // кнопка добавления радиостанции
+        buttonAddStation.setOnClickListener{
+            val intent = Intent(this, AddRadioStationActivity::class.java)
+            addRadioStationLauncher.launch(intent)
+        }
     }
 
     private fun showDeleteConfirmationDialog(position: Int, radioStations: MutableList<RadioStation>) {

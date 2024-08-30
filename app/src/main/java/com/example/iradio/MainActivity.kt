@@ -199,11 +199,11 @@ class MainActivity : AppCompatActivity() {
 
         }
 
-        // Открытие нового окна для добавления радиостанции
-        buttonAddRadioStation.setOnClickListener {
-            val intent = Intent(this, AddRadioStationActivity::class.java)
-            addRadioStationLauncher.launch(intent)
-        }
+//        // Открытие нового окна для добавления радиостанции
+//        buttonAddRadioStation.setOnClickListener {
+//            val intent = Intent(this, AddRadioStationActivity::class.java)
+//            addRadioStationLauncher.launch(intent)
+//        }
 
         buttonListRadioStations.setOnClickListener{
             val intent = Intent(this, RadioStationListActivity::class.java)
