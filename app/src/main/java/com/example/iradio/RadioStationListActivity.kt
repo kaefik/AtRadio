@@ -1,5 +1,6 @@
 package com.example.iradio
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +17,7 @@ class RadioStationListActivity : AppCompatActivity() {
 
     private lateinit var radioStationAdapter: RadioStationAdapter
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_radio_station_list)
