@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity() {
                 // Обновляем интерфейс, если радиостанций не осталось или выбранная станция была удалена
                 if (radioStations.isEmpty()) {
                     stopMusic()
-                    statusRadio.text = "Нет доступных радиостанций"
+                    statusRadio.text = "Empty list stations"
 //                    buttonPlay.isEnabled = false
 //                    buttonForward.isEnabled = false
 //                    buttonPrev.isEnabled = false
@@ -147,7 +147,7 @@ class MainActivity : AppCompatActivity() {
             if (radioStations.isEmpty()) {
                 currentRadioStation = 0
                 stopMusic()
-                statusRadio.text = "Нет доступных радиостанций"
+                statusRadio.text = "Empty list stations"
             }
             else {
                 currentRadioStation += 1
@@ -170,7 +170,7 @@ class MainActivity : AppCompatActivity() {
             if (radioStations.isEmpty()) {
                 currentRadioStation = 0
                 stopMusic()
-                statusRadio.text = "Нет доступных радиостанций"
+                statusRadio.text = "Empty list stations"
             } else {
                 currentRadioStation -= 1
                 if (currentRadioStation<0)
@@ -203,10 +203,10 @@ class MainActivity : AppCompatActivity() {
             if (radioStations.isEmpty()) {
                 currentRadioStation = 0
                 stopMusic()
-                statusRadio.text = "Нет доступных радиостанций"
+                statusRadio.text = "Empty list stations"
             } else {
                 if (statusPlay) {
-                    statusRadio.text = radioStations[currentRadioStation].name + " выкл"
+                    statusRadio.text = radioStations[currentRadioStation].name
                     buttonPlay.text = "Play"
                     statusPlay = false
                     stopMusic()
@@ -216,7 +216,7 @@ class MainActivity : AppCompatActivity() {
                     statusPlay = true
 
                     stopMusic()
-                    statusRadio.text = radioStations[currentRadioStation].name + " в эфире"
+                    statusRadio.text = radioStations[currentRadioStation].name
                     startMusic(radioStations[currentRadioStation], progressBar)
                 }
             }
@@ -259,7 +259,7 @@ class MainActivity : AppCompatActivity() {
             // Логирование ошибки для отладки
             e.printStackTrace()
             // Показ сообщения пользователю о том, что произошла ошибка
-            Toast.makeText(this, "Ошибка: не удалось воспроизвести радио. Проверьте URL.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Error: Check URL station.", Toast.LENGTH_LONG).show()
             // Дополнительная логика, например, сброс состояния или выключение проигрывателя
             stopMusic()
         }
