@@ -21,6 +21,7 @@ class RadioStationListActivity : AppCompatActivity() {
         setContentView(R.layout.activity_radio_station_list)
 
         val buttonAddStation: Button = findViewById(R.id.buttonAddStation)
+        val buttonBack: Button = findViewById(R.id.buttonBack)
 
 
         // Получение списка радиостанций из Intent
@@ -51,6 +52,11 @@ class RadioStationListActivity : AppCompatActivity() {
             }
         }
 
+        buttonBack.setOnClickListener {
+            // Завершить активность с возвратом результата
+            setResult(Activity.RESULT_OK)
+            finish()
+        }
 
         // кнопка добавления радиостанции
         buttonAddStation.setOnClickListener{
