@@ -2,6 +2,7 @@ package com.example.iradio
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
@@ -74,6 +75,7 @@ class MainActivity : AppCompatActivity() {
         val buttonForward: Button = findViewById(R.id.buttonForward)
         val buttonPrev: Button = findViewById(R.id.buttonPrev)
         val buttonListRadioStations: Button = findViewById(R.id.buttonListRadioStations)
+        val buttonFav1: Button = findViewById(R.id.buttonFav1)
 
         var statusPlay: Boolean = false // статус проигрывания текущей станции
         val progressBar: ProgressBar = findViewById(R.id.progressBar)
@@ -115,7 +117,27 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        buttonFav1.setOnLongClickListener {
+            // Создаем диалоговое окно
+            val builder = AlertDialog.Builder(this)
+            builder.setMessage("Save current station?")
+                .setPositiveButton("Yes") { dialog, id ->
+                    // TODO: Сохранить текущую радиостанцию в массив избранных радиостанций под номером 1
+//                    saveCurrentRadioStation(currentRadioStation)
 
+                    Toast.makeText(this, "Station saved", Toast.LENGTH_SHORT).show()
+                }
+                .setNegativeButton("No") { dialog, id ->
+                    // Ничего не делаем, просто закрываем диалог
+                    dialog.dismiss()
+                }
+
+            // Показать диалоговое окно
+            builder.create().show()
+
+            // Возвращаем true, чтобы событие не передавалось дальше
+            true
+        }
 
         buttonListRadioStations.setOnClickListener {
             val intent = Intent(this, RadioStationListActivity::class.java)
