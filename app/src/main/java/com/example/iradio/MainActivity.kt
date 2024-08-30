@@ -94,17 +94,17 @@ class MainActivity : AppCompatActivity() {
                 if (radioStations.isEmpty()) {
                     stopMusic()
                     statusRadio.text = "Нет доступных радиостанций"
-                    buttonPlay.isEnabled = false
-                    buttonForward.isEnabled = false
-                    buttonPrev.isEnabled = false
+//                    buttonPlay.isEnabled = false
+//                    buttonForward.isEnabled = false
+//                    buttonPrev.isEnabled = false
                 } else {
                     if (currentRadioStation >= radioStations.size) {
                         currentRadioStation = 0
                     }
                     statusRadio.text = radioStations[currentRadioStation].name
-                    buttonPlay.isEnabled = true
-                    buttonForward.isEnabled = true
-                    buttonPrev.isEnabled = true
+//                    buttonPlay.isEnabled = true
+//                    buttonForward.isEnabled = true
+//                    buttonPrev.isEnabled = true
 
                     // Если радиостанция играет, запускаем воспроизведение текущей станции
 //                    if (statusPlay) {
@@ -134,39 +134,58 @@ class MainActivity : AppCompatActivity() {
             ))
             // Сохраняем новый список
             saveRadioStations(radioStations)
+            currentRadioStation = 0
+            statusRadio.text = radioStations[currentRadioStation].name
+        } else{
+            statusRadio.text = radioStations[currentRadioStation].name
         }
 
-        statusRadio.text = radioStations[currentRadioStation].name
+
 
         buttonForward.setOnClickListener{
-            currentRadioStation += 1
-            if (radioStations.size<=currentRadioStation)
+
+            if (radioStations.isEmpty()) {
                 currentRadioStation = 0
-            saveCurrentRadioStation(currentRadioStation)
-            statusRadio.text = radioStations[currentRadioStation].name
-            if (statusPlay) {
                 stopMusic()
-                startMusic(radioStations[currentRadioStation], progressBar)
+                statusRadio.text = "Нет доступных радиостанций"
             }
-            else{
-                stopMusic()
+            else {
+                currentRadioStation += 1
+                if (radioStations.size<=currentRadioStation)
+                    currentRadioStation = 0
+                saveCurrentRadioStation(currentRadioStation)
+                statusRadio.text = radioStations[currentRadioStation].name
+                if (statusPlay) {
+                    stopMusic()
+                    startMusic(radioStations[currentRadioStation], progressBar)
+                }
+                else{
+                    stopMusic()
+                }
             }
         }
 
         buttonPrev.setOnClickListener{
-            currentRadioStation -= 1
-            if (currentRadioStation<0)
-                currentRadioStation = radioStations.size-1
 
-            saveCurrentRadioStation(currentRadioStation)
-            statusRadio.text = radioStations[currentRadioStation].name
+            if (radioStations.isEmpty()) {
+                currentRadioStation = 0
+                stopMusic()
+                statusRadio.text = "Нет доступных радиостанций"
+            } else {
+                currentRadioStation -= 1
+                if (currentRadioStation<0)
+                    currentRadioStation = radioStations.size-1
 
-            if (statusPlay) {
-                stopMusic()
-                startMusic(radioStations[currentRadioStation], progressBar)
-            }
-            else{
-                stopMusic()
+                saveCurrentRadioStation(currentRadioStation)
+                statusRadio.text = radioStations[currentRadioStation].name
+
+                if (statusPlay) {
+                    stopMusic()
+                    startMusic(radioStations[currentRadioStation], progressBar)
+                }
+                else{
+                    stopMusic()
+                }
             }
         }
 
@@ -180,21 +199,27 @@ class MainActivity : AppCompatActivity() {
         }
 
         buttonPlay.setOnClickListener{
-            if (statusPlay) {
-                statusRadio.text = radioStations[currentRadioStation].name + " выкл"
-                buttonPlay.text = "Play"
-                statusPlay = false
-                stopMusic()
-            }
-            else {
-                buttonPlay.text = "Stop"
-                statusPlay = true
 
+            if (radioStations.isEmpty()) {
+                currentRadioStation = 0
                 stopMusic()
-                statusRadio.text = radioStations[currentRadioStation].name + " в эфире"
-                startMusic(radioStations[currentRadioStation], progressBar)
-            }
+                statusRadio.text = "Нет доступных радиостанций"
+            } else {
+                if (statusPlay) {
+                    statusRadio.text = radioStations[currentRadioStation].name + " выкл"
+                    buttonPlay.text = "Play"
+                    statusPlay = false
+                    stopMusic()
+                }
+                else {
+                    buttonPlay.text = "Stop"
+                    statusPlay = true
 
+                    stopMusic()
+                    statusRadio.text = radioStations[currentRadioStation].name + " в эфире"
+                    startMusic(radioStations[currentRadioStation], progressBar)
+                }
+            }
         }
 
         buttonListRadioStations.setOnClickListener{
