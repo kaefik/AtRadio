@@ -69,11 +69,16 @@ class RadioStationListActivity : AppCompatActivity() {
         val openDocumentLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
             uri?.let {
                 val newStations = importRadioStationsFromFileUri(this, it)
-                radioStations.clear()
-                radioStations.addAll(newStations)
-                radioStationAdapter.notifyDataSetChanged()  // Уведомляем адаптер об изменении данных
-                saveRadioStations(radioStations)
-                Toast.makeText(this, "Радиостанции импортированы", Toast.LENGTH_SHORT).show()
+
+                if (newStations.size == 0){
+                    Toast.makeText(this, "Файл не содержит новых станций", Toast.LENGTH_SHORT).show()
+                }else {
+                    radioStations.clear()
+                    radioStations.addAll(newStations)
+                    radioStationAdapter.notifyDataSetChanged()  // Уведомляем адаптер об изменении данных
+                    saveRadioStations(radioStations)
+                    Toast.makeText(this, "Радиостанции импортированы", Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
@@ -99,10 +104,6 @@ class RadioStationListActivity : AppCompatActivity() {
             val intent = Intent(this, AddRadioStationActivity::class.java)
             addRadioStationLauncher.launch(intent)
         }
-
-
-
-
     }
 
     private fun showDeleteConfirmationDialog(position: Int, radioStations: MutableList<RadioStation>) {
@@ -178,8 +179,9 @@ class RadioStationListActivity : AppCompatActivity() {
     }
 
     // импорт списка радиостанций из файла в приложение
-    fun importRadioStationsFromFileUri(context: Context, uri: Uri): MutableList<RadioStation> {
+    fun importRadioStationsFromFileUri(context: Context, uri: Uri): List<RadioStation> {
         val radioStations = mutableListOf<RadioStation>()
+        var isValidFile = true
 
         try {
             // Открываем InputStream из URI
@@ -187,26 +189,44 @@ class RadioStationListActivity : AppCompatActivity() {
                 val reader = BufferedReader(InputStreamReader(inputStream))
 
                 // Пропускаем первую строку с заголовком
-                reader.readLine()
+                val headerLine = reader.readLine()
+                if (headerLine == null || !headerLine.equals("Name;URL", ignoreCase = true)) {
+                    // Проверка заголовка файла
+                    isValidFile = false
+                    Toast.makeText(context, "Неверный формат файла", Toast.LENGTH_SHORT).show()
+                    return emptyList()
+                }
 
                 // Чтение данных из файла
                 reader.forEachLine { line ->
-                    val columns = line.split(";")
-                    if (columns.size == 2) {
-                        val name = columns[0]
-                        val url = columns[1]
+                    if (line.isNotBlank()) {
+                        val columns = line.split(";")
+                        if (columns.size == 2) {
+                            val name = columns[0].trim()
+                            val url = columns[1].trim()
 
-                        // Создаем объект RadioStation и добавляем его в список
-                        radioStations.add(RadioStation(name, url))
+                            if (name.isNotEmpty() && url.isNotEmpty()) {
+                                // Создаем объект RadioStation и добавляем его в список
+                                radioStations.add(RadioStation(name, url))
+                            } else {
+                                isValidFile = false
+                                Toast.makeText(context, "Некорректные данные в строке: $line", Toast.LENGTH_SHORT).show()
+                            }
+                        } else {
+                            isValidFile = false
+                            Toast.makeText(context, "Некорректная строка: $line", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
             }
-
         } catch (e: Exception) {
             e.printStackTrace()
-            // Обработка ошибок при чтении файла
+            Toast.makeText(context, "Ошибка при чтении файла", Toast.LENGTH_SHORT).show()
         }
 
-        return radioStations
+        return if (isValidFile) radioStations else emptyList()
     }
+
+
+
 }
