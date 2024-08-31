@@ -18,7 +18,8 @@ import androidx.core.content.FileProvider
 import java.io.File
 import java.io.OutputStreamWriter
 import android.net.Uri
-
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
 class RadioStationListActivity : AppCompatActivity() {
 
@@ -32,10 +33,11 @@ class RadioStationListActivity : AppCompatActivity() {
         val buttonAddStation: Button = findViewById(R.id.buttonAddStation)
         val buttonBack: Button = findViewById(R.id.buttonBack)
         val buttonSaveShareStations: Button = findViewById(R.id.buttonSaveShareStations)
+        val buttonImportStationsFromFile: Button = findViewById(R.id.buttonImportStationsFromFile)
 
 
         // Получение списка радиостанций из Intent
-        val radioStations = intent.getParcelableArrayListExtra<RadioStation>("radioStations")?.toMutableList()
+        var radioStations = intent.getParcelableArrayListExtra<RadioStation>("radioStations")?.toMutableList()
             ?: mutableListOf()
 
         radioStationAdapter = RadioStationAdapter(this, radioStations) { position ->
@@ -62,6 +64,13 @@ class RadioStationListActivity : AppCompatActivity() {
             }
         }
 
+        // Запуск диалога выбора файла
+        val openDocumentLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
+            uri?.let {
+                importRadioStationsFromFileUri(this,it)
+            }
+        }
+
         buttonBack.setOnClickListener {
             // Завершить активность с возвратом результата
             setResult(Activity.RESULT_OK)
@@ -72,11 +81,21 @@ class RadioStationListActivity : AppCompatActivity() {
             saveAndShareRadioStations(this, "radio_stations.csv", radioStations)
         }
 
+        buttonImportStationsFromFile.setOnClickListener {
+
+            // Вызываем диалог выбора файла
+            openDocumentLauncher.launch(arrayOf("text/csv"))
+        }
+
         // кнопка добавления радиостанции
         buttonAddStation.setOnClickListener{
             val intent = Intent(this, AddRadioStationActivity::class.java)
             addRadioStationLauncher.launch(intent)
         }
+
+
+
+
     }
 
     private fun showDeleteConfirmationDialog(position: Int, radioStations: MutableList<RadioStation>) {
@@ -151,5 +170,36 @@ class RadioStationListActivity : AppCompatActivity() {
         }
     }
 
+    // импорт списка радиостанций из файла в приложение
+    fun importRadioStationsFromFileUri(context: Context, uri: Uri): MutableList<RadioStation> {
+        val radioStations = mutableListOf<RadioStation>()
 
+        try {
+            // Открываем InputStream из URI
+            context.contentResolver.openInputStream(uri)?.use { inputStream ->
+                val reader = BufferedReader(InputStreamReader(inputStream))
+
+                // Пропускаем первую строку с заголовком
+                reader.readLine()
+
+                // Чтение данных из файла
+                reader.forEachLine { line ->
+                    val columns = line.split(";")
+                    if (columns.size == 2) {
+                        val name = columns[0]
+                        val url = columns[1]
+
+                        // Создаем объект RadioStation и добавляем его в список
+                        radioStations.add(RadioStation(name, url))
+                    }
+                }
+            }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            // Обработка ошибок при чтении файла
+        }
+
+        return radioStations
+    }
 }
