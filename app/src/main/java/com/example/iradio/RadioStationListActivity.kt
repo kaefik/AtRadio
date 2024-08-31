@@ -72,6 +72,7 @@ class RadioStationListActivity : AppCompatActivity() {
                 radioStations.clear()
                 radioStations.addAll(newStations)
                 radioStationAdapter.notifyDataSetChanged()  // Уведомляем адаптер об изменении данных
+                saveRadioStations(radioStations)
                 Toast.makeText(this, "Радиостанции импортированы", Toast.LENGTH_SHORT).show()
             }
         }
