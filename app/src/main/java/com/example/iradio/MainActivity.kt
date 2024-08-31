@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
     private var radioStations: MutableList<RadioStation> = mutableListOf()
     private var favoriteStations: MutableList<RadioStation?> = mutableListOf(null, null, null)  // Переменная для хранения трех избранных радиостанций
     private var currentRadioStation: Int = 0
-    private lateinit var buttonPlay: Button
+    private lateinit var buttonPlay: ImageButton
     private lateinit var statusRadio: TextView
     private lateinit var progressBar: ProgressBar
     private var statusPlay: Boolean = false // статус проигрывания текущей станции
@@ -127,7 +127,8 @@ class MainActivity : AppCompatActivity() {
                 if (radioStations.isEmpty()) {
                     stopMusic()
                     statusPlay=false
-                    buttonPlay.text = "Play"
+//                    buttonPlay.text = "Play"
+                    buttonPlay.setImageResource(R.drawable.play_64)
                     statusRadio.text = "Empty list stations"
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
                 } else {
@@ -256,12 +257,14 @@ class MainActivity : AppCompatActivity() {
                 if (statusPlay) {
                     statusRadio.text = radioStations[currentRadioStation].name
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
-                    buttonPlay.text = "Play"
+//                    buttonPlay.text = "Play"
+                    buttonPlay.setImageResource(R.drawable.play_64)
                     statusPlay = false
                     stopMusic()
                 }
                 else {
-                    buttonPlay.text = "Stop"
+//                    buttonPlay.text = "Stop"
+                    buttonPlay.setImageResource(R.drawable.stop_64)
                     statusPlay = true
                     stopMusic()
                     statusRadio.text = radioStations[currentRadioStation].name
@@ -406,7 +409,8 @@ class MainActivity : AppCompatActivity() {
     // Функция для обработки нажатия на кнопку избранной станции
     private fun handleFavoriteButtonClick(index: Int) { //, button: Button) {
         favoriteStations.getOrNull(index)?.let { station ->
-            buttonPlay.text = "Stop"
+//            buttonPlay.text = "Stop"
+            buttonPlay.setImageResource(R.drawable.stop_64)
             statusPlay = true
             stopMusic()
             statusRadio.text = station.name
