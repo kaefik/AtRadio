@@ -21,6 +21,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import android.widget.Toast
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.core.content.ContextCompat
 
 // Определение радиостанций
 data class RadioStation(val name: String, val url: String) : Parcelable {
@@ -110,8 +111,11 @@ class MainActivity : AppCompatActivity() {
             saveRadioStations(radioStations)
             currentRadioStation = 0
             statusRadio.text = radioStations[currentRadioStation].name
+            statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
+
         } else{
             statusRadio.text = radioStations[currentRadioStation].name
+            statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
         }
 
         val listRadioStationLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -124,11 +128,13 @@ class MainActivity : AppCompatActivity() {
                     statusPlay=false
                     buttonPlay.text = "Play"
                     statusRadio.text = "Empty list stations"
+                    statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
                 } else {
                     if (currentRadioStation >= radioStations.size) {
                         currentRadioStation = 0
                     }
                     statusRadio.text = radioStations[currentRadioStation].name
+                    statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
                 }
             }
         }
@@ -196,9 +202,11 @@ class MainActivity : AppCompatActivity() {
                 if (statusPlay) {
                     stopMusic()
                     startMusic(radioStations[currentRadioStation], progressBar)
+                    statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
                 }
                 else{
                     stopMusic()
+                    statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
                 }
             }
         }
@@ -219,9 +227,11 @@ class MainActivity : AppCompatActivity() {
                 if (statusPlay) {
                     stopMusic()
                     startMusic(radioStations[currentRadioStation], progressBar)
+                    statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
                 }
                 else{
                     stopMusic()
+                    statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
                 }
             }
         }
@@ -244,6 +254,7 @@ class MainActivity : AppCompatActivity() {
             } else {
                 if (statusPlay) {
                     statusRadio.text = radioStations[currentRadioStation].name
+                    statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
                     buttonPlay.text = "Play"
                     statusPlay = false
                     stopMusic()
@@ -251,9 +262,9 @@ class MainActivity : AppCompatActivity() {
                 else {
                     buttonPlay.text = "Stop"
                     statusPlay = true
-
                     stopMusic()
                     statusRadio.text = radioStations[currentRadioStation].name
+                    statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
                     startMusic(radioStations[currentRadioStation], progressBar)
                 }
             }
@@ -398,6 +409,7 @@ class MainActivity : AppCompatActivity() {
             statusPlay = true
             stopMusic()
             statusRadio.text = station.name
+            statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
             startMusic(station, progressBar)
             Toast.makeText(this, "Playback of selected station ${index + 1}: ${station.name}", Toast.LENGTH_SHORT).show()
         } ?: run {
