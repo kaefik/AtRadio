@@ -54,8 +54,8 @@ class MainActivity : AppCompatActivity() {
     private var mediaPlayer: MediaPlayer? = null
     private lateinit var volumeControl: VolumeControl
     private var radioStations: MutableList<RadioStation> = mutableListOf()
-    private val favoriteStations: MutableList<RadioStation?> = mutableListOf(null, null, null) // Переменная для хранения трех избранных радиостанций
-
+    private var favoriteStations: MutableList<RadioStation?> = mutableListOf(null, null, null)  // Переменная для хранения трех избранных радиостанций
+    private var currentRadioStation: Int = 0
 
 
     @SuppressLint("SetTextI18n")
@@ -85,9 +85,10 @@ class MainActivity : AppCompatActivity() {
         var statusPlay: Boolean = false // статус проигрывания текущей станции
         val progressBar: ProgressBar = findViewById(R.id.progressBar)
 
-        var currentRadioStation: Int = loadLastRadioStation()
+        currentRadioStation = loadLastRadioStation()
 
         radioStations = loadRadioStations() // Загружаем список радиостанций
+        favoriteStations = loadFavoriteStations()
 
         if (radioStations.size<=currentRadioStation){
             currentRadioStation = 0
@@ -129,65 +130,88 @@ class MainActivity : AppCompatActivity() {
 
         // сохранение избранных радиостанции
 
+        // Обработчик для сохранения радиостанции в первый индекс
         buttonFav1.setOnLongClickListener {
-            // Создаем диалоговое окно
-            val builder = AlertDialog.Builder(this)
-            builder.setMessage("Save current station?")
-                .setPositiveButton("Yes") { dialog, id ->
-                    favoriteStations[0] = radioStations[currentRadioStation]
-                    Toast.makeText(this, "Favorite station 1 saved", Toast.LENGTH_SHORT).show()
-                }
-                .setNegativeButton("No") { dialog, id ->
-                    // Ничего не делаем, просто закрываем диалог
-                    dialog.dismiss()
-                }
-            // Показать диалоговое окно
-            builder.create().show()
-            // Возвращаем true, чтобы событие не передавалось дальше
+            showSaveDialog(0)
             true
         }
 
+        // Обработчик для сохранения радиостанции во второй индекс
         buttonFav2.setOnLongClickListener {
-            // Создаем диалоговое окно
-            val builder = AlertDialog.Builder(this)
-            builder.setMessage("Save current station?")
-                .setPositiveButton("Yes") { dialog, id ->
-                    favoriteStations[1] = radioStations[currentRadioStation]
-                    Toast.makeText(this, "Favorite station 2 saved", Toast.LENGTH_SHORT).show()
-                }
-                .setNegativeButton("No") { dialog, id ->
-                    // Ничего не делаем, просто закрываем диалог
-                    dialog.dismiss()
-                }
-            // Показать диалоговое окно
-            builder.create().show()
-            // Возвращаем true, чтобы событие не передавалось дальше
+            showSaveDialog(1)
             true
         }
 
+        // Обработчик для сохранения радиостанции в третий индекс
         buttonFav3.setOnLongClickListener {
-            // Создаем диалоговое окно
-            val builder = AlertDialog.Builder(this)
-            builder.setMessage("Save current station?")
-                .setPositiveButton("Yes") { dialog, id ->
-                    favoriteStations[2] = radioStations[currentRadioStation]
-                    Toast.makeText(this, "Favorite station 3 saved", Toast.LENGTH_SHORT).show()
-                }
-                .setNegativeButton("No") { dialog, id ->
-                    // Ничего не делаем, просто закрываем диалог
-                    dialog.dismiss()
-                }
-            // Показать диалоговое окно
-            builder.create().show()
-            // Возвращаем true, чтобы событие не передавалось дальше
+            showSaveDialog(2)
             true
         }
+
+
+
+//        buttonFav1.setOnLongClickListener {
+//            // Создаем диалоговое окно
+//            val builder = AlertDialog.Builder(this)
+//            builder.setMessage("Save current station?")
+//                .setPositiveButton("Yes") { dialog, id ->
+//                    favoriteStations[0] = radioStations[currentRadioStation]
+//                    saveFavoriteStations()
+//                    Toast.makeText(this, "Favorite station 1 saved", Toast.LENGTH_SHORT).show()
+//                }
+//                .setNegativeButton("No") { dialog, id ->
+//                    // Ничего не делаем, просто закрываем диалог
+//                    dialog.dismiss()
+//                }
+//            // Показать диалоговое окно
+//            builder.create().show()
+//            // Возвращаем true, чтобы событие не передавалось дальше
+//            true
+//        }
+//
+//        buttonFav2.setOnLongClickListener {
+//            // Создаем диалоговое окно
+//            val builder = AlertDialog.Builder(this)
+//            builder.setMessage("Save current station?")
+//                .setPositiveButton("Yes") { dialog, id ->
+//                    favoriteStations[1] = radioStations[currentRadioStation]
+//                    saveFavoriteStations()
+//                    Toast.makeText(this, "Favorite station 2 saved", Toast.LENGTH_SHORT).show()
+//                }
+//                .setNegativeButton("No") { dialog, id ->
+//                    // Ничего не делаем, просто закрываем диалог
+//                    dialog.dismiss()
+//                }
+//            // Показать диалоговое окно
+//            builder.create().show()
+//            // Возвращаем true, чтобы событие не передавалось дальше
+//            true
+//        }
+//
+//        buttonFav3.setOnLongClickListener {
+//            // Создаем диалоговое окно
+//            val builder = AlertDialog.Builder(this)
+//            builder.setMessage("Save current station?")
+//                .setPositiveButton("Yes") { dialog, id ->
+//                    favoriteStations[2] = radioStations[currentRadioStation]
+//                    saveFavoriteStations()
+//                    Toast.makeText(this, "Favorite station 3 saved", Toast.LENGTH_SHORT).show()
+//                }
+//                .setNegativeButton("No") { dialog, id ->
+//                    // Ничего не делаем, просто закрываем диалог
+//                    dialog.dismiss()
+//                }
+//            // Показать диалоговое окно
+//            builder.create().show()
+//            // Возвращаем true, чтобы событие не передавалось дальше
+//            true
+//        }
 
         // Обработчики для одиночного нажатия для воспроизведения
 
         // Первая кнопка избранного
         buttonFav1.setOnClickListener {
-            favoriteStations[0]?.let { station ->
+            favoriteStations.getOrNull(0)?.let { station ->
                 buttonPlay.text = "Stop"
                 statusPlay = true
                 stopMusic()
@@ -201,7 +225,7 @@ class MainActivity : AppCompatActivity() {
 
         // Вторая кнопка избранного
         buttonFav2.setOnClickListener {
-            favoriteStations[1]?.let { station ->
+            favoriteStations.getOrNull(1)?.let  { station ->
                 buttonPlay.text = "Stop"
                 statusPlay = true
                 stopMusic()
@@ -215,7 +239,7 @@ class MainActivity : AppCompatActivity() {
 
         // Третья кнопка избранного
         buttonFav3.setOnClickListener {
-            favoriteStations[2]?.let { station ->
+            favoriteStations.getOrNull(2)?.let  { station ->
                 buttonPlay.text = "Stop"
                 statusPlay = true
                 stopMusic()
@@ -420,7 +444,7 @@ class MainActivity : AppCompatActivity() {
         editor.apply()
     }
 
-    private fun loadFavoriteStations(): MutableList<RadioStation> {
+    private fun loadFavoriteStations(): MutableList<RadioStation?> {
         val sharedPreferences = getSharedPreferences("RadioPreferences", MODE_PRIVATE)
         val gson = Gson()
         val json = sharedPreferences.getString("FavoriteStations", null)
@@ -428,11 +452,30 @@ class MainActivity : AppCompatActivity() {
             val type = object : TypeToken<MutableList<RadioStation>>() {}.type
             gson.fromJson(json, type)
         } else {
-            mutableListOf()
+            mutableListOf(null, null, null)
         }
     }
 
     // END сохранение настроек приложения
+
+    // Функция для отображения диалогового окна и сохранения станции
+    private fun showSaveDialog(index: Int) {
+            // Создаем диалоговое окно
+            val builder = AlertDialog.Builder(this)
+            builder.setMessage("Save current station?")
+                .setPositiveButton("Yes") { dialog, id ->
+                    println("favoriteStations -> $favoriteStations")
+                    favoriteStations[index] = radioStations[currentRadioStation]
+                    saveFavoriteStations()
+                    Toast.makeText(this, "Favorite station $index saved", Toast.LENGTH_SHORT).show()
+                }
+                .setNegativeButton("No") { dialog, id ->
+                    // Ничего не делаем, просто закрываем диалог
+                    dialog.dismiss()
+                }
+            // Показать диалоговое окно
+            builder.create().show()
+    }
 
     override fun onResume() {
         super.onResume()
