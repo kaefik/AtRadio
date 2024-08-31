@@ -47,21 +47,25 @@
         app:layout_constraintTop_toBottomOf="@+id/buttonPlay"
         app:layout_constraintVertical_bias="0.1" />
 
-    <Button
+    <ImageButton
         android:id="@+id/buttonPrev"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="PREV"
+        android:contentDescription="PREV"
+        android:src="@drawable/back_64"
+        android:background="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/buttonPlay"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <ImageButton
         android:id="@+id/buttonForward"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="FORW"
+        android:contentDescription="FORW"
+        android:src="@drawable/forward_64"
+        android:background="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/buttonPlay"
