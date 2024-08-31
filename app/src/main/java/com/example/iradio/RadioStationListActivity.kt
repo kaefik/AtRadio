@@ -18,6 +18,7 @@ import androidx.core.content.FileProvider
 import java.io.File
 import java.io.OutputStreamWriter
 import android.net.Uri
+import android.widget.ImageButton
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
@@ -31,10 +32,10 @@ class RadioStationListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_radio_station_list)
 
-        val buttonAddStation: Button = findViewById(R.id.buttonAddStation)
-        val buttonBack: Button = findViewById(R.id.buttonBack)
-        val buttonSaveShareStations: Button = findViewById(R.id.buttonSaveShareStations)
-        val buttonImportStationsFromFile: Button = findViewById(R.id.buttonImportStationsFromFile)
+        val buttonAddStation: ImageButton = findViewById(R.id.buttonAddStation)
+        val buttonBack: ImageButton = findViewById(R.id.buttonBack)
+        val buttonSaveShareStations: ImageButton = findViewById(R.id.buttonSaveShareStations)
+        val buttonImportStationsFromFile: ImageButton = findViewById(R.id.buttonImportStationsFromFile)
 
 
         // Получение списка радиостанций из Intent
