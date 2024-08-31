@@ -93,6 +93,23 @@ class MainActivity : AppCompatActivity() {
             currentRadioStation = 0
         }
 
+        // Если список пустой, добавляем радиостанции по умолчанию
+        if (radioStations.isEmpty()) {
+            radioStations.addAll(listOf(
+                RadioStation(name = "Классик ФМ", url = "http://cfm.jazzandclassic.ru:14536/rcstream.mp3"),
+                RadioStation(name = "Bolgar Radiosi", url = "http://stream.tatarradio.ru:2068/;stream/1"),
+                RadioStation(name = "Детское радио (Дети ФМ)", url = "http://ic5.101.ru:8000/v14_1"),
+                RadioStation(name = "Монте Карло", url = "https://montecarlo.hostingradio.ru/montecarlo128.mp3"),
+                RadioStation(name = "Saf Radiosi", url = "https://c7.radioboss.fm:18335/stream")
+            ))
+            // Сохраняем новый список
+            saveRadioStations(radioStations)
+            currentRadioStation = 0
+            statusRadio.text = radioStations[currentRadioStation].name
+        } else{
+            statusRadio.text = radioStations[currentRadioStation].name
+        }
+
         val listRadioStationLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 radioStations = loadRadioStations() // Перезагружаем список радиостанций
@@ -101,26 +118,16 @@ class MainActivity : AppCompatActivity() {
                 if (radioStations.isEmpty()) {
                     stopMusic()
                     statusRadio.text = "Empty list stations"
-//                    buttonPlay.isEnabled = false
-//                    buttonForward.isEnabled = false
-//                    buttonPrev.isEnabled = false
                 } else {
                     if (currentRadioStation >= radioStations.size) {
                         currentRadioStation = 0
                     }
                     statusRadio.text = radioStations[currentRadioStation].name
-//                    buttonPlay.isEnabled = true
-//                    buttonForward.isEnabled = true
-//                    buttonPrev.isEnabled = true
-
-                    // Если радиостанция играет, запускаем воспроизведение текущей станции
-//                    if (statusPlay) {
-//                        stopMusic()
-//                        startMusic(radioStations[currentRadioStation], progressBar)
-//                    }
                 }
             }
         }
+
+        // сохранение избранных радиостанции
 
         buttonFav1.setOnLongClickListener {
             // Создаем диалоговое окно
@@ -176,6 +183,7 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
+        // END сохранение избранных радиостанции
 
         buttonListRadioStations.setOnClickListener {
             val intent = Intent(this, RadioStationListActivity::class.java)
@@ -183,27 +191,15 @@ class MainActivity : AppCompatActivity() {
             listRadioStationLauncher.launch(intent)
         }
 
-        // Если список пустой, добавляем радиостанции по умолчанию
-        if (radioStations.isEmpty()) {
-            radioStations.addAll(listOf(
-                RadioStation(name = "Классик ФМ", url = "http://cfm.jazzandclassic.ru:14536/rcstream.mp3"),
-                RadioStation(name = "Bolgar Radiosi", url = "http://stream.tatarradio.ru:2068/;stream/1"),
-                RadioStation(name = "Детское радио (Дети ФМ)", url = "http://ic5.101.ru:8000/v14_1"),
-                RadioStation(name = "Монте Карло", url = "https://montecarlo.hostingradio.ru/montecarlo128.mp3"),
-                RadioStation(name = "Saf Radiosi", url = "https://c7.radioboss.fm:18335/stream")
-            ))
-            // Сохраняем новый список
-            saveRadioStations(radioStations)
-            currentRadioStation = 0
-            statusRadio.text = radioStations[currentRadioStation].name
-        } else{
-            statusRadio.text = radioStations[currentRadioStation].name
-        }
+//        buttonListRadioStations.setOnClickListener{
+//            val intent = Intent(this, RadioStationListActivity::class.java)
+//            intent.putExtra("radioStations", ArrayList(radioStations))
+//            startActivity(intent)
+//        }
 
-
+        // кнопки управления воспроизведением радиостанции
 
         buttonForward.setOnClickListener{
-
             if (radioStations.isEmpty()) {
                 currentRadioStation = 0
                 stopMusic()
@@ -226,7 +222,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         buttonPrev.setOnClickListener{
-
             if (radioStations.isEmpty()) {
                 currentRadioStation = 0
                 stopMusic()
@@ -282,12 +277,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        buttonListRadioStations.setOnClickListener{
-            val intent = Intent(this, RadioStationListActivity::class.java)
-            intent.putExtra("radioStations", ArrayList(radioStations))
-            startActivity(intent)
-        }
+
     }
+
+    // END кнопки управления воспроизведением радиостанции
 
     private fun startMusic(radioStation: RadioStation, progressBar: ProgressBar) {
 
@@ -336,6 +329,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // сохранение настроек приложения
+
     // сохранение текущей радиостанции
     private fun saveCurrentRadioStation(index: Int) {
         val sharedPreferences = getSharedPreferences("RadioPreferences", MODE_PRIVATE)
@@ -371,6 +366,29 @@ class MainActivity : AppCompatActivity() {
             mutableListOf()
         }
     }
+
+    private fun saveFavoriteStations() {
+        val sharedPreferences = getSharedPreferences("RadioPreferences", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        val gson = Gson()
+        val json = gson.toJson(favoriteStations)
+        editor.putString("FavoriteStations", json)
+        editor.apply()
+    }
+
+    private fun loadFavoriteStations(): MutableList<RadioStation> {
+        val sharedPreferences = getSharedPreferences("RadioPreferences", MODE_PRIVATE)
+        val gson = Gson()
+        val json = sharedPreferences.getString("FavoriteStations", null)
+        return if (json != null) {
+            val type = object : TypeToken<MutableList<RadioStation>>() {}.type
+            gson.fromJson(json, type)
+        } else {
+            mutableListOf()
+        }
+    }
+
+    // END сохранение настроек приложения
 
     override fun onResume() {
         super.onResume()
