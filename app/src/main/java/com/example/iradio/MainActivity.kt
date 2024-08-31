@@ -183,6 +183,50 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
+        // Обработчики для одиночного нажатия для воспроизведения
+
+        // Первая кнопка избранного
+        buttonFav1.setOnClickListener {
+            favoriteStations[0]?.let { station ->
+                buttonPlay.text = "Stop"
+                statusPlay = true
+                stopMusic()
+                statusRadio.text = station.name
+                startMusic(station, progressBar)
+                Toast.makeText(this, "Воспроизведение избранной станции 1: ${station.name}", Toast.LENGTH_SHORT).show()
+            } ?: run {
+                Toast.makeText(this, "Избранная станция 1 не сохранена", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        // Вторая кнопка избранного
+        buttonFav2.setOnClickListener {
+            favoriteStations[1]?.let { station ->
+                buttonPlay.text = "Stop"
+                statusPlay = true
+                stopMusic()
+                statusRadio.text = station.name
+                startMusic(station, progressBar)
+                Toast.makeText(this, "Воспроизведение избранной станции 2: ${station.name}", Toast.LENGTH_SHORT).show()
+            } ?: run {
+                Toast.makeText(this, "Избранная станция 2 не сохранена", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        // Третья кнопка избранного
+        buttonFav3.setOnClickListener {
+            favoriteStations[2]?.let { station ->
+                buttonPlay.text = "Stop"
+                statusPlay = true
+                stopMusic()
+                statusRadio.text = station.name
+                startMusic(station, progressBar)
+                Toast.makeText(this, "Воспроизведение избранной станции 3: ${station.name}", Toast.LENGTH_SHORT).show()
+            } ?: run {
+                Toast.makeText(this, "Избранная станция 3 не сохранена", Toast.LENGTH_SHORT).show()
+            }
+        }
+
         // END сохранение избранных радиостанции
 
         buttonListRadioStations.setOnClickListener {
