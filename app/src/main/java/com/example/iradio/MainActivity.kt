@@ -21,6 +21,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import android.widget.Toast
 import android.os.Parcel
 import android.os.Parcelable
+import android.widget.ImageButton
 import androidx.core.content.ContextCompat
 
 // Определение радиостанций
@@ -77,8 +78,8 @@ class MainActivity : AppCompatActivity() {
 
         statusRadio = findViewById<TextView>(R.id.statusRadio)
         buttonPlay = findViewById(R.id.buttonPlay)
-        val buttonVolUp: Button = findViewById(R.id.buttonVolumeUp)
-        val buttonVolDown: Button = findViewById(R.id.buttonVolumeDown)
+        val buttonVolUp: ImageButton = findViewById(R.id.buttonVolumeUp)
+        val buttonVolDown: ImageButton = findViewById(R.id.buttonVolumeDown)
         val buttonForward: Button = findViewById(R.id.buttonForward)
         val buttonPrev: Button = findViewById(R.id.buttonPrev)
         val buttonListRadioStations: Button = findViewById(R.id.buttonListRadioStations)
