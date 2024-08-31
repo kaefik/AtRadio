@@ -118,7 +118,7 @@
         android:id="@+id/statusRadio"
         android:layout_width="264dp"
         android:layout_height="71dp"
-        android:text="Статус программы"
+        android:text=""
         android:textAlignment="center"
         android:textSize="20sp"
         android:ellipsize="none"
