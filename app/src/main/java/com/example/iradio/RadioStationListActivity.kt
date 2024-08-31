@@ -14,9 +14,11 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 
 import android.content.Context
-import org.json.JSONObject
-import java.io.BufferedReader
-import java.io.InputStreamReader
+import androidx.core.content.FileProvider
+import java.io.File
+import java.io.OutputStreamWriter
+import android.net.Uri
+
 
 class RadioStationListActivity : AppCompatActivity() {
 
@@ -29,6 +31,7 @@ class RadioStationListActivity : AppCompatActivity() {
 
         val buttonAddStation: Button = findViewById(R.id.buttonAddStation)
         val buttonBack: Button = findViewById(R.id.buttonBack)
+        val buttonSaveShareStations: Button = findViewById(R.id.buttonSaveShareStations)
 
 
         // Получение списка радиостанций из Intent
@@ -63,6 +66,10 @@ class RadioStationListActivity : AppCompatActivity() {
             // Завершить активность с возвратом результата
             setResult(Activity.RESULT_OK)
             finish()
+        }
+
+        buttonSaveShareStations.setOnClickListener {
+            saveAndShareRadioStations(this, "radio_stations.csv", radioStations)
         }
 
         // кнопка добавления радиостанции
@@ -100,72 +107,47 @@ class RadioStationListActivity : AppCompatActivity() {
         editor.apply()
     }
 
-    // импорт радиостанций из файла в приложение
-    private fun loadRadioStationsFromFile(context: Context, fileName: String): MutableList<RadioStation> {
-        val radioStations = mutableListOf<RadioStation>()
 
+
+    // сохранение и отправки файла с помощью механизма поделиться
+    fun saveAndShareRadioStations(context: Context, fileName: String, radioStations: MutableList<RadioStation>) {
         try {
-            val inputStream = context.assets.open(fileName)
-            val bufferedReader = BufferedReader(InputStreamReader(inputStream))
+            // Сохранение файла в формате CSV
+            val file = File(context.filesDir, fileName)
+            val writer = OutputStreamWriter(file.outputStream())
 
-            bufferedReader.useLines { lines ->
-                lines.forEach { line ->
-                    if (line.isNotEmpty() && line != "{\"Name\":\"\",\"URL\":\"\",\"File\":\"\",\"Port\":\"0\",\"ovol\":\"0\"}") {
-                        try {
-                            val jsonObject = JSONObject(line)
-                            val name = jsonObject.optString("Name", "").trim()
-                            val url = jsonObject.optString("URL", "").trim()
-                            val file = jsonObject.optString("File", "").trim()
-                            val port = jsonObject.optString("Port", "").trim()
-                            val ovol = jsonObject.optString("ovol", "").trim()
-
-                            // Формирование URL с учетом файла и порта
-                            val fullUrl = "http://$url:$port$file"
-
-                            if (name.isNotEmpty() && fullUrl.isNotEmpty()) {
-                                radioStations.add(RadioStation(name, fullUrl))
-                            }
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                            // Игнорируем строки, которые не удалось разобрать
-                        }
-                    }
-                }
-            }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            // Обработка ошибок при открытии файла
-        }
-
-        return radioStations
-    }
-
-    // сохранение списка радиостанций в файл 
-    fun saveRadioStationsToFile(context: Context, fileName: String, radioStations: MutableList<RadioStation>) {
-        try {
-            val outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE)
-            val writer = OutputStreamWriter(outputStream)
+            // Заголовок CSV файла
+            writer.write("Name;URL\n")
 
             radioStations.forEach { station ->
-                val url = URL(station.url)
-                val host = url.host
-                val port = url.port.takeIf { it != -1 }?.toString() ?: "0"
-                val file = url.path
-
-                val jsonObject = JSONObject().apply {
-                    put("Name", station.name)
-                    put("URL", host)
-                    put("File", file)
-                    put("Port", port)
-                    put("ovol", "0") // Пустое значение, если оно не используется
-                }
-                writer.write(jsonObject.toString() + "\n")
+                // Формируем строку для CSV
+                val csvLine = "${station.name};${station.url}\n"
+                writer.write(csvLine)
             }
 
             writer.close()
+
+            // Получение Uri файла через FileProvider
+            val fileUri: Uri = FileProvider.getUriForFile(
+                context,
+                "${context.packageName}.fileprovider",
+                file
+            )
+
+            // Создание Intent для отправки файла
+            val shareIntent: Intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                type = "text/csv"
+                putExtra(Intent.EXTRA_STREAM, fileUri)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+
+            // Запуск активности "Поделиться"
+            context.startActivity(Intent.createChooser(shareIntent, "Share Radio Stations"))
+
         } catch (e: Exception) {
             e.printStackTrace()
-            // Обработка ошибок при записи в файл
+            // Обработка ошибок при записи в файл и отправке
         }
     }
 
