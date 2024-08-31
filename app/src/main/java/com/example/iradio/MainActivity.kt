@@ -397,9 +397,9 @@ class MainActivity : AppCompatActivity() {
             stopMusic()
             statusRadio.text = station.name
             startMusic(station, progressBar)
-            Toast.makeText(this, "Воспроизведение избранной станции ${index + 1}: ${station.name}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Playback of selected station ${index + 1}: ${station.name}", Toast.LENGTH_SHORT).show()
         } ?: run {
-            Toast.makeText(this, "Избранная станция ${index + 1} не сохранена", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Selected station ${index + 1} not saved", Toast.LENGTH_SHORT).show()
         }
     }
 
