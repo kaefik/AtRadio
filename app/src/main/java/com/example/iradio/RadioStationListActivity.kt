@@ -24,6 +24,7 @@ import java.io.InputStreamReader
 class RadioStationListActivity : AppCompatActivity() {
 
     private lateinit var radioStationAdapter: RadioStationAdapter
+//    private lateinit var radioStations: MutableList<RadioStation>
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,7 +38,7 @@ class RadioStationListActivity : AppCompatActivity() {
 
 
         // Получение списка радиостанций из Intent
-        var radioStations = intent.getParcelableArrayListExtra<RadioStation>("radioStations")?.toMutableList()
+        val radioStations: MutableList<RadioStation> = intent.getParcelableArrayListExtra<RadioStation>("radioStations")?.toMutableList()
             ?: mutableListOf()
 
         radioStationAdapter = RadioStationAdapter(this, radioStations) { position ->
@@ -67,7 +68,11 @@ class RadioStationListActivity : AppCompatActivity() {
         // Запуск диалога выбора файла
         val openDocumentLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
             uri?.let {
-                importRadioStationsFromFileUri(this,it)
+                val newStations = importRadioStationsFromFileUri(this, it)
+                radioStations.clear()
+                radioStations.addAll(newStations)
+                radioStationAdapter.notifyDataSetChanged()  // Уведомляем адаптер об изменении данных
+                Toast.makeText(this, "Радиостанции импортированы", Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -84,7 +89,8 @@ class RadioStationListActivity : AppCompatActivity() {
         buttonImportStationsFromFile.setOnClickListener {
 
             // Вызываем диалог выбора файла
-            openDocumentLauncher.launch(arrayOf("text/csv"))
+//            openDocumentLauncher.launch(arrayOf("text/csv"))
+            openDocumentLauncher.launch(arrayOf("*/*"))
         }
 
         // кнопка добавления радиостанции
