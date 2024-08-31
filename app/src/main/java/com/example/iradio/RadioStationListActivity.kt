@@ -60,7 +60,7 @@ class RadioStationListActivity : AppCompatActivity() {
                     radioStations.add(newStation)
                     saveRadioStations(radioStations)
                     radioStationAdapter.notifyDataSetChanged()  // Уведомляем адаптер об изменении данных
-                    Toast.makeText(this, "Радиостанция добавлена", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Radio station added", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -71,13 +71,13 @@ class RadioStationListActivity : AppCompatActivity() {
                 val newStations = importRadioStationsFromFileUri(this, it)
 
                 if (newStations.size == 0){
-                    Toast.makeText(this, "Файл не содержит новых станций", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "File does not contain new stations", Toast.LENGTH_SHORT).show()
                 }else {
                     radioStations.clear()
                     radioStations.addAll(newStations)
                     radioStationAdapter.notifyDataSetChanged()  // Уведомляем адаптер об изменении данных
                     saveRadioStations(radioStations)
-                    Toast.makeText(this, "Радиостанции импортированы", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Radio stations imported", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -108,15 +108,15 @@ class RadioStationListActivity : AppCompatActivity() {
 
     private fun showDeleteConfirmationDialog(position: Int, radioStations: MutableList<RadioStation>) {
         val alertDialog = AlertDialog.Builder(this)
-            .setTitle("Удаление радиостанции")
-            .setMessage("Вы уверены, что хотите удалить эту радиостанцию?")
-            .setPositiveButton("Удалить") { dialog, which ->
+            .setTitle("Radio deletion")
+            .setMessage("Are you sure you want to delete this station?")
+            .setPositiveButton("Delete") { dialog, which ->
                 // Удаляем радиостанцию и уведомляем адаптер об изменении
                 radioStations.removeAt(position)
                 radioStationAdapter.notifyItemRemoved(position)
                 saveRadioStations(radioStations)
             }
-            .setNegativeButton("Отмена") { dialog, which ->
+            .setNegativeButton("Cancel") { dialog, which ->
                 // Отменяем удаление
                 dialog.dismiss()
             }
@@ -193,7 +193,7 @@ class RadioStationListActivity : AppCompatActivity() {
                 if (headerLine == null || !headerLine.equals("Name;URL", ignoreCase = true)) {
                     // Проверка заголовка файла
                     isValidFile = false
-                    Toast.makeText(context, "Неверный формат файла", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Invalid file format", Toast.LENGTH_SHORT).show()
                     return emptyList()
                 }
 
@@ -210,18 +210,18 @@ class RadioStationListActivity : AppCompatActivity() {
                                 radioStations.add(RadioStation(name, url))
                             } else {
                                 isValidFile = false
-                                Toast.makeText(context, "Некорректные данные в строке: $line", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, "Incorrect data in line: $line", Toast.LENGTH_SHORT).show()
                             }
                         } else {
                             isValidFile = false
-                            Toast.makeText(context, "Некорректная строка: $line", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Incorrect line: $line", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(context, "Ошибка при чтении файла", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Error while reading file", Toast.LENGTH_SHORT).show()
         }
 
         return if (isValidFile) radioStations else emptyList()
