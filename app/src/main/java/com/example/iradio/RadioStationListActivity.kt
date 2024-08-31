@@ -13,6 +13,11 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 
+import android.content.Context
+import org.json.JSONObject
+import java.io.BufferedReader
+import java.io.InputStreamReader
+
 class RadioStationListActivity : AppCompatActivity() {
 
     private lateinit var radioStationAdapter: RadioStationAdapter
@@ -94,4 +99,75 @@ class RadioStationListActivity : AppCompatActivity() {
         editor.putString("RadioStations", json)
         editor.apply()
     }
+
+    // импорт радиостанций из файла в приложение
+    private fun loadRadioStationsFromFile(context: Context, fileName: String): MutableList<RadioStation> {
+        val radioStations = mutableListOf<RadioStation>()
+
+        try {
+            val inputStream = context.assets.open(fileName)
+            val bufferedReader = BufferedReader(InputStreamReader(inputStream))
+
+            bufferedReader.useLines { lines ->
+                lines.forEach { line ->
+                    if (line.isNotEmpty() && line != "{\"Name\":\"\",\"URL\":\"\",\"File\":\"\",\"Port\":\"0\",\"ovol\":\"0\"}") {
+                        try {
+                            val jsonObject = JSONObject(line)
+                            val name = jsonObject.optString("Name", "").trim()
+                            val url = jsonObject.optString("URL", "").trim()
+                            val file = jsonObject.optString("File", "").trim()
+                            val port = jsonObject.optString("Port", "").trim()
+                            val ovol = jsonObject.optString("ovol", "").trim()
+
+                            // Формирование URL с учетом файла и порта
+                            val fullUrl = "http://$url:$port$file"
+
+                            if (name.isNotEmpty() && fullUrl.isNotEmpty()) {
+                                radioStations.add(RadioStation(name, fullUrl))
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            // Игнорируем строки, которые не удалось разобрать
+                        }
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            // Обработка ошибок при открытии файла
+        }
+
+        return radioStations
+    }
+
+    // сохранение списка радиостанций в файл 
+    fun saveRadioStationsToFile(context: Context, fileName: String, radioStations: MutableList<RadioStation>) {
+        try {
+            val outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE)
+            val writer = OutputStreamWriter(outputStream)
+
+            radioStations.forEach { station ->
+                val url = URL(station.url)
+                val host = url.host
+                val port = url.port.takeIf { it != -1 }?.toString() ?: "0"
+                val file = url.path
+
+                val jsonObject = JSONObject().apply {
+                    put("Name", station.name)
+                    put("URL", host)
+                    put("File", file)
+                    put("Port", port)
+                    put("ovol", "0") // Пустое значение, если оно не используется
+                }
+                writer.write(jsonObject.toString() + "\n")
+            }
+
+            writer.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            // Обработка ошибок при записи в файл
+        }
+    }
+
+
 }
