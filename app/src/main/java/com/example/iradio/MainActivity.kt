@@ -263,6 +263,7 @@ class MainActivity : AppCompatActivity() {
     // END кнопки управления воспроизведением радиостанции
 
     private fun startMusic(radioStation: RadioStation, progressBar: ProgressBar) {
+        stopMusic()  // Останавливаем текущую музыку перед запуском новой
 
         try {
             mediaPlayer = MediaPlayer().apply {
@@ -289,11 +290,8 @@ class MainActivity : AppCompatActivity() {
                 prepareAsync() // Асинхронная подготовка MediaPlayer
             }
         } catch (e: Exception) {
-            // Логирование ошибки для отладки
             e.printStackTrace()
-            // Показ сообщения пользователю о том, что произошла ошибка
             Toast.makeText(this, "Error: Check URL station.", Toast.LENGTH_LONG).show()
-            // Дополнительная логика, например, сброс состояния или выключение проигрывателя
             stopMusic()
         }
     }
@@ -302,12 +300,14 @@ class MainActivity : AppCompatActivity() {
         mediaPlayer?.let {
             if (it.isPlaying) {
                 it.stop()
-                it.reset()
-                it.release()
-                mediaPlayer = null
             }
+            it.reset()
+            it.release()
+            mediaPlayer = null
         }
     }
+
+
 
     // сохранение настроек приложения
 
