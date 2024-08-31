@@ -82,10 +82,10 @@ class MainActivity : AppCompatActivity() {
         val buttonVolDown: ImageButton = findViewById(R.id.buttonVolumeDown)
         val buttonForward: ImageButton = findViewById(R.id.buttonForward)
         val buttonPrev: ImageButton = findViewById(R.id.buttonPrev)
-        val buttonListRadioStations: Button = findViewById(R.id.buttonListRadioStations)
-        val buttonFav1: Button = findViewById(R.id.buttonFav1)
-        val buttonFav2: Button = findViewById(R.id.buttonFav2)
-        val buttonFav3: Button = findViewById(R.id.buttonFav3)
+        val buttonListRadioStations: ImageButton = findViewById(R.id.buttonListRadioStations)
+        val buttonFav1: ImageButton = findViewById(R.id.buttonFav1)
+        val buttonFav2: ImageButton = findViewById(R.id.buttonFav2)
+        val buttonFav3: ImageButton = findViewById(R.id.buttonFav3)
 
 
         progressBar = findViewById(R.id.progressBar)

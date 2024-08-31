@@ -73,11 +73,13 @@
         app:layout_constraintStart_toEndOf="@+id/buttonPlay"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <ImageButton
         android:id="@+id/buttonFav3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="3"
+        android:contentDescription="Favorite 3"
+        android:src="@drawable/favorite64"
+        android:background="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
@@ -85,11 +87,13 @@
         app:layout_constraintTop_toBottomOf="@+id/buttonForward"
         app:layout_constraintVertical_bias="0.8" />
 
-    <Button
+    <ImageButton
         android:id="@+id/buttonFav2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="2"
+        android:contentDescription="Favorite 2"
+        android:src="@drawable/favorite64"
+        android:background="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/buttonFav3"
         app:layout_constraintHorizontal_bias="0"
@@ -97,11 +101,13 @@
         app:layout_constraintTop_toBottomOf="@+id/buttonVolumeDown"
         app:layout_constraintVertical_bias="0.694" />
 
-    <Button
+    <ImageButton
         android:id="@+id/buttonFav1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="1"
+        android:contentDescription="Favorite 1"
+        android:src="@drawable/favorite64"
+        android:background="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/buttonFav2"
         app:layout_constraintVertical_bias="0.8"
@@ -132,12 +138,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonVolumeDown" />
 
-    <Button
+    <ImageButton
         android:id="@+id/buttonListRadioStations"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="list"
+        android:contentDescription="list"
+        android:src="@drawable/list_48"
+        android:background="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toTopOf="@+id/statusRadio"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.91"
