@@ -9,27 +9,27 @@
         android:id="@+id/editTextRadioName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Название радиостанции"
+        android:hint="Name station"
         android:inputType="text" />
 
     <EditText
         android:id="@+id/editTextRadioUrl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="URL радиостанции"
+        android:hint="URL station"
         android:inputType="textUri" />
 
     <Button
         android:id="@+id/buttonSaveRadioStation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Сохранить" />
+        android:text="Save" />
 
     <Button
         android:id="@+id/buttonCancel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Отмена"
+        android:text="Cancel"
         android:layout_marginTop="8dp" />
 
 </LinearLayout>
