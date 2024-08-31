@@ -121,6 +121,8 @@ class MainActivity : AppCompatActivity() {
                 // Обновляем интерфейс, если радиостанций не осталось или выбранная станция была удалена
                 if (radioStations.isEmpty()) {
                     stopMusic()
+                    statusPlay=false
+                    buttonPlay.text = "Play"
                     statusRadio.text = "Empty list stations"
                 } else {
                     if (currentRadioStation >= radioStations.size) {
