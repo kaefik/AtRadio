@@ -17,7 +17,7 @@
         android:id="@+id/buttonDelete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Удалить"
+        android:text="Delete"
         android:textSize="14sp"
         android:background="?attr/selectableItemBackground" />
 </LinearLayout>
