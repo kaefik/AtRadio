@@ -132,17 +132,6 @@ class RadioStationListActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
-//    private fun saveRadioStations(radioStations: List<RadioStation>) {
-//        val sharedPreferences = getSharedPreferences("RadioPreferences", MODE_PRIVATE)
-//        val editor = sharedPreferences.edit()
-//        val gson = Gson()
-//        val json = gson.toJson(radioStations)
-//        editor.putString("RadioStations", json)
-//        editor.apply()
-//    }
-
-
-
     // сохранение и отправки файла с помощью механизма поделиться
     fun saveAndShareRadioStations(context: Context, fileName: String, radioStations: MutableList<RadioStation>) {
         try {
