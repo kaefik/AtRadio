@@ -396,7 +396,7 @@ class MainActivity : AppCompatActivity() {
                     println("favoriteStations -> $favoriteStations")
                     favoriteStations[index] = radioStations[currentRadioStation]
                     saveFavoriteStations()
-                    Toast.makeText(this, "Favorite station $index saved", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Favorite station ${index+1} saved", Toast.LENGTH_SHORT).show()
                 }
                 .setNegativeButton("No") { dialog, id ->
                     // Ничего не делаем, просто закрываем диалог
