@@ -86,6 +86,7 @@ class MainActivity : AppCompatActivity() {
         val buttonFav1: ImageButton = findViewById(R.id.buttonFav1)
         val buttonFav2: ImageButton = findViewById(R.id.buttonFav2)
         val buttonFav3: ImageButton = findViewById(R.id.buttonFav3)
+        val buttonSettings: ImageButton = findViewById(R.id.buttonSettings)
 
 
         progressBar = findViewById(R.id.progressBar)
@@ -98,6 +99,20 @@ class MainActivity : AppCompatActivity() {
         if (radioStations.size<=currentRadioStation){
             currentRadioStation = 0
         }
+
+        //  проверку на включение автозапуска проигрывания
+        val sharedPreferences = getSharedPreferences("RadioPreferences", MODE_PRIVATE)
+        val isAutoPlayEnabled = sharedPreferences.getBoolean("AutoPlayEnabled", false)
+
+        if (isAutoPlayEnabled && radioStations.isNotEmpty()) {
+            statusPlay = true
+            stopMusic()
+            startMusic(radioStations[currentRadioStation], progressBar)
+            statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
+            buttonPlay.setImageResource(R.drawable.stop_64)
+        }
+        // END  проверку на включение автозапуска проигрывания
+
 
         // Если список пустой, добавляем радиостанции по умолчанию
         if (radioStations.isEmpty()) {
@@ -140,6 +155,15 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+
+        // кнопка настроек программы
+        buttonSettings.setOnClickListener {
+            val intent = Intent(this, SettingsActivity::class.java)
+            startActivity(intent)
+        }
+
+
 
         // сохранение избранных радиостанции
 

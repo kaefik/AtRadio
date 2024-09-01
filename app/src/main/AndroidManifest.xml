@@ -29,6 +29,7 @@
 
         <activity android:name=".AddRadioStationActivity" />
         <activity android:name=".RadioStationListActivity" />
+        <activity android:name=".SettingsActivity" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
