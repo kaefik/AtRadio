@@ -108,6 +108,7 @@ class MainActivity : AppCompatActivity() {
                     val mutableRadioStations = updatedRadioStations.toMutableList()
                     appSettings.radioStations.clear()
                     appSettings.radioStations.addAll(mutableRadioStations)
+                    saveAppSettings(appSettings)
                 }
 
                 if (appSettings.radioStations.isEmpty()) {
