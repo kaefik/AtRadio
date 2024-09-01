@@ -409,7 +409,6 @@ class MainActivity : AppCompatActivity() {
     // Функция для обработки нажатия на кнопку избранной станции
     private fun handleFavoriteButtonClick(index: Int) { //, button: Button) {
         favoriteStations.getOrNull(index)?.let { station ->
-//            buttonPlay.text = "Stop"
             buttonPlay.setImageResource(R.drawable.stop_64)
             statusPlay = true
             stopMusic()
