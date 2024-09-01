@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
 import android.app.AlertDialog
 import android.content.Intent
-import android.widget.Button
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 
@@ -59,7 +58,7 @@ class RadioStationListActivity : AppCompatActivity() {
                 if (name != null && url != null) {
                     val newStation = RadioStation(name, url)
                     radioStations.add(newStation)
-                    saveRadioStations(radioStations)
+//                    saveRadioStations(radioStations)
                     radioStationAdapter.notifyDataSetChanged()  // Уведомляем адаптер об изменении данных
                     Toast.makeText(this, "Radio station added", Toast.LENGTH_SHORT).show()
                 }
@@ -77,17 +76,24 @@ class RadioStationListActivity : AppCompatActivity() {
                     radioStations.clear()
                     radioStations.addAll(newStations)
                     radioStationAdapter.notifyDataSetChanged()  // Уведомляем адаптер об изменении данных
-                    saveRadioStations(radioStations)
+//                    saveRadioStations(radioStations)
                     Toast.makeText(this, "Radio stations imported", Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
         buttonBack.setOnClickListener {
-            // Завершить активность с возвратом результата
-            setResult(Activity.RESULT_OK)
+            // Создаем новый Intent для передачи данных обратно в MainActivity
+            val resultIntent = Intent()
+            resultIntent.putParcelableArrayListExtra("radioStations", ArrayList(radioStations))
+
+            // Устанавливаем результат для MainActivity
+            setResult(Activity.RESULT_OK, resultIntent)
+
+            // Завершаем текущую активность
             finish()
         }
+
 
         buttonSaveShareStations.setOnClickListener {
             saveAndShareRadioStations(this, "radio_stations.csv", radioStations)
@@ -115,7 +121,7 @@ class RadioStationListActivity : AppCompatActivity() {
                 // Удаляем радиостанцию и уведомляем адаптер об изменении
                 radioStations.removeAt(position)
                 radioStationAdapter.notifyItemRemoved(position)
-                saveRadioStations(radioStations)
+//                saveRadioStations(radioStations)
             }
             .setNegativeButton("Cancel") { dialog, which ->
                 // Отменяем удаление
@@ -126,14 +132,14 @@ class RadioStationListActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
-    private fun saveRadioStations(radioStations: List<RadioStation>) {
-        val sharedPreferences = getSharedPreferences("RadioPreferences", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        val gson = Gson()
-        val json = gson.toJson(radioStations)
-        editor.putString("RadioStations", json)
-        editor.apply()
-    }
+//    private fun saveRadioStations(radioStations: List<RadioStation>) {
+//        val sharedPreferences = getSharedPreferences("RadioPreferences", MODE_PRIVATE)
+//        val editor = sharedPreferences.edit()
+//        val gson = Gson()
+//        val json = gson.toJson(radioStations)
+//        editor.putString("RadioStations", json)
+//        editor.apply()
+//    }
 
 
 

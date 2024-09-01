@@ -103,7 +103,12 @@ class MainActivity : AppCompatActivity() {
 
         val listRadioStationLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                appSettings.radioStations = loadRadioStations() // Перезагружаем список радиостанций
+                val updatedRadioStations = result.data?.getParcelableArrayListExtra<RadioStation>("radioStations")?.toMutableList()
+                if (updatedRadioStations != null) {
+                    val mutableRadioStations = updatedRadioStations.toMutableList()
+                    appSettings.radioStations.clear()
+                    appSettings.radioStations.addAll(mutableRadioStations)
+                }
 
                 if (appSettings.radioStations.isEmpty()) {
                     stopMusic()
@@ -306,6 +311,8 @@ class MainActivity : AppCompatActivity() {
         } ?: Toast.makeText(this, "No station saved to favorite ${favIndex + 1}", Toast.LENGTH_SHORT).show()
     }
 
+    // сохранение настроек приложения
+
     private fun saveAppSettings(settings: AppSettings) {
         val sharedPreferences = getSharedPreferences("AppSettings", MODE_PRIVATE)
         val editor = sharedPreferences.edit()
@@ -330,31 +337,6 @@ class MainActivity : AppCompatActivity() {
             )
         }
     }
-
-    // сохранение настроек приложения
-
-
-    private fun saveRadioStations(radioStations: List<RadioStation>) {
-        val sharedPreferences = getSharedPreferences("RadioPreferences", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        val gson = Gson()
-        val json = gson.toJson(radioStations)
-        editor.putString("RadioStations", json)
-        editor.apply()
-    }
-
-    private fun loadRadioStations(): MutableList<RadioStation> {
-        val sharedPreferences = getSharedPreferences("RadioPreferences", MODE_PRIVATE)
-        val gson = Gson()
-        val json = sharedPreferences.getString("RadioStations", null)
-        return if (json != null) {
-            val type = object : TypeToken<MutableList<RadioStation>>() {}.type
-            gson.fromJson(json, type)
-        } else {
-            mutableListOf()
-        }
-    }
-
 
     // END сохранение настроек приложения
 
