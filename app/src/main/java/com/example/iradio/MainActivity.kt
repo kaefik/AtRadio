@@ -24,40 +24,14 @@ import android.os.Parcelable
 import android.widget.ImageButton
 import androidx.core.content.ContextCompat
 
-// Определение радиостанций
-data class RadioStation(val name: String, val url: String) : Parcelable {
-    constructor(parcel: Parcel) : this(
-        parcel.readString() ?: "",
-        parcel.readString() ?: ""
-    )
-
-    override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeString(name)
-        parcel.writeString(url)
-    }
-
-    override fun describeContents(): Int {
-        return 0
-    }
-
-    companion object CREATOR : Parcelable.Creator<RadioStation> {
-        override fun createFromParcel(parcel: Parcel): RadioStation {
-            return RadioStation(parcel)
-        }
-
-        override fun newArray(size: Int): Array<RadioStation?> {
-            return arrayOfNulls(size)
-        }
-    }
-}
 
 class MainActivity : AppCompatActivity() {
 
     private var mediaPlayer: MediaPlayer? = null
     private lateinit var volumeControl: VolumeControl
-    private var radioStations: MutableList<RadioStation> = mutableListOf()
-    private var favoriteStations: MutableList<RadioStation?> = mutableListOf(null, null, null)  // Переменная для хранения трех избранных радиостанций
-    private var currentRadioStation: Int = 0
+    private lateinit var appSettings: AppSettings
+    private val gson = Gson()
+
     private lateinit var buttonPlay: ImageButton
     private lateinit var statusRadio: TextView
     private lateinit var progressBar: ProgressBar
@@ -88,283 +62,276 @@ class MainActivity : AppCompatActivity() {
         val buttonFav3: ImageButton = findViewById(R.id.buttonFav3)
         val buttonSettings: ImageButton = findViewById(R.id.buttonSettings)
 
-
         progressBar = findViewById(R.id.progressBar)
 
-        currentRadioStation = loadLastRadioStation()
+        // Загружаем настройки при старте
+        appSettings = loadAppSettings() ?: AppSettings(
+            favoriteStations = mutableListOf(null, null, null),
+            isAutoPlayEnabled = false,
+            lastRadioStationIndex = 0,
+            radioStations = mutableListOf()
+        )
 
-        radioStations = loadRadioStations() // Загружаем список радиостанций
-        favoriteStations = loadFavoriteStations()
-
-        if (radioStations.size<=currentRadioStation){
-            currentRadioStation = 0
+        if (appSettings.radioStations.size <= appSettings.lastRadioStationIndex) {
+            appSettings.lastRadioStationIndex = 0
         }
 
-        //  проверку на включение автозапуска проигрывания
-        val sharedPreferences = getSharedPreferences("RadioPreferences", MODE_PRIVATE)
-        val isAutoPlayEnabled = sharedPreferences.getBoolean("AutoPlayEnabled", false)
-
-        if (isAutoPlayEnabled && radioStations.isNotEmpty()) {
+        if (appSettings.isAutoPlayEnabled && appSettings.radioStations.isNotEmpty()) {
             statusPlay = true
             stopMusic()
-            startMusic(radioStations[currentRadioStation], progressBar)
+            startMusic(appSettings.radioStations[appSettings.lastRadioStationIndex], progressBar)
             statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
             buttonPlay.setImageResource(R.drawable.stop_64)
         }
-        // END  проверку на включение автозапуска проигрывания
 
-
-        // Если список пустой, добавляем радиостанции по умолчанию
-        if (radioStations.isEmpty()) {
-            radioStations.addAll(listOf(
+        if (appSettings.radioStations.isEmpty()) {
+            appSettings.radioStations.addAll(listOf(
                 RadioStation(name = "Классик ФМ", url = "http://cfm.jazzandclassic.ru:14536/rcstream.mp3"),
                 RadioStation(name = "Bolgar Radiosi", url = "http://stream.tatarradio.ru:2068/;stream/1"),
                 RadioStation(name = "Детское радио (Дети ФМ)", url = "http://ic5.101.ru:8000/v14_1"),
                 RadioStation(name = "Монте Карло", url = "https://montecarlo.hostingradio.ru/montecarlo128.mp3"),
                 RadioStation(name = "Saf Radiosi", url = "https://c7.radioboss.fm:18335/stream")
             ))
-            // Сохраняем новый список
-            saveRadioStations(radioStations)
-            currentRadioStation = 0
-            statusRadio.text = radioStations[currentRadioStation].name
+            saveAppSettings(appSettings)
+            appSettings.lastRadioStationIndex = 0
+            statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
             statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
-
-        } else{
-            statusRadio.text = radioStations[currentRadioStation].name
+        } else {
+            statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
             statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
         }
 
         val listRadioStationLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                radioStations = loadRadioStations() // Перезагружаем список радиостанций
+                appSettings.radioStations = loadRadioStations() // Перезагружаем список радиостанций
 
-                // Обновляем интерфейс, если радиостанций не осталось или выбранная станция была удалена
-                if (radioStations.isEmpty()) {
+                if (appSettings.radioStations.isEmpty()) {
                     stopMusic()
-                    statusPlay=false
-//                    buttonPlay.text = "Play"
+                    statusPlay = false
                     buttonPlay.setImageResource(R.drawable.play_64)
                     statusRadio.text = "Empty list stations"
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
                 } else {
-                    if (currentRadioStation >= radioStations.size) {
-                        currentRadioStation = 0
+                    if (appSettings.lastRadioStationIndex >= appSettings.radioStations.size) {
+                        appSettings.lastRadioStationIndex = 0
                     }
-                    statusRadio.text = radioStations[currentRadioStation].name
+                    statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
                 }
             }
         }
 
-
-        // кнопка настроек программы
-        buttonSettings.setOnClickListener {
-            val intent = Intent(this, SettingsActivity::class.java)
-            startActivity(intent)
+        val settingAppLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+//            if (result.resultCode == Activity.RESULT_OK) {
+                appSettings= loadAppSettings() // Перезагружаем все настройки
+//            }
         }
 
+        buttonSettings.setOnClickListener {
+            val intent = Intent(this, SettingsActivity::class.java)
+////            intent.putParcelableArrayListExtra("radioStations", ArrayList(appSettings.radioStations))
+            settingAppLauncher.launch(intent)
 
+        }
 
-        // сохранение избранных радиостанции
-
-        // Обработчик для сохранения радиостанции в первый индекс
         buttonFav1.setOnLongClickListener {
             showSaveDialog(0)
             true
         }
 
-        // Обработчик для сохранения радиостанции во второй индекс
         buttonFav2.setOnLongClickListener {
             showSaveDialog(1)
             true
         }
 
-        // Обработчик для сохранения радиостанции в третий индекс
         buttonFav3.setOnLongClickListener {
             showSaveDialog(2)
             true
         }
 
-
-
-        // Обработчики для одиночного нажатия для воспроизведения
-
-        buttonFav1.setOnClickListener{
-            handleFavoriteButtonClick(0) //, buttonFav1)
+        buttonFav1.setOnClickListener {
+            handleFavoriteButtonClick(0)
         }
 
         buttonFav2.setOnClickListener {
-            handleFavoriteButtonClick(1) //, buttonFav2)
+            handleFavoriteButtonClick(1)
         }
 
         buttonFav3.setOnClickListener {
-            handleFavoriteButtonClick(2) //, buttonFav3)
+            handleFavoriteButtonClick(2)
         }
-
-
-
-        // END сохранение избранных радиостанции
 
         buttonListRadioStations.setOnClickListener {
             val intent = Intent(this, RadioStationListActivity::class.java)
-            intent.putParcelableArrayListExtra("radioStations", ArrayList(radioStations))
+            intent.putParcelableArrayListExtra("radioStations", ArrayList(appSettings.radioStations))
             listRadioStationLauncher.launch(intent)
         }
 
-        // кнопки управления воспроизведением радиостанции
-
-        buttonForward.setOnClickListener{
-            if (radioStations.isEmpty()) {
-                currentRadioStation = 0
-                stopMusic()
-                statusRadio.text = "Empty list stations"
-            }
-            else {
-                currentRadioStation += 1
-                if (radioStations.size<=currentRadioStation)
-                    currentRadioStation = 0
-                saveCurrentRadioStation(currentRadioStation)
-                statusRadio.text = radioStations[currentRadioStation].name
-                if (statusPlay) {
-                    stopMusic()
-                    startMusic(radioStations[currentRadioStation], progressBar)
-                    statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
-                }
-                else{
-                    stopMusic()
-                    statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
-                }
-            }
-        }
-
-        buttonPrev.setOnClickListener{
-            if (radioStations.isEmpty()) {
-                currentRadioStation = 0
+        buttonForward.setOnClickListener {
+            if (appSettings.radioStations.isEmpty()) {
+                appSettings.lastRadioStationIndex = 0
                 stopMusic()
                 statusRadio.text = "Empty list stations"
             } else {
-                currentRadioStation -= 1
-                if (currentRadioStation<0)
-                    currentRadioStation = radioStations.size-1
-
-                saveCurrentRadioStation(currentRadioStation)
-                statusRadio.text = radioStations[currentRadioStation].name
-
+                appSettings.lastRadioStationIndex += 1
+                if (appSettings.radioStations.size <= appSettings.lastRadioStationIndex)
+                    appSettings.lastRadioStationIndex = 0
+                saveAppSettings(appSettings)
+                statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
                 if (statusPlay) {
                     stopMusic()
-                    startMusic(radioStations[currentRadioStation], progressBar)
+                    startMusic(appSettings.radioStations[appSettings.lastRadioStationIndex], progressBar)
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
-                }
-                else{
+                } else {
                     stopMusic()
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
                 }
             }
         }
 
+        buttonPrev.setOnClickListener {
+            if (appSettings.radioStations.isEmpty()) {
+                appSettings.lastRadioStationIndex = 0
+                stopMusic()
+                statusRadio.text = "Empty list stations"
+            } else {
+                appSettings.lastRadioStationIndex -= 1
+                if (appSettings.lastRadioStationIndex < 0)
+                    appSettings.lastRadioStationIndex = appSettings.radioStations.size - 1
 
-        buttonVolUp.setOnClickListener{
+                saveAppSettings(appSettings)
+                statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
+
+                if (statusPlay) {
+                    stopMusic()
+                    startMusic(appSettings.radioStations[appSettings.lastRadioStationIndex], progressBar)
+                    statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
+                } else {
+                    stopMusic()
+                    statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
+                }
+            }
+        }
+
+        buttonVolUp.setOnClickListener {
             volumeControl.increaseVolume()
         }
 
-        buttonVolDown.setOnClickListener{
+        buttonVolDown.setOnClickListener {
             volumeControl.decreaseVolume()
         }
 
-        buttonPlay.setOnClickListener{
-
-            if (radioStations.isEmpty()) {
-                currentRadioStation = 0
+        buttonPlay.setOnClickListener {
+            if (appSettings.radioStations.isEmpty()) {
+                appSettings.lastRadioStationIndex = 0
                 stopMusic()
                 statusRadio.text = "Empty list stations"
             } else {
                 if (statusPlay) {
-                    statusRadio.text = radioStations[currentRadioStation].name
+                    statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
-//                    buttonPlay.text = "Play"
                     buttonPlay.setImageResource(R.drawable.play_64)
                     statusPlay = false
                     stopMusic()
-                }
-                else {
-//                    buttonPlay.text = "Stop"
+                } else {
                     buttonPlay.setImageResource(R.drawable.stop_64)
                     statusPlay = true
                     stopMusic()
-                    statusRadio.text = radioStations[currentRadioStation].name
+                    statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
-                    startMusic(radioStations[currentRadioStation], progressBar)
+                    startMusic(appSettings.radioStations[appSettings.lastRadioStationIndex], progressBar)
                 }
             }
         }
-
-
     }
 
-    // END кнопки управления воспроизведением радиостанции
-
     private fun startMusic(radioStation: RadioStation, progressBar: ProgressBar) {
-        stopMusic()  // Останавливаем текущую музыку перед запуском новой
+        stopMusic()
 
         try {
             mediaPlayer = MediaPlayer().apply {
-                setDataSource(radioStation.url) // URL на поток
+                setDataSource(radioStation.url)
 
                 setOnPreparedListener {
                     progressBar.visibility = View.GONE
                     start()
                 }
 
-                setOnBufferingUpdateListener { _, percent ->
-                    if (percent < 100) {
-                        progressBar.visibility = View.VISIBLE
-                    } else {
-                        progressBar.visibility = View.GONE
-                    }
+                setOnErrorListener { _, _, _ ->
+                    stopMusic()
+                    progressBar.visibility = View.GONE
+                    Toast.makeText(this@MainActivity, "Error playing station", Toast.LENGTH_SHORT).show()
+                    false
                 }
 
-                // Логика обработки ошибок во время воспроизведения
-                setOnErrorListener { _, _, _ ->
-                    progressBar.visibility = View.GONE
-                    true
-                }
-                prepareAsync() // Асинхронная подготовка MediaPlayer
+                progressBar.visibility = View.VISIBLE
+                prepareAsync()
             }
         } catch (e: Exception) {
-            e.printStackTrace()
-            Toast.makeText(this, "Error: Check URL station.", Toast.LENGTH_LONG).show()
-            stopMusic()
+            Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
         }
     }
 
     private fun stopMusic() {
-        mediaPlayer?.let {
-            if (it.isPlaying) {
-                it.stop()
+        mediaPlayer?.apply {
+            stop()
+            release()
+        }
+        mediaPlayer = null
+    }
+
+    private fun showSaveDialog(favIndex: Int) {
+        AlertDialog.Builder(this)
+            .setMessage("Save current station as favorite ${favIndex + 1}?")
+            .setPositiveButton("Save") { _, _ ->
+                appSettings.favoriteStations[favIndex] = appSettings.radioStations[appSettings.lastRadioStationIndex]
+                saveAppSettings(appSettings)
+                Toast.makeText(this, "Station saved to favorite ${favIndex + 1}", Toast.LENGTH_SHORT).show()
             }
-            it.reset()
-            it.release()
-            mediaPlayer = null
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun handleFavoriteButtonClick(favIndex: Int) {
+        appSettings.favoriteStations[favIndex]?.let {
+            if (statusPlay) {
+                stopMusic()
+            }
+            statusPlay = true
+            appSettings.lastRadioStationIndex = appSettings.radioStations.indexOf(it)
+            startMusic(it, progressBar)
+            statusRadio.text = it.name
+            statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
+            buttonPlay.setImageResource(R.drawable.stop_64)
+        } ?: Toast.makeText(this, "No station saved to favorite ${favIndex + 1}", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun saveAppSettings(settings: AppSettings) {
+        val sharedPreferences = getSharedPreferences("AppSettings", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        val json = gson.toJson(settings)
+        editor.putString("AppSettingsData", json)
+        editor.apply()
+    }
+
+    private fun loadAppSettings(): AppSettings {
+        val sharedPreferences = getSharedPreferences("AppSettings", MODE_PRIVATE)
+        val json = sharedPreferences.getString("AppSettingsData", null)
+        return if (json != null) {
+            val type = object : TypeToken<AppSettings>() {}.type
+            gson.fromJson(json, type)
+        } else {
+            // Возвращаем настройки по умолчанию, если они отсутствуют
+            AppSettings(
+                favoriteStations = mutableListOf(null, null, null), // Пустые избранные станции
+                isAutoPlayEnabled = false, // Значение по умолчанию
+                lastRadioStationIndex = 0, // Первая радиостанция в списке
+                radioStations = mutableListOf() // Пустой список радиостанций
+            )
         }
     }
 
-
-
     // сохранение настроек приложения
-
-    // сохранение текущей радиостанции
-    private fun saveCurrentRadioStation(index: Int) {
-        val sharedPreferences = getSharedPreferences("RadioPreferences", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putInt("LastRadioStationIndex", index)
-        editor.commit() // если необходимо сразу же сохранить данные
-    }
-
-    //  получение из настроек текущую радиостанцию
-    private fun loadLastRadioStation(): Int {
-        val sharedPreferences = getSharedPreferences("RadioPreferences", MODE_PRIVATE)
-        return sharedPreferences.getInt("LastRadioStationIndex", 0) // 0 - значение по умолчанию, если данных нет
-    }
 
 
     private fun saveRadioStations(radioStations: List<RadioStation>) {
@@ -388,73 +355,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveFavoriteStations() {
-        val sharedPreferences = getSharedPreferences("RadioPreferences", MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        val gson = Gson()
-        val json = gson.toJson(favoriteStations)
-        editor.putString("FavoriteStations", json)
-        editor.apply()
-    }
-
-    private fun loadFavoriteStations(): MutableList<RadioStation?> {
-        val sharedPreferences = getSharedPreferences("RadioPreferences", MODE_PRIVATE)
-        val gson = Gson()
-        val json = sharedPreferences.getString("FavoriteStations", null)
-        return if (json != null) {
-            val type = object : TypeToken<MutableList<RadioStation>>() {}.type
-            gson.fromJson(json, type)
-        } else {
-            mutableListOf(null, null, null)
-        }
-    }
 
     // END сохранение настроек приложения
 
-    // Функция для отображения диалогового окна и сохранения станции
-    private fun showSaveDialog(index: Int) {
-            // Создаем диалоговое окно
-            val builder = AlertDialog.Builder(this)
-            builder.setMessage("Save current station?")
-                .setPositiveButton("Yes") { dialog, id ->
-                    println("favoriteStations -> $favoriteStations")
-                    favoriteStations[index] = radioStations[currentRadioStation]
-                    saveFavoriteStations()
-                    Toast.makeText(this, "Favorite station ${index+1} saved", Toast.LENGTH_SHORT).show()
-                }
-                .setNegativeButton("No") { dialog, id ->
-                    // Ничего не делаем, просто закрываем диалог
-                    dialog.dismiss()
-                }
-            // Показать диалоговое окно
-            builder.create().show()
-    }
-
-    // Функция для обработки нажатия на кнопку избранной станции
-    private fun handleFavoriteButtonClick(index: Int) { //, button: Button) {
-        favoriteStations.getOrNull(index)?.let { station ->
-            buttonPlay.setImageResource(R.drawable.stop_64)
-            statusPlay = true
-            stopMusic()
-            statusRadio.text = station.name
-            statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
-            startMusic(station, progressBar)
-            Toast.makeText(this, "Playback of selected station ${index + 1}: ${station.name}", Toast.LENGTH_SHORT).show()
-        } ?: run {
-            Toast.makeText(this, "Selected station ${index + 1} not saved", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        radioStations = loadRadioStations()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        // Освобождение ресурсов MediaPlayer при завершении активности
-        mediaPlayer?.release()
-        mediaPlayer = null
-    }
 }
-
