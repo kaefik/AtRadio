@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "iRadio"
+rootProject.name = "AtRadio"
 include(":app")

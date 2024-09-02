@@ -1,4 +1,4 @@
-package com.example.iradio
+package com.example.atradio
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

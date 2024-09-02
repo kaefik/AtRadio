@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.iradio"
+    namespace = "com.example.atradio"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.iradio"
+        applicationId = "com.example.atradio"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

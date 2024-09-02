@@ -1,4 +1,4 @@
-package com.example.iradio
+package com.example.atradio
 
 import android.app.Activity
 import android.content.Intent
@@ -7,8 +7,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-
-import com.example.iradio.isValidUrl
 
 class AddRadioStationActivity : AppCompatActivity() {
 

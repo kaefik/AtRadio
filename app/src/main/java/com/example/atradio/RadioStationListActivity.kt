@@ -1,4 +1,4 @@
-package com.example.iradio
+package com.example.atradio
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.Gson
 import android.app.AlertDialog
 import android.content.Intent
 import android.widget.Toast

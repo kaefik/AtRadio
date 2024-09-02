@@ -1,4 +1,4 @@
-package com.example.iradio;
+package com.example.atradio;
 
 import android.content.Context
 import android.media.AudioManager

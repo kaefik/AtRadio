@@ -1,4 +1,4 @@
-package com.example.iradio
+package com.example.atradio
 import android.os.Parcel
 import android.os.Parcelable
 

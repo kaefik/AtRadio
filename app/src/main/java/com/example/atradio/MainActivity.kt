@@ -1,10 +1,9 @@
-package com.example.iradio
+package com.example.atradio
 
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.os.Bundle
-import android.widget.Button
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -19,8 +18,6 @@ import com.google.gson.reflect.TypeToken
 import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContracts
 import android.widget.Toast
-import android.os.Parcel
-import android.os.Parcelable
 import android.widget.ImageButton
 import androidx.core.content.ContextCompat
 
@@ -76,13 +73,13 @@ class MainActivity : AppCompatActivity() {
             appSettings.lastRadioStationIndex = 0
         }
 
-        if (appSettings.isAutoPlayEnabled && appSettings.radioStations.isNotEmpty()) {
-            statusPlay = true
-            stopMusic()
-            startMusic(appSettings.radioStations[appSettings.lastRadioStationIndex], progressBar)
-            statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
-            buttonPlay.setImageResource(R.drawable.stop_64)
-        }
+//        if (appSettings.isAutoPlayEnabled && appSettings.radioStations.isNotEmpty()) {
+//            statusPlay = true
+//            stopMusic()
+//            startMusic(appSettings.radioStations[appSettings.lastRadioStationIndex], progressBar)
+//            statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
+//            buttonPlay.setImageResource(R.drawable.stop_64)
+//        }
 
         if (appSettings.radioStations.isEmpty()) {
             appSettings.radioStations.addAll(listOf(
@@ -97,8 +94,18 @@ class MainActivity : AppCompatActivity() {
             statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
             statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
         } else {
-            statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
-            statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
+            if (appSettings.isAutoPlayEnabled ) {
+                statusPlay = true
+                statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
+                statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
+                buttonPlay.setImageResource(R.drawable.stop_64)
+                stopMusic()
+                startMusic(appSettings.radioStations[appSettings.lastRadioStationIndex], progressBar)
+            } else {
+                statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
+                statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
+                buttonPlay.setImageResource(R.drawable.play_64)
+            }
         }
 
         val listRadioStationLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
