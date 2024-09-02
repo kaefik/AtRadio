@@ -40,9 +40,18 @@ class RadioStationListActivity : AppCompatActivity() {
         val radioStations: MutableList<RadioStation> = intent.getParcelableArrayListExtra<RadioStation>("radioStations")?.toMutableList()
             ?: mutableListOf()
 
-        radioStationAdapter = RadioStationAdapter(this, radioStations) { position ->
-            showDeleteConfirmationDialog(position, radioStations)
-        }
+        radioStationAdapter = RadioStationAdapter(
+            this,
+            radioStations,
+            { position -> showDeleteConfirmationDialog(position, radioStations) },
+            { selectedStation -> // Новый обработчик кликов на элемент списка
+                val resultIntent = Intent()
+                resultIntent.putExtra("selectedStation", selectedStation)
+                resultIntent.putParcelableArrayListExtra("radioStations", ArrayList(radioStations)) // Передаем обновленный список радиостанций
+                setResult(Activity.RESULT_OK, resultIntent)
+                finish() // Завершаем текущую Activity и возвращаемся в MainActivity
+            }
+        )
 
         val recyclerView: RecyclerView = findViewById(R.id.recyclerViewRadioStations)
         recyclerView.layoutManager = LinearLayoutManager(this)

@@ -11,7 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 class RadioStationAdapter(
     private val context: Context,
     private val radioStations: MutableList<RadioStation>,
-    private val onDeleteClick: (Int) -> Unit
+    private val onDeleteClick: (Int) -> Unit,
+    private val onItemClick: (RadioStation) -> Unit // Новый параметр для клика по элементу
 ) : RecyclerView.Adapter<RadioStationAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -27,6 +28,10 @@ class RadioStationAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val radioStation = radioStations[position]
         holder.radioStationName.text = radioStation.name
+
+        holder.itemView.setOnClickListener {
+            onItemClick(radioStation) // Обработка клика на элемент
+        }
 
         holder.buttonDelete.setOnClickListener {
             onDeleteClick(position)

@@ -131,6 +131,19 @@ class MainActivity : AppCompatActivity() {
                     statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
                 }
+
+                val selectedStation = result.data?.getParcelableExtra<RadioStation>("selectedStation")
+                if (selectedStation != null) {
+                    appSettings.lastRadioStationIndex = appSettings.radioStations.indexOf(selectedStation)
+                    saveAppSettings(appSettings)
+                    statusPlay = true
+                    statusRadio.text = selectedStation.name
+                    statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
+                    buttonPlay.setImageResource(R.drawable.stop_64)
+                    stopMusic()
+                    startMusic(selectedStation, progressBar)
+                }
+
             }
         }
 
