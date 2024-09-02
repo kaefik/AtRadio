@@ -159,7 +159,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:contentDescription="settings"
-        android:src="@drawable/settings48"
+        android:src="@drawable/settings32"
         android:background="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toTopOf="@+id/statusRadio"
         app:layout_constraintEnd_toEndOf="parent"
