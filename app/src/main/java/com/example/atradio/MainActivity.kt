@@ -73,14 +73,6 @@ class MainActivity : AppCompatActivity() {
             appSettings.lastRadioStationIndex = 0
         }
 
-//        if (appSettings.isAutoPlayEnabled && appSettings.radioStations.isNotEmpty()) {
-//            statusPlay = true
-//            stopMusic()
-//            startMusic(appSettings.radioStations[appSettings.lastRadioStationIndex], progressBar)
-//            statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
-//            buttonPlay.setImageResource(R.drawable.stop_64)
-//        }
-
         if (appSettings.radioStations.isEmpty()) {
             appSettings.radioStations.addAll(listOf(
                 RadioStation(name = "Классик ФМ", url = "http://cfm.jazzandclassic.ru:14536/rcstream.mp3"),
@@ -100,7 +92,10 @@ class MainActivity : AppCompatActivity() {
                 statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
                 buttonPlay.setImageResource(R.drawable.stop_64)
                 stopMusic()
-                startMusic(appSettings.radioStations[appSettings.lastRadioStationIndex], progressBar)
+                val isNotErrorPlay = startMusic(appSettings.radioStations[appSettings.lastRadioStationIndex], progressBar)
+                if (!isNotErrorPlay) {
+                    onErrorPlay()
+                }
             } else {
                 statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
                 statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
@@ -141,7 +136,10 @@ class MainActivity : AppCompatActivity() {
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
                     buttonPlay.setImageResource(R.drawable.stop_64)
                     stopMusic()
-                    startMusic(selectedStation, progressBar)
+                    val isNotErrorPlay = startMusic(selectedStation, progressBar)
+                    if (!isNotErrorPlay) {
+                        onErrorPlay()
+                    }
                 }
 
             }
@@ -206,8 +204,11 @@ class MainActivity : AppCompatActivity() {
                 statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
                 if (statusPlay) {
                     stopMusic()
-                    startMusic(appSettings.radioStations[appSettings.lastRadioStationIndex], progressBar)
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
+                    val isNotErrorPlay = startMusic(appSettings.radioStations[appSettings.lastRadioStationIndex], progressBar)
+                    if (!isNotErrorPlay) {
+                        onErrorPlay()
+                    }
                 } else {
                     stopMusic()
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
@@ -230,8 +231,11 @@ class MainActivity : AppCompatActivity() {
 
                 if (statusPlay) {
                     stopMusic()
-                    startMusic(appSettings.radioStations[appSettings.lastRadioStationIndex], progressBar)
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
+                    val isNotErrorPlay = startMusic(appSettings.radioStations[appSettings.lastRadioStationIndex], progressBar)
+                    if (!isNotErrorPlay) {
+                        onErrorPlay()
+                    }
                 } else {
                     stopMusic()
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
@@ -252,6 +256,9 @@ class MainActivity : AppCompatActivity() {
                 appSettings.lastRadioStationIndex = 0
                 stopMusic()
                 statusRadio.text = "Empty list stations"
+                statusPlay = false
+                statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
+                buttonPlay.setImageResource(R.drawable.play_64)
             } else {
                 if (statusPlay) {
                     statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
@@ -265,16 +272,21 @@ class MainActivity : AppCompatActivity() {
                     stopMusic()
                     statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
-                    startMusic(appSettings.radioStations[appSettings.lastRadioStationIndex], progressBar)
+                    val isNotErrorPlay = startMusic(appSettings.radioStations[appSettings.lastRadioStationIndex], progressBar)
+                    if (!isNotErrorPlay) {
+                        onErrorPlay()
+                    }
                 }
             }
         }
     }
 
-    private fun startMusic(radioStation: RadioStation, progressBar: ProgressBar) {
+    // если все проходит без ошибок, то возвр-ся true, иначе false
+    private fun startMusic(radioStation: RadioStation, progressBar: ProgressBar): Boolean {
         stopMusic()
 
-        try {
+        return try {
+            var hasErrorOccurred = false
             mediaPlayer = MediaPlayer().apply {
                 setDataSource(radioStation.url)
 
@@ -287,14 +299,19 @@ class MainActivity : AppCompatActivity() {
                     stopMusic()
                     progressBar.visibility = View.GONE
                     Toast.makeText(this@MainActivity, "Error playing station", Toast.LENGTH_SHORT).show()
+                    onErrorPlay()
                     false
                 }
 
                 progressBar.visibility = View.VISIBLE
                 prepareAsync()
+
             }
+            true
         } catch (e: Exception) {
             Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+            onErrorPlay()
+            false // Возвращаем false, если произошло исключение
         }
     }
 
@@ -325,11 +342,24 @@ class MainActivity : AppCompatActivity() {
             }
             statusPlay = true
             appSettings.lastRadioStationIndex = appSettings.radioStations.indexOf(it)
-            startMusic(it, progressBar)
             statusRadio.text = it.name
-            statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
-            buttonPlay.setImageResource(R.drawable.stop_64)
+            val isNotErrorPlay = startMusic(it, progressBar)
+            if (isNotErrorPlay) {
+                statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
+                buttonPlay.setImageResource(R.drawable.stop_64)
+            } else {
+               onErrorPlay()
+            }
+
         } ?: Toast.makeText(this, "No station saved to favorite ${favIndex + 1}", Toast.LENGTH_SHORT).show()
+    }
+
+    // обработка ошибки проигрывания музыки
+    private fun onErrorPlay(){
+        statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
+        buttonPlay.setImageResource(R.drawable.play_64)
+        statusPlay = false
+
     }
 
     // сохранение настроек приложения
