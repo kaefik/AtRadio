@@ -67,6 +67,12 @@ class MainActivity : AppCompatActivity() {
         dimView.visibility = View.GONE
         blackView.visibility = View.VISIBLE
         radioText.visibility = View.VISIBLE
+        var newText = appSettings.radioStations[appSettings.lastRadioStationIndex].name
+        val newSizeText = 15
+        if (newText.length>newSizeText){
+            newText = newText.substring(0, newSizeText)+"..."
+        }
+        radioText.text = newText
         startMovingText()
     }
 
