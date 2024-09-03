@@ -1,6 +1,7 @@
 package com.example.atradio
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -50,6 +51,7 @@ class SettingsActivity : AppCompatActivity() {
             appSettings = defaultAppSettings()
             saveAppSettings(appSettings)
             refreshSettings()
+            showInfoDialogResetSettings()
         }
 
         buttonBack.setOnClickListener {
@@ -95,6 +97,22 @@ class SettingsActivity : AppCompatActivity() {
             lastRadioStationIndex = 0, // Первая радиостанция в списке
             radioStations = mutableListOf() // Пустой список радиостанций
         )
+    }
+
+    private fun showInfoDialogResetSettings() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Information")
+        builder.setMessage("You need to restart the application to apply the settings.")
+
+        // Настройка кнопки "ОК"
+        builder.setPositiveButton("OK") { dialog, _ ->
+            // Закрытие окна при нажатии на кнопку
+            dialog.dismiss()
+        }
+
+        // Создание и отображение диалога
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
     }
 
 }
