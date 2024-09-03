@@ -33,10 +33,11 @@ data class RadioStation(val name: String, val url: String) : Parcelable {
 
 // Класс для хранения настроек приложения
 data class AppSettings(
-    var favoriteStations: MutableList<RadioStation?>,
-    var isAutoPlayEnabled: Boolean,
-    var lastRadioStationIndex: Int,
-    var radioStations: MutableList<RadioStation>
+    var favoriteStations: MutableList<RadioStation?>, // список избранных станций
+    var isAutoPlayEnabled: Boolean,    // флаг, запуска автопроигрывания при открытии приложения
+    var isScreenSaverEnabled: Boolean, // флаг включение скринсейвера
+    var lastRadioStationIndex: Int,     // номер последней проигранной станции
+    var radioStations: MutableList<RadioStation> // список станций
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         mutableListOf<RadioStation?>().apply {
