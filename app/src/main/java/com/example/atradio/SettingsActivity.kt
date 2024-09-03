@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import com.google.gson.Gson
@@ -15,6 +16,7 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var screenSaverSwitch: SwitchCompat
     private lateinit var appSettings: AppSettings
     private lateinit var buttonResetAllSettings: Button
+    private lateinit var buttonBack: ImageButton
     private val gson = Gson()
 
 
@@ -25,6 +27,7 @@ class SettingsActivity : AppCompatActivity() {
         autoPlaySwitch = findViewById(R.id.autoPlaySwitch)
         screenSaverSwitch = findViewById(R.id.screenSaverSwitch)
         buttonResetAllSettings = findViewById(R.id.buttonResetAllSettings)
+        buttonBack = findViewById(R.id.buttonBack)
 
         // Загрузка настроек, если их нет, то использование настроек по умолчанию
         appSettings = loadAppSettings()
@@ -47,6 +50,11 @@ class SettingsActivity : AppCompatActivity() {
             appSettings = defaultAppSettings()
             saveAppSettings(appSettings)
             refreshSettings()
+        }
+
+        buttonBack.setOnClickListener {
+            saveAppSettings(appSettings)
+            finish()
         }
     }
 
