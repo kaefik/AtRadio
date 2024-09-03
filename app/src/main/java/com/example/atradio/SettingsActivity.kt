@@ -1,7 +1,9 @@
 package com.example.atradio
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import com.google.gson.Gson
@@ -12,6 +14,7 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var autoPlaySwitch: SwitchCompat
     private lateinit var screenSaverSwitch: SwitchCompat
     private lateinit var appSettings: AppSettings
+    private lateinit var buttonResetAllSettings: Button
     private val gson = Gson()
 
 
@@ -21,15 +24,13 @@ class SettingsActivity : AppCompatActivity() {
 
         autoPlaySwitch = findViewById(R.id.autoPlaySwitch)
         screenSaverSwitch = findViewById(R.id.screenSaverSwitch)
+        buttonResetAllSettings = findViewById(R.id.buttonResetAllSettings)
 
         // Загрузка настроек, если их нет, то использование настроек по умолчанию
         appSettings = loadAppSettings()
 
         // Установка состояния переключателя автозапуска на основе загруженных настроек
-        autoPlaySwitch.isChecked = appSettings.isAutoPlayEnabled
-
-
-        screenSaverSwitch.isChecked = appSettings.isScreenSaverEnabled
+        refreshSettings()
 
         // Обработка изменения состояния переключателя
         autoPlaySwitch.setOnCheckedChangeListener { _, isChecked ->
@@ -42,6 +43,18 @@ class SettingsActivity : AppCompatActivity() {
             saveAppSettings(appSettings)
         }
 
+        buttonResetAllSettings.setOnClickListener {
+            appSettings = defaultAppSettings()
+            saveAppSettings(appSettings)
+            refreshSettings()
+        }
+    }
+
+    // обновляет переключатели и другие параметры в соответствии с текущими настройками appSettings
+    // добавить сюда когда добавляешь новый параметр
+    private fun refreshSettings(){
+        autoPlaySwitch.isChecked = appSettings.isAutoPlayEnabled
+        screenSaverSwitch.isChecked = appSettings.isScreenSaverEnabled
     }
 
     private fun saveAppSettings(settings: AppSettings) {
@@ -61,14 +74,19 @@ class SettingsActivity : AppCompatActivity() {
         } else {
             // Возвращаем настройки по умолчанию, если они отсутствуют
             // TODO: заменить здесь и в MainActivity данный блок единым . пока не придумал каким
-            AppSettings(
-                favoriteStations = mutableListOf(null, null, null), // Пустые избранные станции
-                isAutoPlayEnabled = false, // Значение по умолчанию
-                isScreenSaverEnabled = true, // Значение по умолчанию
-                lastRadioStationIndex = 0, // Первая радиостанция в списке
-                radioStations = mutableListOf() // Пустой список радиостанций
-            )
+            defaultAppSettings()
         }
+    }
+
+    // настройки по умолчанию
+    private fun defaultAppSettings():AppSettings{
+        return AppSettings(
+            favoriteStations = mutableListOf(null, null, null), // Пустые избранные станции
+            isAutoPlayEnabled = false, // Значение по умолчанию
+            isScreenSaverEnabled = true, // Значение по умолчанию
+            lastRadioStationIndex = 0, // Первая радиостанция в списке
+            radioStations = mutableListOf() // Пустой список радиостанций
+        )
     }
 
 }

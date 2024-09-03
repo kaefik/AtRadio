@@ -35,4 +35,10 @@
         android:layout_height="wrap_content"
         android:text="Enable ScreenSaver" />
 
+    <Button
+        android:id="@+id/buttonResetAllSettings"
+        android:layout_width="128dp"
+        android:layout_height="wrap_content"
+        android:text="Reset All Settings" />
+
 </LinearLayout>
