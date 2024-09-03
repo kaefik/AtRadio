@@ -26,6 +26,13 @@ import android.widget.ImageButton
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 
+import android.os.Handler
+import android.os.Looper
+import android.view.MotionEvent
+
+
+
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,6 +46,24 @@ class MainActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
     private var statusPlay: Boolean = false // статус проигрывания текущей станции
 
+    //заставка
+    private lateinit var dimView: View
+    private lateinit var blackView: View
+
+    private val dimDelay = 30_000L // 30 секунд
+    private val blackDelay = 10_000L // 10 секунд
+
+    private val handler = Handler(Looper.getMainLooper())
+    private val dimRunnable = Runnable {
+        dimView.visibility = View.VISIBLE
+    }
+
+    private val blackRunnable = Runnable {
+        dimView.visibility = View.GONE
+        blackView.visibility = View.VISIBLE
+    }
+    // END заставка
+
     @RequiresApi(Build.VERSION_CODES.R)
     @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,6 +75,12 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        // заставка
+        dimView = findViewById(R.id.dim_view)
+        blackView = findViewById(R.id.black_view)
+        resetTimers()
+        // END заставка
 
         // Скрытие строки статуса
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -408,5 +439,27 @@ class MainActivity : AppCompatActivity() {
     }
 
     // END сохранение настроек приложения
+
+    // заставка
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        if (event?.action == MotionEvent.ACTION_DOWN) {
+            resetTimers()
+            restoreBrightness()
+        }
+        return super.onTouchEvent(event)
+    }
+
+    private fun resetTimers() {
+        handler.removeCallbacks(dimRunnable)
+        handler.removeCallbacks(blackRunnable)
+        handler.postDelayed(dimRunnable, dimDelay)
+        handler.postDelayed(blackRunnable, dimDelay + blackDelay)
+    }
+
+    private fun restoreBrightness() {
+        dimView.visibility = View.GONE
+        blackView.visibility = View.GONE
+    }
+    // END заставка
 
 }
