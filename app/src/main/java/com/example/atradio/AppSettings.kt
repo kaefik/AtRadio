@@ -44,6 +44,7 @@ data class AppSettings(
             parcel.readList(this, RadioStation::class.java.classLoader)
         },
         parcel.readByte() != 0.toByte(),
+        parcel.readByte() != 0.toByte(),
         parcel.readInt(),
         mutableListOf<RadioStation>().apply {
             parcel.readList(this, RadioStation::class.java.classLoader)
@@ -53,6 +54,7 @@ data class AppSettings(
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeList(favoriteStations)
         parcel.writeByte(if (isAutoPlayEnabled) 1 else 0)
+        parcel.writeByte(if (isScreenSaverEnabled) 1 else 0)
         parcel.writeInt(lastRadioStationIndex)
         parcel.writeList(radioStations)
     }

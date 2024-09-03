@@ -23,4 +23,16 @@
         android:layout_height="wrap_content"
         android:text="Enable Autoplay" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ScreenSaver(protect display)"
+        android:textSize="18sp" />
+
+    <androidx.appcompat.widget.SwitchCompat
+        android:id="@+id/screenSaverSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Enable ScreenSaver" />
+
 </LinearLayout>

@@ -448,6 +448,7 @@ class MainActivity : AppCompatActivity() {
             AppSettings(
                 favoriteStations = mutableListOf(null, null, null), // Пустые избранные станции
                 isAutoPlayEnabled = false, // Значение по умолчанию
+                isScreenSaverEnabled = true, // Значение по умолчанию
                 lastRadioStationIndex = 0, // Первая радиостанция в списке
                 radioStations = mutableListOf() // Пустой список радиостанций
             )
