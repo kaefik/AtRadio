@@ -5,5 +5,8 @@
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
     </style>
 
-    <style name="Theme.IRadio" parent="Base.Theme.IRadio" />
+    <style name="Theme.IRadio" parent="Base.Theme.IRadio" >
+        <!-- Убираем строку состояния -->
+        <item name="android:windowFullscreen">true</item>
+    </style>
 </resources>
