@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">AtRadio</string>
+    <string name="textScreenSaver">\@Radio</string>
 </resources>

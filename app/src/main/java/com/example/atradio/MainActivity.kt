@@ -16,6 +16,7 @@ import android.view.View
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import android.view.WindowInsets
 import android.view.WindowInsetsController
@@ -29,9 +30,7 @@ import androidx.core.content.ContextCompat
 import android.os.Handler
 import android.os.Looper
 import android.view.MotionEvent
-
-
-
+import kotlin.random.Random
 
 
 class MainActivity : AppCompatActivity() {
@@ -46,12 +45,18 @@ class MainActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
     private var statusPlay: Boolean = false // статус проигрывания текущей станции
 
-    //заставка
+    //заставка - сринсейвер
     private lateinit var dimView: View
     private lateinit var blackView: View
+    private lateinit var radioText: TextView
+
+    private var directionX = 1 // Направление по оси X (1 - вправо, -1 - влево)
+    private var directionY = 1 // Направление по оси Y (1 - вниз, -1 - вверх)
+    private var velocity = 10f // Скорость перемещения текста
 
     private val dimDelay = 30_000L // 30 секунд
     private val blackDelay = 10_000L // 10 секунд
+    private val moveDelay = 15_000L // 15 секунд
 
     private val handler = Handler(Looper.getMainLooper())
     private val dimRunnable = Runnable {
@@ -61,8 +66,17 @@ class MainActivity : AppCompatActivity() {
     private val blackRunnable = Runnable {
         dimView.visibility = View.GONE
         blackView.visibility = View.VISIBLE
+        radioText.visibility = View.VISIBLE
+        startMovingText()
     }
-    // END заставка
+
+    private val moveTextRunnable = object : Runnable {
+        override fun run() {
+            moveText()
+            handler.postDelayed(this, 50) // Обновляем позицию каждые 16 мс (~60 fps)
+        }
+    }
+    // END заставка - сринсейвер
 
     @RequiresApi(Build.VERSION_CODES.R)
     @SuppressLint("SetTextI18n")
@@ -76,11 +90,12 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        // заставка
+        // заставка - сринсейвер
         dimView = findViewById(R.id.dim_view)
         blackView = findViewById(R.id.black_view)
+        radioText = findViewById(R.id.radio_text)
         resetTimers()
-        // END заставка
+        // END заставка - сринсейвер
 
         // Скрытие строки статуса
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -111,12 +126,7 @@ class MainActivity : AppCompatActivity() {
         progressBar = findViewById(R.id.progressBar)
 
         // Загружаем настройки при старте
-        appSettings = loadAppSettings() ?: AppSettings(
-            favoriteStations = mutableListOf(null, null, null),
-            isAutoPlayEnabled = false,
-            lastRadioStationIndex = 0,
-            radioStations = mutableListOf()
-        )
+        appSettings = loadAppSettings()
 
         if (appSettings.radioStations.size <= appSettings.lastRadioStationIndex) {
             appSettings.lastRadioStationIndex = 0
@@ -440,7 +450,7 @@ class MainActivity : AppCompatActivity() {
 
     // END сохранение настроек приложения
 
-    // заставка
+    // заставка - сринсейвер
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event?.action == MotionEvent.ACTION_DOWN) {
             resetTimers()
@@ -452,14 +462,67 @@ class MainActivity : AppCompatActivity() {
     private fun resetTimers() {
         handler.removeCallbacks(dimRunnable)
         handler.removeCallbacks(blackRunnable)
+        handler.removeCallbacks(moveTextRunnable)
         handler.postDelayed(dimRunnable, dimDelay)
         handler.postDelayed(blackRunnable, dimDelay + blackDelay)
+        handler.postDelayed(moveTextRunnable, dimDelay + blackDelay + moveDelay)
     }
 
     private fun restoreBrightness() {
         dimView.visibility = View.GONE
         blackView.visibility = View.GONE
+        radioText.visibility = View.GONE
+        handler.removeCallbacks(moveTextRunnable)
     }
-    // END заставка
+
+    private fun startMovingText() {
+        handler.post(moveTextRunnable)
+    }
+
+    private fun moveText() {
+        val parentWidth = blackView.width
+        val parentHeight = blackView.height
+        val textWidth = radioText.width
+        val textHeight = radioText.height
+
+        // Текущая позиция текста
+        var currentX = radioText.translationX
+        var currentY = radioText.translationY
+
+        // Обновляем позицию текста
+        currentX += directionX * velocity
+        currentY += directionY * velocity
+
+        // Проверяем столкновение с границами экрана и изменяем направление
+        var hitBoundary = false
+
+        if (currentX <= 0 || currentX + textWidth >= parentWidth) {
+            directionX *= -1 // Изменяем направление по оси X
+            hitBoundary = true
+        }
+        if (currentY <= 0 || currentY + textHeight >= parentHeight) {
+            directionY *= -1 // Изменяем направление по оси Y
+            hitBoundary = true
+        }
+
+        // Если текст столкнулся с границей, меняем цвет
+        if (hitBoundary) {
+            changeTextColor()
+        }
+
+        // Устанавливаем новую позицию текста
+        radioText.translationX = currentX
+        radioText.translationY = currentY
+    }
+
+    private fun changeTextColor() {
+        val randomColor = Color.rgb(
+            Random.nextInt(256),
+            Random.nextInt(256),
+            Random.nextInt(256)
+        )
+        radioText.setTextColor(randomColor)
+    }
+    // END заставка - сринсейвер
 
 }

@@ -185,4 +185,16 @@
         android:visibility="gone"
          />
 
+    <!-- Текст "Radio" для заставки -->
+    <TextView
+        android:id="@+id/radio_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/textScreenSaver"
+        android:textColor="@android:color/white"
+        android:textSize="24sp"
+        android:visibility="gone"
+        android:layout_gravity="center" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
