@@ -96,11 +96,17 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        // Загружаем настройки при старте
+        appSettings = loadAppSettings()
+
         // заставка - сринсейвер
         dimView = findViewById(R.id.dim_view)
         blackView = findViewById(R.id.black_view)
         radioText = findViewById(R.id.radio_text)
-        resetTimers()
+
+        if (appSettings.isScreenSaverEnabled) {
+            resetTimers()
+        }
         // END заставка - сринсейвер
 
         // Скрытие строки статуса
@@ -130,9 +136,6 @@ class MainActivity : AppCompatActivity() {
         val buttonSettings: ImageButton = findViewById(R.id.buttonSettings)
 
         progressBar = findViewById(R.id.progressBar)
-
-        // Загружаем настройки при старте
-        appSettings = loadAppSettings()
 
         if (appSettings.radioStations.size <= appSettings.lastRadioStationIndex) {
             appSettings.lastRadioStationIndex = 0

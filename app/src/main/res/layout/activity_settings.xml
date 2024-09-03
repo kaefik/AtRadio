@@ -21,12 +21,12 @@
         android:id="@+id/autoPlaySwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Enable Autoplay" />
+        android:text="@string/enable_autoplay_settings" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ScreenSaver(protect display)"
+        android:text="@string/screensaver_protect_display_settings"
         android:textSize="18sp" />
 
     <androidx.appcompat.widget.SwitchCompat

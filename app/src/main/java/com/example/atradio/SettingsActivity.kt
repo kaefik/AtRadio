@@ -36,6 +36,12 @@ class SettingsActivity : AppCompatActivity() {
             appSettings.isAutoPlayEnabled = isChecked
             saveAppSettings(appSettings)
         }
+
+        screenSaverSwitch.setOnCheckedChangeListener { _, isChecked ->
+            appSettings.isScreenSaverEnabled = isChecked
+            saveAppSettings(appSettings)
+        }
+
     }
 
     private fun saveAppSettings(settings: AppSettings) {
