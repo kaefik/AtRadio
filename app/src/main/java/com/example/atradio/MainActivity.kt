@@ -32,6 +32,7 @@ import android.os.Looper
 import android.view.MotionEvent
 import android.util.TypedValue
 import android.content.Context
+import android.view.ViewGroup
 
 
 class MainActivity : AppCompatActivity() {
@@ -65,6 +66,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val blackRunnable = Runnable {
+        disableUIElements()
         dimView.visibility = View.GONE
         blackView.visibility = View.VISIBLE
         radioText.visibility = View.VISIBLE
@@ -470,7 +472,7 @@ class MainActivity : AppCompatActivity() {
     // Добавляем обработку событий onPause и onResume
     override fun onPause() {
         super.onPause()
-        handler.removeCallbacksAndMessages(null) // Останавливаем все запланированные задачи, чтобы избежать неправильного запуска скринсейвера
+        stopScreenSaver() // Остановить скринсейвер
     }
 
     override fun onResume() {
@@ -478,6 +480,13 @@ class MainActivity : AppCompatActivity() {
         if (appSettings.isScreenSaverEnabled) {
             resetTimers() // Сбрасываем таймеры только если скринсейвер разрешен
         }
+    }
+
+    // Метод для остановки таймеров и скрытия скринсейвера
+    private fun stopScreenSaver() {
+        handler.removeCallbacksAndMessages(null)
+        restoreBrightness() // Скрыть элементы скринсейвера
+        enableUIElements() // Включить элементы интерфейса
     }
 
     internal fun resetTimers() {
@@ -500,6 +509,7 @@ class MainActivity : AppCompatActivity() {
         blackView.visibility = View.GONE
         radioText.visibility = View.GONE
         handler.removeCallbacks(moveTextRunnable)
+        enableUIElements() // Включить элементы интерфейса
     }
 
     private fun startMovingText() {
@@ -535,6 +545,23 @@ class MainActivity : AppCompatActivity() {
         // Устанавливаем новую позицию текста
         radioText.translationX = currentX
         radioText.translationY = currentY
+    }
+
+    // Метод для отключения всех элементов интерфейса
+    private fun disableUIElements() {
+        findViewById<ViewGroup>(R.id.main).setChildrenEnabled(false)
+    }
+
+    // Метод для включения всех элементов интерфейса
+    private fun enableUIElements() {
+        findViewById<ViewGroup>(R.id.main).setChildrenEnabled(true)
+    }
+
+    // Функция-расширение для отключения или включения всех дочерних элементов ViewGroup
+    private fun ViewGroup.setChildrenEnabled(enabled: Boolean) {
+        for (i in 0 until childCount) {
+            getChildAt(i).isEnabled = enabled
+        }
     }
 
 }
