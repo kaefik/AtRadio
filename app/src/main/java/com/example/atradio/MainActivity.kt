@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
 
     private var directionX = 1 // Направление по оси X (1 - вправо, -1 - влево)
     private var directionY = 1 // Направление по оси Y (1 - вниз, -1 - вверх)
-    private var velocity = 10f // Скорость перемещения текста
+    private var velocity = 5f // Скорость перемещения текста
 
     private val dimDelay = 30_000L // 30 секунд
     private val blackDelay = 10_000L // 10 секунд
@@ -73,6 +73,8 @@ class MainActivity : AppCompatActivity() {
             newText = newText.substring(0, newSizeText)+"..."
         }
         radioText.text = newText
+        radioText.setTextSize(30f)
+        radioText.setTextColor(ContextCompat.getColor(this, R.color.gray))
         startMovingText()
     }
 
@@ -515,24 +517,24 @@ class MainActivity : AppCompatActivity() {
             hitBoundary = true
         }
 
-        // Если текст столкнулся с границей, меняем цвет
-        if (hitBoundary) {
-            changeTextColor()
-        }
+//        // Если текст столкнулся с границей, меняем цвет
+//        if (hitBoundary) {
+//            changeTextColor()
+//        }
 
         // Устанавливаем новую позицию текста
         radioText.translationX = currentX
         radioText.translationY = currentY
     }
 
-    private fun changeTextColor() {
-        val randomColor = Color.rgb(
-            Random.nextInt(256),
-            Random.nextInt(256),
-            Random.nextInt(256)
-        )
-        radioText.setTextColor(randomColor)
-    }
+//    private fun changeTextColor() {
+//        val randomColor = Color.rgb(
+//            Random.nextInt(256),
+//            Random.nextInt(256),
+//            Random.nextInt(256)
+//        )
+//        radioText.setTextColor(randomColor)
+//    }
     // END заставка - сринсейвер
 
 }

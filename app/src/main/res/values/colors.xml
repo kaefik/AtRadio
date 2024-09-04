@@ -6,4 +6,5 @@
     <color name="play">#8db600</color>
     <color name="dim_color">#80000000</color>
     <color name="black_color">#FF000000</color>
+    <color name="gray">#FFA9A9A9</color>
 </resources>
