@@ -222,7 +222,7 @@ class MainActivity : AppCompatActivity() {
             resetTimers()
         }
 
-        buttonSettings.setOnClickListener {
+        buttonSettings.setOnClickListenerWithScreenSaverReset {
             val intent = Intent(this, SettingsActivity::class.java)
 ////            intent.putParcelableArrayListExtra("radioStations", ArrayList(appSettings.radioStations))
             settingAppLauncher.launch(intent)
@@ -244,25 +244,25 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        buttonFav1.setOnClickListener {
+        buttonFav1.setOnClickListenerWithScreenSaverReset {
             handleFavoriteButtonClick(0)
         }
 
-        buttonFav2.setOnClickListener {
+        buttonFav2.setOnClickListenerWithScreenSaverReset {
             handleFavoriteButtonClick(1)
         }
 
-        buttonFav3.setOnClickListener {
+        buttonFav3.setOnClickListenerWithScreenSaverReset {
             handleFavoriteButtonClick(2)
         }
 
-        buttonListRadioStations.setOnClickListener {
+        buttonListRadioStations.setOnClickListenerWithScreenSaverReset {
             val intent = Intent(this, RadioStationListActivity::class.java)
             intent.putParcelableArrayListExtra("radioStations", ArrayList(appSettings.radioStations))
             listRadioStationLauncher.launch(intent)
         }
 
-        buttonForward.setOnClickListener {
+        buttonForward.setOnClickListenerWithScreenSaverReset {
             if (appSettings.radioStations.isEmpty()) {
                 appSettings.lastRadioStationIndex = 0
                 stopMusic()
@@ -287,7 +287,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        buttonPrev.setOnClickListener {
+        buttonPrev.setOnClickListenerWithScreenSaverReset {
             if (appSettings.radioStations.isEmpty()) {
                 appSettings.lastRadioStationIndex = 0
                 stopMusic()
@@ -314,15 +314,15 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        buttonVolUp.setOnClickListener {
+        buttonVolUp.setOnClickListenerWithScreenSaverReset {
             volumeControl.increaseVolume()
         }
 
-        buttonVolDown.setOnClickListener {
+        buttonVolDown.setOnClickListenerWithScreenSaverReset {
             volumeControl.decreaseVolume()
         }
 
-        buttonPlay.setOnClickListener {
+        buttonPlay.setOnClickListenerWithScreenSaverReset {
             if (appSettings.radioStations.isEmpty()) {
                 appSettings.lastRadioStationIndex = 0
                 stopMusic()
@@ -485,7 +485,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun resetTimers() {
+    internal fun resetTimers() {
         // Добавляем проверку, чтобы убедиться, что скринсейвер не запускается, если он отключен
         if (!appSettings.isScreenSaverEnabled) {
             return
@@ -500,7 +500,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun restoreBrightness() {
+    internal fun restoreBrightness() {
         dimView.visibility = View.GONE
         blackView.visibility = View.GONE
         radioText.visibility = View.GONE
@@ -557,4 +557,14 @@ class MainActivity : AppCompatActivity() {
 //    }
     // END заставка - сринсейвер
 
+}
+
+// Описание функции-расширения должно быть вне класса MainActivity
+// чтобы при нажатии на любой элемент активити прекращал работаь скринсейвер
+fun View.setOnClickListenerWithScreenSaverReset(action: () -> Unit) {
+    this.setOnClickListener {
+        (context as MainActivity).resetTimers()      // Сбрасываем таймеры скринсейвера
+        (context as MainActivity).restoreBrightness() // Прекращаем работу скринсейвера
+        action() // Выполнение основной логики
+    }
 }
