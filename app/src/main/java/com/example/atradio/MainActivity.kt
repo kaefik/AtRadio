@@ -245,6 +245,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         buttonFav1.setOnClickListenerWithScreenSaverReset {
+            // сначала выполняется код из View.setOnClickListenerWithScreenSaverReset
             handleFavoriteButtonClick(0)
         }
 
@@ -515,7 +516,7 @@ class MainActivity : AppCompatActivity() {
         val parentWidth = blackView.width
         val parentHeight = blackView.height
         val textWidth = radioText.width
-        val textHeight = radioText.height
+        val textHeight = radioTe
 
         // Текущая позиция текста
         var currentX = radioText.translationX
