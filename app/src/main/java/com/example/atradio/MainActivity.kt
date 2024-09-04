@@ -106,9 +106,9 @@ class MainActivity : AppCompatActivity() {
         blackView = findViewById(R.id.black_view)
         radioText = findViewById(R.id.radio_text)
 
-        if (appSettings.isScreenSaverEnabled) {
+//        if (appSettings.isScreenSaverEnabled) {
             resetTimers()
-        }
+//        }
         // END заставка - сринсейвер
 
         // Скрытие строки статуса
@@ -216,9 +216,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         val settingAppLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-//            if (result.resultCode == Activity.RESULT_OK) {
-                appSettings= loadAppSettings() // Перезагружаем все настройки
-//            }
+            if (result.resultCode == Activity.RESULT_OK) {
+                appSettings = loadAppSettings() // Перезагружаем все настройки
+            }
+            resetTimers()
         }
 
         buttonSettings.setOnClickListener {
@@ -471,7 +472,25 @@ class MainActivity : AppCompatActivity() {
         return super.onTouchEvent(event)
     }
 
+    // Добавляем обработку событий onPause и onResume
+    override fun onPause() {
+        super.onPause()
+        handler.removeCallbacksAndMessages(null) // Останавливаем все запланированные задачи, чтобы избежать неправильного запуска скринсейвера
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (appSettings.isScreenSaverEnabled) {
+            resetTimers() // Сбрасываем таймеры только если скринсейвер разрешен
+        }
+    }
+
     private fun resetTimers() {
+        // Добавляем проверку, чтобы убедиться, что скринсейвер не запускается, если он отключен
+        if (!appSettings.isScreenSaverEnabled) {
+            return
+        }
+
         handler.removeCallbacks(dimRunnable)
         handler.removeCallbacks(blackRunnable)
         handler.removeCallbacks(moveTextRunnable)
@@ -479,6 +498,7 @@ class MainActivity : AppCompatActivity() {
         handler.postDelayed(blackRunnable, dimDelay + blackDelay)
         handler.postDelayed(moveTextRunnable, dimDelay + blackDelay + moveDelay)
     }
+
 
     private fun restoreBrightness() {
         dimView.visibility = View.GONE
