@@ -2,6 +2,10 @@ package com.example.atradio
 import android.os.Parcel
 import android.os.Parcelable
 
+import android.content.Context
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.io.File
 
 
 // Определение радиостанций
@@ -72,4 +76,50 @@ data class AppSettings(
             return arrayOfNulls(size)
         }
     }
+}
+
+// Функция для загрузки радиостанций из CSV
+fun loadRadioStationsFromRaw(context: Context, resourceId: Int): MutableList<RadioStation> {
+    val radioStations = mutableListOf<RadioStation>()
+
+    // Открываем файл из папки raw
+    context.resources.openRawResource(resourceId).use { inputStream ->
+        BufferedReader(InputStreamReader(inputStream)).use { reader ->
+            var line: String?
+
+            // Пропускаем заголовок, если есть
+            reader.readLine()
+
+            // Чтение строк из CSV
+            while (reader.readLine().also { line = it } != null) {
+                line?.let {
+                    val tokens = it.split(";")
+                    if (tokens.size >= 2) {
+                        val name = tokens[0]
+                        val url = tokens[1]
+                        radioStations.add(RadioStation(name, url))
+                    }
+                }
+            }
+        }
+    }
+
+    return radioStations
+}
+
+// Ваша основная активность или место, где вы инициализируете AppSettings
+fun initAppSettings(context: Context): AppSettings {
+    val appSettings = AppSettings(
+        favoriteStations = mutableListOf(null, null, null), // Пустые избранные станции
+        isAutoPlayEnabled = false, // Значение по умолчанию
+        isScreenSaverEnabled = true, // Значение по умолчанию
+        lastRadioStationIndex = 0, // Первая радиостанция в списке
+        radioStations = mutableListOf() // Пустой список радиостанций
+    )
+
+    // Загрузка радиостанций из CSV
+    appSettings.radioStations.clear()
+    appSettings.radioStations.addAll(loadRadioStationsFromRaw(context, R.raw.radio_stations_default))
+
+    return appSettings
 }

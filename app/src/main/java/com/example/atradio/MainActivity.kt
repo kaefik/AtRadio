@@ -31,6 +31,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.MotionEvent
 import android.util.TypedValue
+import android.content.Context
 
 
 class MainActivity : AppCompatActivity() {
@@ -144,13 +145,16 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (appSettings.radioStations.isEmpty()) {
-            appSettings.radioStations.addAll(listOf(
-                RadioStation(name = "Классик ФМ", url = "http://cfm.jazzandclassic.ru:14536/rcstream.mp3"),
-                RadioStation(name = "Bolgar Radiosi", url = "http://stream.tatarradio.ru:2068/;stream/1"),
-                RadioStation(name = "Детское радио (Дети ФМ)", url = "http://ic5.101.ru:8000/v14_1"),
-                RadioStation(name = "Монте Карло", url = "https://montecarlo.hostingradio.ru/montecarlo128.mp3"),
-                RadioStation(name = "Saf Radiosi", url = "https://c7.radioboss.fm:18335/stream")
-            ))
+            // Загрузка радиостанций из CSV
+            appSettings.radioStations.addAll(loadRadioStationsFromRaw(this, R.raw.radio_stations_default))
+
+//            appSettings.radioStations.addAll(listOf(
+//                RadioStation(name = "Классик ФМ", url = "http://cfm.jazzandclassic.ru:14536/rcstream.mp3"),
+//                RadioStation(name = "Bolgar Radiosi", url = "http://stream.tatarradio.ru:2068/;stream/1"),
+//                RadioStation(name = "Детское радио (Дети ФМ)", url = "http://ic5.101.ru:8000/v14_1"),
+//                RadioStation(name = "Монте Карло", url = "https://montecarlo.hostingradio.ru/montecarlo128.mp3"),
+//                RadioStation(name = "Saf Radiosi", url = "https://c7.radioboss.fm:18335/stream")
+//            ))
             saveAppSettings(appSettings)
             appSettings.lastRadioStationIndex = 0
             statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
@@ -452,13 +456,7 @@ class MainActivity : AppCompatActivity() {
             gson.fromJson(json, type)
         } else {
             // Возвращаем настройки по умолчанию, если они отсутствуют
-            AppSettings(
-                favoriteStations = mutableListOf(null, null, null), // Пустые избранные станции
-                isAutoPlayEnabled = false, // Значение по умолчанию
-                isScreenSaverEnabled = true, // Значение по умолчанию
-                lastRadioStationIndex = 0, // Первая радиостанция в списке
-                radioStations = mutableListOf() // Пустой список радиостанций
-            )
+           initAppSettings(this)
         }
     }
 
@@ -516,7 +514,7 @@ class MainActivity : AppCompatActivity() {
         val parentWidth = blackView.width
         val parentHeight = blackView.height
         val textWidth = radioText.width
-        val textHeight = radioTe
+        val textHeight = radioText.height
 
         // Текущая позиция текста
         var currentX = radioText.translationX

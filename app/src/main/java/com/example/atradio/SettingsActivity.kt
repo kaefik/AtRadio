@@ -48,10 +48,10 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         buttonResetAllSettings.setOnClickListener {
-            appSettings = defaultAppSettings()
-            saveAppSettings(appSettings)
+            appSettings = initAppSettings(this)
             refreshSettings()
             showInfoDialogResetSettings()
+            saveAppSettings(appSettings)
         }
 
         buttonBack.setOnClickListener {
@@ -84,20 +84,10 @@ class SettingsActivity : AppCompatActivity() {
         } else {
             // Возвращаем настройки по умолчанию, если они отсутствуют
             // TODO: заменить здесь и в MainActivity данный блок единым . пока не придумал каким
-            defaultAppSettings()
+            initAppSettings(this)
         }
     }
 
-    // настройки по умолчанию
-    private fun defaultAppSettings():AppSettings{
-        return AppSettings(
-            favoriteStations = mutableListOf(null, null, null), // Пустые избранные станции
-            isAutoPlayEnabled = false, // Значение по умолчанию
-            isScreenSaverEnabled = true, // Значение по умолчанию
-            lastRadioStationIndex = 0, // Первая радиостанция в списке
-            radioStations = mutableListOf() // Пустой список радиостанций
-        )
-    }
 
     private fun showInfoDialogResetSettings() {
         val builder = AlertDialog.Builder(this)
