@@ -68,10 +68,13 @@ class MainActivity : AppCompatActivity() {
         dimView.visibility = View.GONE
         blackView.visibility = View.VISIBLE
         radioText.visibility = View.VISIBLE
-        var newText = appSettings.radioStations[appSettings.lastRadioStationIndex].name
-        val newSizeText = 15
-        if (newText.length>newSizeText){
-            newText = newText.substring(0, newSizeText)+"..."
+        var newText ="@Radio"
+        if (!appSettings.radioStations.isEmpty()){
+            newText = appSettings.radioStations[appSettings.lastRadioStationIndex].name
+            val newSizeText = 15
+            if (newText.length > newSizeText) {
+                newText = newText.substring(0, newSizeText) + "..."
+            }
         }
         radioText.text = newText
         radioText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 100f)
@@ -148,13 +151,6 @@ class MainActivity : AppCompatActivity() {
             // Загрузка радиостанций из CSV
             appSettings.radioStations.addAll(loadRadioStationsFromRaw(this, R.raw.radio_stations_default))
 
-//            appSettings.radioStations.addAll(listOf(
-//                RadioStation(name = "Классик ФМ", url = "http://cfm.jazzandclassic.ru:14536/rcstream.mp3"),
-//                RadioStation(name = "Bolgar Radiosi", url = "http://stream.tatarradio.ru:2068/;stream/1"),
-//                RadioStation(name = "Детское радио (Дети ФМ)", url = "http://ic5.101.ru:8000/v14_1"),
-//                RadioStation(name = "Монте Карло", url = "https://montecarlo.hostingradio.ru/montecarlo128.mp3"),
-//                RadioStation(name = "Saf Radiosi", url = "https://c7.radioboss.fm:18335/stream")
-//            ))
             saveAppSettings(appSettings)
             appSettings.lastRadioStationIndex = 0
             statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
@@ -536,25 +532,10 @@ class MainActivity : AppCompatActivity() {
             hitBoundary = true
         }
 
-//        // Если текст столкнулся с границей, меняем цвет
-//        if (hitBoundary) {
-//            changeTextColor()
-//        }
-
         // Устанавливаем новую позицию текста
         radioText.translationX = currentX
         radioText.translationY = currentY
     }
-
-//    private fun changeTextColor() {
-//        val randomColor = Color.rgb(
-//            Random.nextInt(256),
-//            Random.nextInt(256),
-//            Random.nextInt(256)
-//        )
-//        radioText.setTextColor(randomColor)
-//    }
-    // END заставка - сринсейвер
 
 }
 
