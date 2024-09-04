@@ -30,7 +30,7 @@ import androidx.core.content.ContextCompat
 import android.os.Handler
 import android.os.Looper
 import android.view.MotionEvent
-import kotlin.random.Random
+import android.util.TypedValue
 
 
 class MainActivity : AppCompatActivity() {
@@ -73,7 +73,7 @@ class MainActivity : AppCompatActivity() {
             newText = newText.substring(0, newSizeText)+"..."
         }
         radioText.text = newText
-        radioText.setTextSize(30f)
+        radioText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 100f)
         radioText.setTextColor(ContextCompat.getColor(this, R.color.gray))
         startMovingText()
     }
