@@ -16,7 +16,6 @@ import android.view.View
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import android.content.Intent
-import android.graphics.Color
 import android.os.Build
 import android.view.WindowInsets
 import android.view.WindowInsetsController
@@ -31,7 +30,6 @@ import android.os.Handler
 import android.os.Looper
 import android.view.MotionEvent
 import android.util.TypedValue
-import android.content.Context
 import android.view.ViewGroup
 
 
@@ -71,7 +69,7 @@ class MainActivity : AppCompatActivity() {
         blackView.visibility = View.VISIBLE
         radioText.visibility = View.VISIBLE
         var newText ="@Radio"
-        if (!appSettings.radioStations.isEmpty()){
+        if (appSettings.radioStations.isNotEmpty()){
             newText = appSettings.radioStations[appSettings.lastRadioStationIndex].name
             val newSizeText = 15
             if (newText.length > newSizeText) {
@@ -93,7 +91,7 @@ class MainActivity : AppCompatActivity() {
     // END заставка - сринсейвер
 
     @RequiresApi(Build.VERSION_CODES.R)
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -131,7 +129,7 @@ class MainActivity : AppCompatActivity() {
 
         volumeControl = VolumeControl(this)
 
-        statusRadio = findViewById<TextView>(R.id.statusRadio)
+        statusRadio = findViewById(R.id.statusRadio)
         buttonPlay = findViewById(R.id.buttonPlay)
         val buttonVolUp: ImageButton = findViewById(R.id.buttonVolumeUp)
         val buttonVolDown: ImageButton = findViewById(R.id.buttonVolumeDown)
@@ -360,7 +358,6 @@ class MainActivity : AppCompatActivity() {
         stopMusic()
 
         return try {
-            var hasErrorOccurred = false
             mediaPlayer = MediaPlayer().apply {
                 setDataSource(radioStation.url)
 
@@ -531,15 +528,11 @@ class MainActivity : AppCompatActivity() {
         currentY += directionY * velocity
 
         // Проверяем столкновение с границами экрана и изменяем направление
-        var hitBoundary = false
-
         if (currentX <= 0 || currentX + textWidth >= parentWidth) {
             directionX *= -1 // Изменяем направление по оси X
-            hitBoundary = true
         }
         if (currentY <= 0 || currentY + textHeight >= parentHeight) {
             directionY *= -1 // Изменяем направление по оси Y
-            hitBoundary = true
         }
 
         // Устанавливаем новую позицию текста
