@@ -28,16 +28,11 @@ class AddRadioStationActivity : AppCompatActivity() {
             // Проверка, что поля не пустые
             if (name.isNotEmpty() && url.isNotEmpty()) {
                 // Подготовка данных для возврата в MainActivity
-                val resultIntent = Intent()
-                resultIntent.putExtra("radioName", name)
-                resultIntent.putExtra("radioUrl", url)
-
                 if (isValidUrl(url)) {
                     // Подготовка данных для возврата в MainActivity
                     val resultIntent = Intent()
                     resultIntent.putExtra("radioName", name)
-                    resultIntent.putExtra("radioUrl", url)
-
+                    resultIntent.putExtra("radioUrl", url)gs
                     // Установка результата и завершение активности
                     setResult(Activity.RESULT_OK, resultIntent)
                     finish()
