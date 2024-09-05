@@ -4,6 +4,8 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.os.Bundle
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -42,6 +44,7 @@ import android.support.v4.media.session.PlaybackStateCompat
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.app.ServiceCompat.startForeground
 
 
 class MainActivity : AppCompatActivity() {
@@ -57,6 +60,7 @@ class MainActivity : AppCompatActivity() {
     private var statusPlay: Boolean = false // статус проигрывания текущей станции
 
     // плеер в панели уведомления
+    private val PERMISSION_REQUEST_CODE = 1001 // переменную PERMISSION_REQUEST_CODE для запроса разрешений
     private lateinit var mediaSession: MediaSessionCompat
 
     // END плеер в панели уведомления
@@ -375,11 +379,15 @@ class MainActivity : AppCompatActivity() {
                 override fun onPlay() {
                     super.onPlay()
                     startMusic(appSettings.radioStations[appSettings.lastRadioStationIndex], progressBar)
+                    updatePlaybackState(PlaybackStateCompat.STATE_PLAYING)
+                    createNotification() // Перезапускаем уведомление с обновленным состоянием
                 }
 
                 override fun onPause() {
                     super.onPause()
                     stopMusic()
+                    updatePlaybackState(PlaybackStateCompat.STATE_PAUSED)
+                    createNotification() // Перезапускаем уведомление с обновленным состоянием
                 }
 
                 override fun onSkipToNext() {
@@ -394,13 +402,29 @@ class MainActivity : AppCompatActivity() {
             })
             setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
         }
-
+        createNotificationChannel()
         createNotification()
 
         // END плеер в панели уведомления
 
 
     }
+
+    private fun createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                "media_playback_channel",
+                "Media Playback",
+                NotificationManager.IMPORTANCE_LOW
+            ).apply {
+                description = "Channel for media playback controls"
+            }
+            val notificationManager: NotificationManager =
+                getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
 
     // плеер в панели уведомления
     private fun createNotification() {
@@ -435,21 +459,22 @@ class MainActivity : AppCompatActivity() {
             .addAction(R.drawable.forward_64, "Next", nextPendingIntent)
             .build()
 
+        // разрешение на уведомления запрашивается
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.POST_NOTIFICATIONS
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                PERMISSION_REQUEST_CODE
+            )
             return
         }
+
         notificationManager.notify(1, notification)
+//        startForeground(1, notification)
     }
 
     private fun updatePlaybackState(state: Int) {
