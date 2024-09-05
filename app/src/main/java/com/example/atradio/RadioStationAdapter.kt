@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
@@ -17,7 +18,7 @@ class RadioStationAdapter(
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val radioStationName: TextView = view.findViewById(R.id.radioStationName)
-        val buttonDelete: Button = view.findViewById(R.id.buttonDelete)
+        val buttonDelete: ImageButton = view.findViewById(R.id.buttonDelete)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

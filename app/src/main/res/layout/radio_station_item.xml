@@ -13,11 +13,13 @@
         android:text="@string/radio_station_name"
         android:textSize="18sp" />
 
-    <Button
+    <ImageButton
         android:id="@+id/buttonDelete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/delete"
+        android:contentDescription="@string/delete"
+        android:src="@drawable/delete"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:textSize="14sp"
-        android:background="?attr/selectableItemBackground" />
+         />
 </LinearLayout>
