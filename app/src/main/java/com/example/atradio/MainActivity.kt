@@ -18,7 +18,6 @@ import android.view.View
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import android.content.Intent
-import android.graphics.Color
 import android.os.Build
 import android.view.WindowInsets
 import android.view.WindowInsetsController
@@ -33,7 +32,6 @@ import android.os.Handler
 import android.os.Looper
 import android.view.MotionEvent
 import android.util.TypedValue
-import android.content.Context
 import android.view.ViewGroup
 
 
@@ -72,8 +70,8 @@ class MainActivity : AppCompatActivity() {
         dimView.visibility = View.GONE
         blackView.visibility = View.VISIBLE
         radioText.visibility = View.VISIBLE
-        var newText ="@Radio"
-        if (!appSettings.radioStations.isEmpty()){
+        var newText = getString(R.string.at_radio)
+        if (appSettings.radioStations.isNotEmpty()){
             newText = appSettings.radioStations[appSettings.lastRadioStationIndex].name
             val newSizeText = 15
             if (newText.length > newSizeText) {
@@ -95,7 +93,7 @@ class MainActivity : AppCompatActivity() {
     // END заставка - сринсейвер
 
     @RequiresApi(Build.VERSION_CODES.R)
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -145,7 +143,7 @@ class MainActivity : AppCompatActivity() {
 
         volumeControl = VolumeControl(this)
 
-        statusRadio = findViewById<TextView>(R.id.statusRadio)
+        statusRadio = findViewById(R.id.statusRadio)
         buttonPlay = findViewById(R.id.buttonPlay)
         val buttonVolUp: ImageButton = findViewById(R.id.buttonVolumeUp)
         val buttonVolDown: ImageButton = findViewById(R.id.buttonVolumeDown)
@@ -203,7 +201,7 @@ class MainActivity : AppCompatActivity() {
                     stopMusic()
                     statusPlay = false
                     buttonPlay.setImageResource(R.drawable.play_64)
-                    statusRadio.text = "Empty list stations"
+                    statusRadio.text = getString(R.string.empty_list_stations)
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
                 } else {
                     if (appSettings.lastRadioStationIndex >= appSettings.radioStations.size) {
@@ -382,7 +380,6 @@ class MainActivity : AppCompatActivity() {
         stopMusic()
 
         return try {
-            var hasErrorOccurred = false
             mediaPlayer = MediaPlayer().apply {
                 setDataSource(radioStation.url)
 
@@ -394,7 +391,7 @@ class MainActivity : AppCompatActivity() {
                 setOnErrorListener { _, _, _ ->
                     stopMusic()
                     progressBar.visibility = View.GONE
-                    Toast.makeText(this@MainActivity, "Error playing station", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MainActivity, getString(R.string.error_playing_station), Toast.LENGTH_SHORT).show()
                     onErrorPlay()
                     false
                 }
@@ -405,7 +402,7 @@ class MainActivity : AppCompatActivity() {
             }
             true
         } catch (e: Exception) {
-            Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.error_message) + e.message, Toast.LENGTH_LONG).show()
             onErrorPlay()
             false // Возвращаем false, если произошло исключение
         }
@@ -421,13 +418,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun showSaveDialog(favIndex: Int) {
         AlertDialog.Builder(this)
-            .setMessage("Save current station as favorite ${favIndex + 1}?")
-            .setPositiveButton("Save") { _, _ ->
+            .setMessage(getString(R.string.save_favorite_message) + (favIndex + 1) + "?")
+            .setPositiveButton(getString(R.string.save)) { _, _ ->
                 appSettings.favoriteStations[favIndex] = appSettings.radioStations[appSettings.lastRadioStationIndex]
                 saveAppSettings(appSettings)
                 Toast.makeText(this, "Station saved to favorite ${favIndex + 1}", Toast.LENGTH_SHORT).show()
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(getString(R.string.cancel), null)
             .show()
     }
 
@@ -447,7 +444,7 @@ class MainActivity : AppCompatActivity() {
                onErrorPlay()
             }
 
-        } ?: Toast.makeText(this, "No station saved to favorite ${favIndex + 1}", Toast.LENGTH_SHORT).show()
+        } ?: Toast.makeText(this, getString(R.string.no_station_saved_to_favorite) + (favIndex + 1), Toast.LENGTH_SHORT).show()
     }
 
     // обработка ошибки проигрывания музыки
@@ -553,15 +550,11 @@ class MainActivity : AppCompatActivity() {
         currentY += directionY * velocity
 
         // Проверяем столкновение с границами экрана и изменяем направление
-        var hitBoundary = false
-
         if (currentX <= 0 || currentX + textWidth >= parentWidth) {
             directionX *= -1 // Изменяем направление по оси X
-            hitBoundary = true
         }
         if (currentY <= 0 || currentY + textHeight >= parentHeight) {
             directionY *= -1 // Изменяем направление по оси Y
-            hitBoundary = true
         }
 
         // Устанавливаем новую позицию текста

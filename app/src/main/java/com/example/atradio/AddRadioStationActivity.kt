@@ -28,25 +28,20 @@ class AddRadioStationActivity : AppCompatActivity() {
             // Проверка, что поля не пустые
             if (name.isNotEmpty() && url.isNotEmpty()) {
                 // Подготовка данных для возврата в MainActivity
-                val resultIntent = Intent()
-                resultIntent.putExtra("radioName", name)
-                resultIntent.putExtra("radioUrl", url)
-
                 if (isValidUrl(url)) {
                     // Подготовка данных для возврата в MainActivity
                     val resultIntent = Intent()
                     resultIntent.putExtra("radioName", name)
                     resultIntent.putExtra("radioUrl", url)
-
                     // Установка результата и завершение активности
                     setResult(Activity.RESULT_OK, resultIntent)
                     finish()
                 } else {
-                    Toast.makeText(this, "Please enter the correct URL", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.invalid_url_message), Toast.LENGTH_SHORT).show()
                 }
             } else {
                 // Отображение сообщения об ошибке
-                Toast.makeText(this, "Enter the name and URL of the radio station", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.empty_fields_message), Toast.LENGTH_SHORT).show()
             }
         }
 
