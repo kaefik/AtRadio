@@ -32,7 +32,7 @@ class AddRadioStationActivity : AppCompatActivity() {
                     // Подготовка данных для возврата в MainActivity
                     val resultIntent = Intent()
                     resultIntent.putExtra("radioName", name)
-                    resultIntent.putExtra("radioUrl", url)gs
+                    resultIntent.putExtra("radioUrl", url)
                     // Установка результата и завершение активности
                     setResult(Activity.RESULT_OK, resultIntent)
                     finish()
