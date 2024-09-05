@@ -89,15 +89,13 @@ class SettingsActivity : AppCompatActivity() {
 
     private fun showInfoDialogResetSettings() {
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Information")
-        builder.setMessage("You need to restart the application to apply the settings.")
+        builder.setTitle(getString(R.string.dialog_title))
+        builder.setMessage(getString(R.string.dialog_message))
 
         // Настройка кнопки "ОК"
-        builder.setPositiveButton("OK") { dialog, _ ->
-            // Закрытие окна при нажатии на кнопку
+        builder.setPositiveButton(getString(R.string.dialog_button_ok)) { dialog, _ ->
             dialog.dismiss()
         }
-
         // Создание и отображение диалога
         val dialog: AlertDialog = builder.create()
         dialog.show()

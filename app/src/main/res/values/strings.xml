@@ -19,4 +19,8 @@
     <string name="incorrect_data">Incorrect data in line: %1$s</string>
     <string name="incorrect_line">Incorrect line: %1$s</string>
     <string name="error_reading_file">Error while reading file</string>
+
+    <string name="dialog_title">Information</string>
+    <string name="dialog_message">You need to restart the application to apply the settings.</string>
+    <string name="dialog_button_ok">OK</string>
 </resources>
