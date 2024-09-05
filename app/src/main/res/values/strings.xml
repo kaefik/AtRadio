@@ -45,4 +45,5 @@
     <string name="favorite_1">Favorite 1</string>
     <string name="list">list</string>
     <string name="settings">settings</string>
+    <string name="radio_station_name">Radio Station Name</string>
 </resources>

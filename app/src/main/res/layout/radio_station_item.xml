@@ -10,14 +10,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Radio Station Name"
+        android:text="@string/radio_station_name"
         android:textSize="18sp" />
 
     <Button
         android:id="@+id/buttonDelete"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Delete"
+        android:text="@string/delete"
         android:textSize="14sp"
         android:background="?attr/selectableItemBackground" />
 </LinearLayout>
