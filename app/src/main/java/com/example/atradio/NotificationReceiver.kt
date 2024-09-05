@@ -10,27 +10,28 @@ class NotificationReceiver : BroadcastReceiver() {
         if (context == null || intent == null) return
 
         val action = intent.action
-        val activity = context as MainActivity
-        val mediaSession = activity.getMediaSession()
+
+        // Взаимодействие с сервисом через intent
+        val mediaPlaybackServiceIntent = Intent(context, MediaPlaybackService::class.java)
+        mediaPlaybackServiceIntent.action = action
 
         when (action) {
             "ACTION_PLAY" -> {
                 Toast.makeText(context, "Play pressed", Toast.LENGTH_SHORT).show()
-                mediaSession.controller.transportControls.play()
+                context.startService(mediaPlaybackServiceIntent)
             }
             "ACTION_PAUSE" -> {
                 Toast.makeText(context, "Pause pressed", Toast.LENGTH_SHORT).show()
-                mediaSession.controller.transportControls.pause()
+                context.startService(mediaPlaybackServiceIntent)
             }
             "ACTION_NEXT" -> {
                 Toast.makeText(context, "Next pressed", Toast.LENGTH_SHORT).show()
-                mediaSession.controller.transportControls.skipToNext()
+                context.startService(mediaPlaybackServiceIntent)
             }
             "ACTION_PREV" -> {
                 Toast.makeText(context, "Previous pressed", Toast.LENGTH_SHORT).show()
-                mediaSession.controller.transportControls.skipToPrevious()
+                context.startService(mediaPlaybackServiceIntent)
             }
         }
     }
 }
-
