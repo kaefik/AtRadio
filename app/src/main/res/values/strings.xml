@@ -35,4 +35,14 @@
     <string name="autoplay_last_station">Autoplay Last Station</string>
     <string name="enable_screensaver">Enable ScreenSaver</string>
     <string name="reset_all_settings">Reset All Settings</string>
+    <string name="play_stop">Play/Stop</string>
+    <string name="vol_plus">VOL+</string>
+    <string name="vol_minus">VOL-</string>
+    <string name="prev">PREV</string>
+    <string name="forward">FORW</string>
+    <string name="favorite_3">Favorite 3</string>
+    <string name="favorite_2">Favorite 2</string>
+    <string name="favorite_1">Favorite 1</string>
+    <string name="list">list</string>
+    <string name="settings">settings</string>
 </resources>
