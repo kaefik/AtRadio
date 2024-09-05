@@ -3,6 +3,8 @@ package com.example.atradio
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.os.Bundle
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -128,6 +130,18 @@ class MainActivity : AppCompatActivity() {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN
             )
         }
+
+        // уведомление - сервис плеера
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val serviceChannel = NotificationChannel(
+                RadioService.CHANNEL_ID,
+                "Radio Service Channel",
+                NotificationManager.IMPORTANCE_LOW
+            )
+            val manager = getSystemService(NotificationManager::class.java)
+            manager?.createNotificationChannel(serviceChannel)
+        }
+        // END уведомление - сервис плеера
 
         volumeControl = VolumeControl(this)
 
@@ -330,26 +344,34 @@ class MainActivity : AppCompatActivity() {
                 appSettings.lastRadioStationIndex = 0
                 stopMusic()
                 statusRadio.text = "Empty list stations"
+                // Остановка воспроизведения
+                val stopIntent = Intent(this, RadioService::class.java).apply {
+                    action = RadioService.ACTION_STOP
+                }
+                startService(stopIntent)
                 statusPlay = false
                 statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
                 buttonPlay.setImageResource(R.drawable.play_64)
             } else {
                 if (statusPlay) {
-                    statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
+                    // Остановка воспроизведения
+                    val stopIntent = Intent(this, RadioService::class.java).apply {
+                        action = RadioService.ACTION_STOP
+                    }
+                    startService(stopIntent)
+                    statusPlay = false
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
                     buttonPlay.setImageResource(R.drawable.play_64)
-                    statusPlay = false
-                    stopMusic()
                 } else {
-                    buttonPlay.setImageResource(R.drawable.stop_64)
-                    statusPlay = true
-                    stopMusic()
-                    statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
-                    statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
-                    val isNotErrorPlay = startMusic(appSettings.radioStations[appSettings.lastRadioStationIndex], progressBar)
-                    if (!isNotErrorPlay) {
-                        onErrorPlay()
+                    // Запуск воспроизведения
+                    val playIntent = Intent(this, RadioService::class.java).apply {
+                        action = RadioService.ACTION_PLAY
+                        putExtra(RadioService.EXTRA_RADIO_URL, appSettings.radioStations[appSettings.lastRadioStationIndex].url)
                     }
+                    startService(playIntent)
+                    statusPlay = true
+                    statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
+                    buttonPlay.setImageResource(R.drawable.stop_64)
                 }
             }
         }

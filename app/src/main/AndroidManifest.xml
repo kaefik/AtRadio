@@ -43,9 +43,11 @@
 
 
 
+
     </application>
 
     <!-- Разрешение на чтение из внешнего хранилища -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
 
 </manifest>
