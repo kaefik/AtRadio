@@ -47,4 +47,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.8.8")
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    // для управление плеером через панель уведомлений
+    implementation(libs.androidx.media)
+     implementation("androidx.core:core-ktx:1.10.0")
 }

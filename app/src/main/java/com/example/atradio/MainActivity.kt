@@ -1,5 +1,6 @@
 package com.example.atradio
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
@@ -31,8 +32,16 @@ import android.os.Handler
 import android.os.Looper
 import android.view.MotionEvent
 import android.util.TypedValue
-import android.content.Context
 import android.view.ViewGroup
+
+import android.app.PendingIntent
+import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
+import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 
 
 class MainActivity : AppCompatActivity() {
@@ -46,6 +55,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var statusRadio: TextView
     private lateinit var progressBar: ProgressBar
     private var statusPlay: Boolean = false // статус проигрывания текущей станции
+
+    // плеер в панели уведомления
+    private lateinit var mediaSession: MediaSessionCompat
+
+    // END плеер в панели уведомления
 
     //заставка - сринсейвер
     private lateinit var dimView: View
@@ -353,7 +367,123 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        // плеер в панели уведомления
+        // Инициализация MediaSessionCompat
+        mediaSession = MediaSessionCompat(this, "ATRadioSession").apply {
+            setCallback(object : MediaSessionCompat.Callback() {
+                override fun onPlay() {
+                    super.onPlay()
+                    startMusic(appSettings.radioStations[appSettings.lastRadioStationIndex], progressBar)
+                }
+
+                override fun onPause() {
+                    super.onPause()
+                    stopMusic()
+                }
+
+                override fun onSkipToNext() {
+                    super.onSkipToNext()
+                    nextStation()
+                }
+
+                override fun onSkipToPrevious() {
+                    super.onSkipToPrevious()
+                    prevStation()
+                }
+            })
+            setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS)
+        }
+
+        createNotification()
+
+        // END плеер в панели уведомления
+
+
     }
+
+    // плеер в панели уведомления
+    private fun createNotification() {
+        val notificationManager = NotificationManagerCompat.from(this)
+
+        // Инициализация Intent'ов для уведомления
+        val playIntent = Intent(this, NotificationReceiver::class.java).setAction("ACTION_PLAY")
+        val playPendingIntent = PendingIntent.getBroadcast(this, 0, playIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
+        val pauseIntent = Intent(this, NotificationReceiver::class.java).setAction("ACTION_PAUSE")
+        val pausePendingIntent = PendingIntent.getBroadcast(this, 0, pauseIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
+        val nextIntent = Intent(this, NotificationReceiver::class.java).setAction("ACTION_NEXT")
+        val nextPendingIntent = PendingIntent.getBroadcast(this, 0, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
+        val prevIntent = Intent(this, NotificationReceiver::class.java).setAction("ACTION_PREV")
+        val prevPendingIntent = PendingIntent.getBroadcast(this, 0, prevIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
+        // Уведомление с медиаконтроллами
+        val notification = NotificationCompat.Builder(this, "media_playback_channel")
+            .setContentTitle("AT Radio")
+            .setContentText("Now Playing")
+            .setSmallIcon(R.drawable.ic_radio)
+            .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.ic_radio))
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setStyle(androidx.media.app.NotificationCompat.MediaStyle()
+                .setMediaSession(mediaSession.sessionToken)
+                .setShowActionsInCompactView(0, 1, 2)
+            )
+            .addAction(R.drawable.back_64, "Previous", prevPendingIntent)
+            .addAction(if (statusPlay) R.drawable.stop_64 else R.drawable.play_64, "Play/Pause", if (statusPlay) pausePendingIntent else playPendingIntent)
+            .addAction(R.drawable.forward_64, "Next", nextPendingIntent)
+            .build()
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        notificationManager.notify(1, notification)
+    }
+
+    private fun updatePlaybackState(state: Int) {
+        mediaSession.setPlaybackState(
+            PlaybackStateCompat.Builder()
+                .setActions(
+                    PlaybackStateCompat.ACTION_PLAY_PAUSE or
+                            PlaybackStateCompat.ACTION_SKIP_TO_NEXT or
+                            PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS
+                )
+                .setState(state, PlaybackStateCompat.PLAYBACK_POSITION_UNKNOWN, 1f)
+                .build()
+        )
+    }
+
+    private fun nextStation() {
+        appSettings.lastRadioStationIndex = (appSettings.lastRadioStationIndex + 1) % appSettings.radioStations.size
+        startMusic(appSettings.radioStations[appSettings.lastRadioStationIndex], progressBar)
+    }
+
+    private fun prevStation() {
+        appSettings.lastRadioStationIndex = if (appSettings.lastRadioStationIndex - 1 < 0)
+            appSettings.radioStations.size - 1
+        else
+            appSettings.lastRadioStationIndex - 1
+        startMusic(appSettings.radioStations[appSettings.lastRadioStationIndex], progressBar)
+    }
+
+    fun getMediaSession(): MediaSessionCompat {
+        return mediaSession
+    }
+
+    // END плеер в панели уведомления
+
 
     // если все проходит без ошибок, то возвр-ся true, иначе false
     private fun startMusic(radioStation: RadioStation, progressBar: ProgressBar): Boolean {
@@ -562,6 +692,15 @@ class MainActivity : AppCompatActivity() {
         for (i in 0 until childCount) {
             getChildAt(i).isEnabled = enabled
         }
+    }
+
+
+    //
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaSession.release()
+        stopMusic()
     }
 
 }
