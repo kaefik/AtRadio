@@ -10,12 +10,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/back"
         app:srcCompat="@drawable/back48" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Autoplay Last Station"
+        android:text="@string/autoplay_last_station"
         android:textSize="18sp" />
 
     <androidx.appcompat.widget.SwitchCompat
@@ -34,12 +35,12 @@
         android:id="@+id/screenSaverSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Enable ScreenSaver" />
+        android:text="@string/enable_screensaver" />
 
     <Button
         android:id="@+id/buttonResetAllSettings"
         android:layout_width="128dp"
         android:layout_height="wrap_content"
-        android:text="Reset All Settings" />
+        android:text="@string/reset_all_settings" />
 
 </LinearLayout>

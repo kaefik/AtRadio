@@ -32,4 +32,7 @@
     <string name="share">Share</string>
     <string name="import_str">Import</string>
     <string name="back">Back</string>
+    <string name="autoplay_last_station">Autoplay Last Station</string>
+    <string name="enable_screensaver">Enable ScreenSaver</string>
+    <string name="reset_all_settings">Reset All Settings</string>
 </resources>
