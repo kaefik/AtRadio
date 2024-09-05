@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity() {
         dimView.visibility = View.GONE
         blackView.visibility = View.VISIBLE
         radioText.visibility = View.VISIBLE
-        var newText ="@Radio"
+        var newText = getString(R.string.at_radio)
         if (appSettings.radioStations.isNotEmpty()){
             newText = appSettings.radioStations[appSettings.lastRadioStationIndex].name
             val newSizeText = 15
@@ -187,7 +187,7 @@ class MainActivity : AppCompatActivity() {
                     stopMusic()
                     statusPlay = false
                     buttonPlay.setImageResource(R.drawable.play_64)
-                    statusRadio.text = "Empty list stations"
+                    statusRadio.text = getString(R.string.empty_list_stations)
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
                 } else {
                     if (appSettings.lastRadioStationIndex >= appSettings.radioStations.size) {
@@ -369,7 +369,7 @@ class MainActivity : AppCompatActivity() {
                 setOnErrorListener { _, _, _ ->
                     stopMusic()
                     progressBar.visibility = View.GONE
-                    Toast.makeText(this@MainActivity, "Error playing station", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MainActivity, getString(R.string.error_playing_station), Toast.LENGTH_SHORT).show()
                     onErrorPlay()
                     false
                 }
@@ -380,7 +380,7 @@ class MainActivity : AppCompatActivity() {
             }
             true
         } catch (e: Exception) {
-            Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.error_message) + e.message, Toast.LENGTH_LONG).show()
             onErrorPlay()
             false // Возвращаем false, если произошло исключение
         }
@@ -396,13 +396,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun showSaveDialog(favIndex: Int) {
         AlertDialog.Builder(this)
-            .setMessage("Save current station as favorite ${favIndex + 1}?")
-            .setPositiveButton("Save") { _, _ ->
+            .setMessage(getString(R.string.save_favorite_message) + (favIndex + 1) + "?")
+            .setPositiveButton(getString(R.string.save)) { _, _ ->
                 appSettings.favoriteStations[favIndex] = appSettings.radioStations[appSettings.lastRadioStationIndex]
                 saveAppSettings(appSettings)
                 Toast.makeText(this, "Station saved to favorite ${favIndex + 1}", Toast.LENGTH_SHORT).show()
             }
-            .setNegativeButton("Cancel", null)
+            .setNegativeButton(getString(R.string.cancel), null)
             .show()
     }
 
@@ -422,7 +422,7 @@ class MainActivity : AppCompatActivity() {
                onErrorPlay()
             }
 
-        } ?: Toast.makeText(this, "No station saved to favorite ${favIndex + 1}", Toast.LENGTH_SHORT).show()
+        } ?: Toast.makeText(this, getString(R.string.no_station_saved_to_favorite) + (favIndex + 1), Toast.LENGTH_SHORT).show()
     }
 
     // обработка ошибки проигрывания музыки
