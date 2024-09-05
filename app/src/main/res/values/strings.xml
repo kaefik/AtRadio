@@ -3,4 +3,7 @@
     <string name="textScreenSaver">\@Radio</string>
     <string name="screensaver_protect_display_settings">ScreenSaver(restart required)</string>
     <string name="enable_autoplay_settings">Enable Autoplay</string>
+
+    <string name="invalid_url_message">Please enter the correct URL</string>
+    <string name="empty_fields_message">Enter the name and URL of the radio station</string>
 </resources>

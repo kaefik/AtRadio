@@ -37,11 +37,11 @@ class AddRadioStationActivity : AppCompatActivity() {
                     setResult(Activity.RESULT_OK, resultIntent)
                     finish()
                 } else {
-                    Toast.makeText(this, "Please enter the correct URL", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.invalid_url_message), Toast.LENGTH_SHORT).show()
                 }
             } else {
                 // Отображение сообщения об ошибке
-                Toast.makeText(this, "Enter the name and URL of the radio station", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.empty_fields_message), Toast.LENGTH_SHORT).show()
             }
         }
 
