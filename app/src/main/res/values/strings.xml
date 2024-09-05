@@ -28,4 +28,8 @@
     <string name="cancel">Cancel</string>
     <string name="station_saved_to_favorite">Station saved to favorite</string>
     <string name="no_station_saved_to_favorite">No station saved to favorite</string>
+    <string name="add">Add</string>
+    <string name="share">Share</string>
+    <string name="import">Import</string>
+    <string name="back">Back</string>
 </resources>

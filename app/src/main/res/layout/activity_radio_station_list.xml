@@ -12,7 +12,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.977"
-        tools:layout_editor_absoluteX="0dp" />
+        tools:layout_editor_absoluteX="0dp"
+        tools:ignore="MissingConstraints" />
 
     <ImageButton
         android:id="@+id/buttonAddStation"
@@ -20,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="40dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Add"
+        android:contentDescription="@string/add"
         android:src="@drawable/add48"
         app:layout_constraintBottom_toTopOf="@+id/recyclerViewRadioStations"
         app:layout_constraintEnd_toEndOf="parent"
@@ -33,7 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="40dp"
-        android:contentDescription="Share"
+        android:contentDescription="@string/share"
         android:src="@drawable/share48"
         android:background="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toTopOf="@+id/recyclerViewRadioStations"
@@ -47,7 +48,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="40dp"
-        android:contentDescription="Import"
+        android:contentDescription="@string/import"
         android:src="@drawable/import48"
         android:background="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toTopOf="@+id/recyclerViewRadioStations"
@@ -61,7 +62,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="40dp"
-        android:contentDescription="Back"
+        android:contentDescription="@string/back"
         android:src="@drawable/back48"
         android:background="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toTopOf="@+id/recyclerViewRadioStations"
