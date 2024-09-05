@@ -6,4 +6,17 @@
 
     <string name="invalid_url_message">Please enter the correct URL</string>
     <string name="empty_fields_message">Enter the name and URL of the radio station</string>
+
+    <string name="radio_station_added">Radio station added</string>
+    <string name="file_no_new_stations">File does not contain new stations</string>
+    <string name="radio_stations_imported">Radio stations imported</string>
+    <string name="radio_deletion_title">Radio deletion</string>
+    <string name="radio_deletion_message">Are you sure you want to delete this station?</string>
+    <string name="delete">Delete</string>
+    <string name="cancel">Cancel</string>
+    <string name="share_radio_stations">Share Radio Stations</string>
+    <string name="invalid_file_format">Invalid file format</string>
+    <string name="incorrect_data">Incorrect data in line: %1$s</string>
+    <string name="incorrect_line">Incorrect line: %1$s</string>
+    <string name="error_reading_file">Error while reading file</string>
 </resources>

@@ -23,7 +23,6 @@ import java.io.InputStreamReader
 class RadioStationListActivity : AppCompatActivity() {
 
     private lateinit var radioStationAdapter: RadioStationAdapter
-//    private lateinit var radioStations: MutableList<RadioStation>
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,7 +34,6 @@ class RadioStationListActivity : AppCompatActivity() {
         val buttonSaveShareStations: ImageButton = findViewById(R.id.buttonSaveShareStations)
         val buttonImportStationsFromFile: ImageButton = findViewById(R.id.buttonImportStationsFromFile)
 
-
         // Получение списка радиостанций из Intent
         val radioStations: MutableList<RadioStation> = intent.getParcelableArrayListExtra<RadioStation>("radioStations")?.toMutableList()
             ?: mutableListOf()
@@ -44,12 +42,12 @@ class RadioStationListActivity : AppCompatActivity() {
             this,
             radioStations,
             { position -> showDeleteConfirmationDialog(position, radioStations) },
-            { selectedStation -> // Новый обработчик кликов на элемент списка
+            { selectedStation ->
                 val resultIntent = Intent()
                 resultIntent.putExtra("selectedStation", selectedStation)
-                resultIntent.putParcelableArrayListExtra("radioStations", ArrayList(radioStations)) // Передаем обновленный список радиостанций
+                resultIntent.putParcelableArrayListExtra("radioStations", ArrayList(radioStations))
                 setResult(Activity.RESULT_OK, resultIntent)
-                finish() // Завершаем текущую Activity и возвращаемся в MainActivity
+                finish()
             }
         )
 
@@ -66,56 +64,43 @@ class RadioStationListActivity : AppCompatActivity() {
                 if (name != null && url != null) {
                     val newStation = RadioStation(name, url)
                     radioStations.add(newStation)
-//                    saveRadioStations(radioStations)
-                    radioStationAdapter.notifyDataSetChanged()  // Уведомляем адаптер об изменении данных
-                    Toast.makeText(this, "Radio station added", Toast.LENGTH_SHORT).show()
+                    radioStationAdapter.notifyDataSetChanged()
+                    Toast.makeText(this, getString(R.string.radio_station_added), Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
-        // Запуск диалога выбора файла
         val openDocumentLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
             uri?.let {
                 val newStations = importRadioStationsFromFileUri(this, it)
 
-                if (newStations.size == 0){
-                    Toast.makeText(this, "File does not contain new stations", Toast.LENGTH_SHORT).show()
-                }else {
+                if (newStations.isEmpty()) {
+                    Toast.makeText(this, getString(R.string.file_no_new_stations), Toast.LENGTH_SHORT).show()
+                } else {
                     radioStations.clear()
                     radioStations.addAll(newStations)
-                    radioStationAdapter.notifyDataSetChanged()  // Уведомляем адаптер об изменении данных
-//                    saveRadioStations(radioStations)
-                    Toast.makeText(this, "Radio stations imported", Toast.LENGTH_SHORT).show()
+                    radioStationAdapter.notifyDataSetChanged()
+                    Toast.makeText(this, getString(R.string.radio_stations_imported), Toast.LENGTH_SHORT).show()
                 }
             }
         }
 
         buttonBack.setOnClickListener {
-            // Создаем новый Intent для передачи данных обратно в MainActivity
             val resultIntent = Intent()
             resultIntent.putParcelableArrayListExtra("radioStations", ArrayList(radioStations))
-
-            // Устанавливаем результат для MainActivity
             setResult(Activity.RESULT_OK, resultIntent)
-
-            // Завершаем текущую активность
             finish()
         }
-
 
         buttonSaveShareStations.setOnClickListener {
             saveAndShareRadioStations(this, "radio_stations.csv", radioStations)
         }
 
         buttonImportStationsFromFile.setOnClickListener {
-
-            // Вызываем диалог выбора файла
-//            openDocumentLauncher.launch(arrayOf("text/csv"))
             openDocumentLauncher.launch(arrayOf("*/*"))
         }
 
-        // кнопка добавления радиостанции
-        buttonAddStation.setOnClickListener{
+        buttonAddStation.setOnClickListener {
             val intent = Intent(this, AddRadioStationActivity::class.java)
             addRadioStationLauncher.launch(intent)
         }
@@ -123,16 +108,13 @@ class RadioStationListActivity : AppCompatActivity() {
 
     private fun showDeleteConfirmationDialog(position: Int, radioStations: MutableList<RadioStation>) {
         val alertDialog = AlertDialog.Builder(this)
-            .setTitle("Radio deletion")
-            .setMessage("Are you sure you want to delete this station?")
-            .setPositiveButton("Delete") { dialog, which ->
-                // Удаляем радиостанцию и уведомляем адаптер об изменении
+            .setTitle(getString(R.string.radio_deletion_title))
+            .setMessage(getString(R.string.radio_deletion_message))
+            .setPositiveButton(getString(R.string.delete)) { _, _ ->
                 radioStations.removeAt(position)
                 radioStationAdapter.notifyItemRemoved(position)
-//                saveRadioStations(radioStations)
             }
-            .setNegativeButton("Cancel") { dialog, which ->
-                // Отменяем удаление
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
                 dialog.dismiss()
             }
             .create()
@@ -140,32 +122,26 @@ class RadioStationListActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
-    // сохранение и отправки файла с помощью механизма поделиться
-    fun saveAndShareRadioStations(context: Context, fileName: String, radioStations: MutableList<RadioStation>) {
+    private fun saveAndShareRadioStations(context: Context, fileName: String, radioStations: MutableList<RadioStation>) {
         try {
-            // Сохранение файла в формате CSV
             val file = File(context.filesDir, fileName)
             val writer = OutputStreamWriter(file.outputStream())
 
-            // Заголовок CSV файла
             writer.write("Name;URL\n")
 
             radioStations.forEach { station ->
-                // Формируем строку для CSV
                 val csvLine = "${station.name};${station.url}\n"
                 writer.write(csvLine)
             }
 
             writer.close()
 
-            // Получение Uri файла через FileProvider
             val fileUri: Uri = FileProvider.getUriForFile(
                 context,
                 "${context.packageName}.fileprovider",
                 file
             )
 
-            // Создание Intent для отправки файла
             val shareIntent: Intent = Intent().apply {
                 action = Intent.ACTION_SEND
                 type = "text/csv"
@@ -173,35 +149,28 @@ class RadioStationListActivity : AppCompatActivity() {
                 addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
             }
 
-            // Запуск активности "Поделиться"
-            context.startActivity(Intent.createChooser(shareIntent, "Share Radio Stations"))
+            context.startActivity(Intent.createChooser(shareIntent, getString(R.string.share_radio_stations)))
 
         } catch (e: Exception) {
             e.printStackTrace()
-            // Обработка ошибок при записи в файл и отправке
         }
     }
 
-    // импорт списка радиостанций из файла в приложение
-    fun importRadioStationsFromFileUri(context: Context, uri: Uri): List<RadioStation> {
+    private fun importRadioStationsFromFileUri(context: Context, uri: Uri): List<RadioStation> {
         val radioStations = mutableListOf<RadioStation>()
         var isValidFile = true
 
         try {
-            // Открываем InputStream из URI
             context.contentResolver.openInputStream(uri)?.use { inputStream ->
                 val reader = BufferedReader(InputStreamReader(inputStream))
 
-                // Пропускаем первую строку с заголовком
                 val headerLine = reader.readLine()
                 if (headerLine == null || !headerLine.equals("Name;URL", ignoreCase = true)) {
-                    // Проверка заголовка файла
                     isValidFile = false
-                    Toast.makeText(context, "Invalid file format", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, getString(R.string.invalid_file_format), Toast.LENGTH_SHORT).show()
                     return emptyList()
                 }
 
-                // Чтение данных из файла
                 reader.forEachLine { line ->
                     if (line.isNotBlank()) {
                         val columns = line.split(";")
@@ -210,27 +179,23 @@ class RadioStationListActivity : AppCompatActivity() {
                             val url = columns[1].trim()
 
                             if (name.isNotEmpty() && url.isNotEmpty()) {
-                                // Создаем объект RadioStation и добавляем его в список
                                 radioStations.add(RadioStation(name, url))
                             } else {
                                 isValidFile = false
-                                Toast.makeText(context, "Incorrect data in line: $line", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(context, getString(R.string.incorrect_data, line), Toast.LENGTH_SHORT).show()
                             }
                         } else {
                             isValidFile = false
-                            Toast.makeText(context, "Incorrect line: $line", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, getString(R.string.incorrect_line, line), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            Toast.makeText(context, "Error while reading file", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, getString(R.string.error_reading_file), Toast.LENGTH_SHORT).show()
         }
 
         return if (isValidFile) radioStations else emptyList()
     }
-
-
-
 }
