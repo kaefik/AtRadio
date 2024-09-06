@@ -118,7 +118,7 @@ class MainActivity : AppCompatActivity() {
         // локализация приложения
         // Проверяем, был ли уже выбран язык ранее
 
-        if (appSettings.language.isEmpty()) {
+        if (appSettings.language.isNullOrEmpty()) {
             // Если язык не был выбран, показываем диалог для выбора языка
             showLanguageDialog()
         } else {
