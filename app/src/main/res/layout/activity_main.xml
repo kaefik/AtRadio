@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -9,16 +10,16 @@
 
     <ImageButton
         android:id="@+id/buttonPlay"
-        android:layout_width="119dp"
-        android:layout_height="106dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/play_stop"
         android:src="@drawable/play_64"
-        android:background="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="ImageContrastCheck" />
 
     <ImageButton
         android:id="@+id/buttonVolumeUp"
@@ -31,9 +32,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.9"
-        />
-
+        app:layout_constraintVertical_bias="0.9" />
 
     <ImageButton
         android:id="@+id/buttonVolumeDown"
@@ -76,66 +75,76 @@
         android:id="@+id/buttonFav3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/favorite_3"
         android:src="@drawable/favorite64"
-        android:background="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@+id/buttonFav2"
         app:layout_constraintTop_toBottomOf="@+id/buttonForward"
-        app:layout_constraintVertical_bias="0.8" />
+        app:layout_constraintVertical_bias="0.8"
+        tools:ignore="ImageContrastCheck" />
 
     <ImageButton
         android:id="@+id/buttonFav2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/favorite_2"
         android:src="@drawable/favorite64"
-        android:background="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/buttonFav3"
         app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@+id/buttonFav1"
         app:layout_constraintTop_toBottomOf="@+id/buttonVolumeDown"
-        app:layout_constraintVertical_bias="0.694" />
+        app:layout_constraintVertical_bias="0.694"
+        tools:ignore="ImageContrastCheck" />
 
     <ImageButton
         android:id="@+id/buttonFav1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/favorite_1"
         android:src="@drawable/favorite64"
-        android:background="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/buttonFav2"
-        app:layout_constraintVertical_bias="0.8"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonPrev" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonPrev"
+        app:layout_constraintVertical_bias="0.8"
+        tools:ignore="ImageContrastCheck" />
 
     <TextView
         android:id="@+id/statusRadio"
-        android:layout_width="264dp"
-        android:layout_height="71dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:text=""
         android:textAlignment="center"
         android:textSize="20sp"
-        android:ellipsize="none"
+        android:ellipsize="end"
+        android:maxLines="1"
         app:layout_constraintBottom_toTopOf="@+id/buttonVolumeUp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5" />
+        app:layout_constraintVertical_bias="0.5"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        />
 
     <ProgressBar
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="260dp"
-        android:layout_height="27dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@+id/buttonFav2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonVolumeDown" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonVolumeDown"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        />
 
     <ImageButton
         android:id="@+id/buttonListRadioStations"
@@ -157,17 +166,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/settings"
         android:src="@drawable/settings32"
-        android:background="?attr/selectableItemBackgroundBorderless"
         app:layout_constraintBottom_toTopOf="@+id/statusRadio"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.09"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.4"/>
+        app:layout_constraintVertical_bias="0.4"
+        tools:ignore="TouchTargetSizeCheck" />
 
-    <!-- Полупрозрачный View для затемнения экрана -->
     <View
         android:id="@+id/dim_view"
         android:layout_width="match_parent"
@@ -175,16 +184,13 @@
         android:background="@color/dim_color"
         android:visibility="gone" />
 
-    <!-- Полностью черный View -->
     <View
         android:id="@+id/black_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/black_color"
-        android:visibility="gone"
-         />
+        android:visibility="gone" />
 
-    <!-- Текст "Radio" для заставки -->
     <TextView
         android:id="@+id/radio_text"
         android:layout_width="wrap_content"
@@ -195,6 +201,5 @@
         android:textSize="24sp"
         android:visibility="gone"
         tools:ignore="MissingConstraints" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
