@@ -59,6 +59,22 @@
         android:layout_gravity="start"
         android:layout_marginTop="8dp" />
 
+    <!-- Спадающий список для выбора языка -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/language"
+        android:textSize="18sp"
+        android:layout_marginTop="16dp"
+        android:gravity="start" />
+
+    <Spinner
+        android:id="@+id/languageSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp" />
+
+
     <!-- Кнопка сброса настроек -->
     <Button
         android:id="@+id/buttonResetAllSettings"

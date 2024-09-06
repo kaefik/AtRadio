@@ -1,9 +1,15 @@
 package com.example.atradio
 
+import android.app.Activity
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.Spinner
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import com.google.gson.Gson
@@ -16,6 +22,7 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var appSettings: AppSettings
     private lateinit var buttonResetAllSettings: Button
     private lateinit var buttonBack: ImageButton
+    private lateinit var languageSpinner: Spinner
     private val gson = Gson()
 
 
@@ -27,6 +34,7 @@ class SettingsActivity : AppCompatActivity() {
         screenSaverSwitch = findViewById(R.id.screenSaverSwitch)
         buttonResetAllSettings = findViewById(R.id.buttonResetAllSettings)
         buttonBack = findViewById(R.id.buttonBack)
+        languageSpinner = findViewById(R.id.languageSpinner)
 
         // Загрузка настроек, если их нет, то использование настроек по умолчанию
         appSettings = loadAppSettings()
@@ -54,8 +62,47 @@ class SettingsActivity : AppCompatActivity() {
 
         buttonBack.setOnClickListener {
             saveAppSettings(appSettings)
+            val resultIntent = Intent().apply {
+                // Можно добавить данные в Intent, если нужно
+                putExtra("key", "value")
+            }
+
+            setResult(Activity.RESULT_OK, resultIntent)
             finish()
         }
+
+        // Настройка спиннера выбора языка приложения
+        val languages = arrayOf("en", "ru")
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, languages)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        languageSpinner.adapter = adapter
+
+        // Обработка изменения выбора языка
+        languageSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                val selectedLanguage = languages[position]
+                appSettings.language = selectedLanguage
+                saveAppSettings(appSettings)
+                // Здесь вы можете добавить логику для применения изменения языка в приложении
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                // Ничего не делаем
+            }
+        }
+        // END Настройка спиннера выбора языка приложения
+
+
+        // Установка текущего выбранного языка
+        languageSpinner.setSelection(getLanguageIndex(appSettings.language))
+
+        // Обработка изменения состояния переключателя автозапуска
+        autoPlaySwitch.setOnCheckedChangeListener { _, isChecked ->
+            appSettings.isAutoPlayEnabled = isChecked
+            saveAppSettings(appSettings)
+        }
+
+
     }
 
     // обновляет переключатели и другие параметры в соответствии с текущими настройками appSettings
@@ -63,6 +110,16 @@ class SettingsActivity : AppCompatActivity() {
     private fun refreshSettings(){
         autoPlaySwitch.isChecked = appSettings.isAutoPlayEnabled
         screenSaverSwitch.isChecked = appSettings.isScreenSaverEnabled
+        languageSpinner.setSelection(getLanguageIndex(appSettings.language))
+    }
+
+    // Получаем индекс языка для установки в Spinner
+    private fun getLanguageIndex(language: String): Int {
+        return when (language) {
+            "en" -> 0
+            "ru" -> 1
+            else -> 0 // По умолчанию English
+        }
     }
 
     private fun saveAppSettings(settings: AppSettings) {

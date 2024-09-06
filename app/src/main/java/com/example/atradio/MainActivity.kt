@@ -36,6 +36,10 @@ import android.content.Context
 import android.content.res.Configuration
 import java.util.*
 
+import android.app.AlarmManager
+import android.app.PendingIntent
+import kotlin.system.exitProcess
+
 class MainActivity : AppCompatActivity() {
 
     private var kol = 0
@@ -113,10 +117,8 @@ class MainActivity : AppCompatActivity() {
 
         // локализация приложения
         // Проверяем, был ли уже выбран язык ранее
-//        val sharedPreferences = getSharedPreferences("Settings", Context.MODE_PRIVATE)
-//        val language = sharedPreferences.getString("App_Language", "")
 
-        if (appSettings.language.isNullOrEmpty()) {
+        if (appSettings.language.isEmpty()) {
             // Если язык не был выбран, показываем диалог для выбора языка
             showLanguageDialog()
         } else {
@@ -131,9 +133,8 @@ class MainActivity : AppCompatActivity() {
         blackView = findViewById(R.id.black_view)
         radioText = findViewById(R.id.radio_text)
 
-//        if (appSettings.isScreenSaverEnabled) {
-            resetTimers()
-//        }
+        resetTimers()
+
         // END заставка - сринсейвер
 
         // Скрытие строки статуса
@@ -239,6 +240,9 @@ class MainActivity : AppCompatActivity() {
         val settingAppLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 appSettings = loadAppSettings() // Перезагружаем все настройки
+                setLocale(appSettings.language)
+//                restartApp(this)
+                recreate()
             }
             resetTimers()
         }
@@ -614,6 +618,14 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    override fun onDestroy() {
+        super.onDestroy()
+        // Освобождение ресурсов MediaPlayer при завершении активности
+        mediaPlayer?.release()
+        mediaPlayer = null
+    }
+
+
 
 }
 
@@ -626,3 +638,4 @@ fun View.setOnClickListenerWithScreenSaverReset(action: () -> Unit) {
         action() // Выполнение основной логики
     }
 }
+

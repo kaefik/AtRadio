@@ -48,4 +48,5 @@
     <string name="radio_station_name">Radio Station Name</string>
     <string name="name_station">Name station</string>
     <string name="url_station">URL station</string>
+    <string name="language">Language</string>
 </resources>
