@@ -1,35 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:padding="16dp">
 
     <EditText
         android:id="@+id/editTextRadioName"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Name station"
-        android:inputType="text" />
+        android:autofillHints=""
+        android:hint="@string/name_station"
+        android:inputType="text"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.9"
+        tools:ignore="VisualLintTextFieldSize" />
 
     <EditText
         android:id="@+id/editTextRadioUrl"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="URL station"
-        android:inputType="textUri" />
+        android:layout_marginTop="8dp"
+        android:autofillHints=""
+        android:hint="@string/url_station"
+        android:inputType="textUri"
+        android:minHeight="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editTextRadioName"
+        app:layout_constraintWidth_percent="0.9"
+        tools:ignore="VisualLintTextFieldSize" />
 
     <Button
         android:id="@+id/buttonSaveRadioStation"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Save" />
+        android:text="@string/save"
+        app:layout_constraintTop_toBottomOf="@id/editTextRadioUrl"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="0.9"
+        android:layout_marginTop="16dp"
+        tools:ignore="VisualLintButtonSize" />
 
     <Button
         android:id="@+id/buttonCancel"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Cancel"
-        android:layout_marginTop="8dp" />
+        android:text="@string/cancel"
+        app:layout_constraintTop_toBottomOf="@id/buttonSaveRadioStation"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="0.9"
+        android:layout_marginTop="8dp"
+        tools:ignore="VisualLintButtonSize" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
