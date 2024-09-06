@@ -3,6 +3,7 @@ package com.example.atradio
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -14,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SwitchCompat
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import java.util.Locale
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -38,6 +40,8 @@ class SettingsActivity : AppCompatActivity() {
 
         // Загрузка настроек, если их нет, то использование настроек по умолчанию
         appSettings = loadAppSettings()
+
+//        setLocale(appSettings.language)
 
         // Установка состояния переключателя автозапуска на основе загруженных настроек
         refreshSettings()
@@ -72,7 +76,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         // Настройка спиннера выбора языка приложения
-        val languages = arrayOf("en", "ru")
+        val languages = arrayOf("en", "ru", "tt")
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, languages)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         languageSpinner.adapter = adapter
@@ -118,6 +122,7 @@ class SettingsActivity : AppCompatActivity() {
         return when (language) {
             "en" -> 0
             "ru" -> 1
+            "tt" -> 2
             else -> 0 // По умолчанию English
         }
     }
@@ -157,5 +162,4 @@ class SettingsActivity : AppCompatActivity() {
         val dialog: AlertDialog = builder.create()
         dialog.show()
     }
-
 }
