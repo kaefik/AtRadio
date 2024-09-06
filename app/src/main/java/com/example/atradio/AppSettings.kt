@@ -3,6 +3,7 @@ import android.os.Parcel
 import android.os.Parcelable
 
 import android.content.Context
+import org.intellij.lang.annotations.Language
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
@@ -36,29 +37,32 @@ data class RadioStation(val name: String, val url: String) : Parcelable {
 // Класс для хранения настроек приложения
 data class AppSettings(
     var favoriteStations: MutableList<RadioStation?>, // список избранных станций
-    var isAutoPlayEnabled: Boolean,    // флаг, запуска автопроигрывания при открытии приложения
-    var isScreenSaverEnabled: Boolean, // флаг включение скринсейвера
+    var isAutoPlayEnabled: Boolean,    // флаг автозапуска
+    var isScreenSaverEnabled: Boolean, // флаг включения скринсейвера
     var lastRadioStationIndex: Int,     // номер последней проигранной станции
-    var radioStations: MutableList<RadioStation> // список станций
+    var radioStations: MutableList<RadioStation>, // список станций
+    var language: String // язык интерфейса
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         mutableListOf<RadioStation?>().apply {
-            parcel.readList(this, RadioStation::class.java.classLoader)
+            parcel.readTypedList(this, RadioStation.CREATOR)  // Исправлено для чтения списка радиостанций
         },
         parcel.readByte() != 0.toByte(),
         parcel.readByte() != 0.toByte(),
         parcel.readInt(),
         mutableListOf<RadioStation>().apply {
-            parcel.readList(this, RadioStation::class.java.classLoader)
-        }
+            parcel.readTypedList(this, RadioStation.CREATOR) // Исправлено для чтения списка радиостанций
+        },
+        parcel.readString() ?: "en" // чтение языка интерфейса с дефолтным значением
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeList(favoriteStations)
+        parcel.writeTypedList(favoriteStations) // Используем writeTypedList для записи списка
         parcel.writeByte(if (isAutoPlayEnabled) 1 else 0)
         parcel.writeByte(if (isScreenSaverEnabled) 1 else 0)
         parcel.writeInt(lastRadioStationIndex)
-        parcel.writeList(radioStations)
+        parcel.writeTypedList(radioStations) // Используем writeTypedList для записи списка
+        parcel.writeString(language) // Сохраняем язык интерфейса
     }
 
     override fun describeContents(): Int {
@@ -75,6 +79,7 @@ data class AppSettings(
         }
     }
 }
+
 
 // Функция для загрузки радиостанций из CSV
 fun loadRadioStationsFromRaw(context: Context, resourceId: Int): MutableList<RadioStation> {
@@ -112,7 +117,8 @@ fun initAppSettings(context: Context): AppSettings {
         isAutoPlayEnabled = false, // Значение по умолчанию
         isScreenSaverEnabled = true, // Значение по умолчанию
         lastRadioStationIndex = 0, // Первая радиостанция в списке
-        radioStations = mutableListOf() // Пустой список радиостанций
+        radioStations = mutableListOf(), // Пустой список радиостанций
+        language = "en"
     )
 
     // Загрузка радиостанций из CSV
