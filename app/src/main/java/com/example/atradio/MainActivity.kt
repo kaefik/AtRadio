@@ -113,15 +113,15 @@ class MainActivity : AppCompatActivity() {
 
         // локализация приложения
         // Проверяем, был ли уже выбран язык ранее
-        val sharedPreferences = getSharedPreferences("Settings", Context.MODE_PRIVATE)
-        val language = sharedPreferences.getString("App_Language", "")
+//        val sharedPreferences = getSharedPreferences("Settings", Context.MODE_PRIVATE)
+//        val language = sharedPreferences.getString("App_Language", "")
 
-        if (language.isNullOrEmpty()) {
+        if (appSettings.language.isNullOrEmpty()) {
             // Если язык не был выбран, показываем диалог для выбора языка
             showLanguageDialog()
         } else {
             // Если язык был выбран ранее, устанавливаем его
-            setLocale(language)
+            setLocale(appSettings.language)
             setContentView(R.layout.activity_main)
         }
         // END локализация приложения
@@ -607,17 +607,10 @@ class MainActivity : AppCompatActivity() {
         Locale.setDefault(locale)
         val config = Configuration()
         config.setLocale(locale)
-
         // Сохраняем выбранный язык
-        val sharedPreferences = getSharedPreferences("Settings", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        editor.putString("App_Language", languageCode)
-        editor.apply()
-
+        appSettings.language=languageCode
+        saveAppSettings(appSettings)
         resources.updateConfiguration(config, resources.displayMetrics)
-
-        // Уведомляем пользователя о смене языка
-        Toast.makeText(this, "Язык изменен", Toast.LENGTH_SHORT).show()
     }
 
 

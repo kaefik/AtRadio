@@ -118,7 +118,7 @@ fun initAppSettings(context: Context): AppSettings {
         isScreenSaverEnabled = true, // Значение по умолчанию
         lastRadioStationIndex = 0, // Первая радиостанция в списке
         radioStations = mutableListOf(), // Пустой список радиостанций
-        language = "en"
+        language = ""
     )
 
     // Загрузка радиостанций из CSV
