@@ -32,8 +32,13 @@ import android.view.MotionEvent
 import android.util.TypedValue
 import android.view.ViewGroup
 
+import android.content.Context
+import android.content.res.Configuration
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
+
+    private var kol = 0
 
     private var mediaPlayer: MediaPlayer? = null
     private lateinit var volumeControl: VolumeControl
@@ -104,6 +109,22 @@ class MainActivity : AppCompatActivity() {
 
         // Загружаем настройки при старте
         appSettings = loadAppSettings()
+
+
+        // локализация приложения
+        // Проверяем, был ли уже выбран язык ранее
+        val sharedPreferences = getSharedPreferences("Settings", Context.MODE_PRIVATE)
+        val language = sharedPreferences.getString("App_Language", "")
+
+        if (language.isNullOrEmpty()) {
+            // Если язык не был выбран, показываем диалог для выбора языка
+            showLanguageDialog()
+        } else {
+            // Если язык был выбран ранее, устанавливаем его
+            setLocale(language)
+            setContentView(R.layout.activity_main)
+        }
+        // END локализация приложения
 
         // заставка - сринсейвер
         dimView = findViewById(R.id.dim_view)
@@ -556,6 +577,50 @@ class MainActivity : AppCompatActivity() {
             getChildAt(i).isEnabled = enabled
         }
     }
+
+    // локализация приложения под различные языки
+
+    private fun showLanguageDialog() {
+        val languages = arrayOf("English", "Русский")
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Выберите язык")
+        builder.setSingleChoiceItems(languages, -1) { dialog, which ->
+            when (which) {
+                0 -> {
+                    setLocale("en")
+                }
+                1 -> {
+                    setLocale("ru")
+                }
+            }
+            dialog.dismiss()
+        }
+        builder.setOnDismissListener {
+            // Перезапуск MainActivity после выбора языка
+            recreate()
+        }
+        builder.show()
+    }
+
+    private fun setLocale(languageCode: String) {
+        val locale = Locale(languageCode)
+        Locale.setDefault(locale)
+        val config = Configuration()
+        config.setLocale(locale)
+
+        // Сохраняем выбранный язык
+        val sharedPreferences = getSharedPreferences("Settings", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.putString("App_Language", languageCode)
+        editor.apply()
+
+        resources.updateConfiguration(config, resources.displayMetrics)
+
+        // Уведомляем пользователя о смене языка
+        Toast.makeText(this, "Язык изменен", Toast.LENGTH_SHORT).show()
+    }
+
+
 
 }
 
