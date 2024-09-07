@@ -10,7 +10,7 @@
     <string name="file_no_new_stations">Файлда яңа станцияләр юк</string>
     <string name="radio_stations_imported">Радио станцияләре кертелде</string>
     <string name="radio_deletion_title">Радионы бетерү</string>
-    <string name="radio_deletion_message">Бу станцияне бетерергә ышанасызмы?</string>
+    <string name="radio_deletion_message">Агымдагы станцияне бетерергә ышанасызмы?</string>
     <string name="delete">Бетерү</string>
     <string name="share_radio_stations">Радио станцияләрен уртаклашу</string>
     <string name="invalid_file_format">Файл форматы дөрес түгел</string>
