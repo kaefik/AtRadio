@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AtRadio</string>
+    <string name="at_radio">\@Радио</string>
+
+    <string name="screensaver_protect_display_settings">Экран һаҡсыһы (қайтанан башлау талап ителә)</string>
+    <string name="enable_autoplay_settings">Автоплейҙы йәлеп итеү</string>
+    <string name="invalid_url_message">Дөрөҫ URL индерегеҙ</string>
+    <string name="empty_fields_message">Радиостанцияның исеме һәм URL-ы индерегеҙ</string>
+    <string name="radio_station_added">Радиостанция өҫтәлде</string>
+    <string name="file_no_new_stations">Файлда яңы станциялар юҡ</string>
+    <string name="radio_stations_imported">Радиостанциялар импортланды</string>
+    <string name="radio_deletion_title">Радиостанцияны юйыу</string>
+    <string name="radio_deletion_message">Һеҙ ысынлап та был станцияны юйырға теләйһегеҙме?</string>
+    <string name="delete">Юйырға</string>
+    <string name="share_radio_stations">Радиостанцияларҙы бүлешергә</string>
+    <string name="invalid_file_format">Файл форматы дөрөҫ түгел</string>
+    <string name="incorrect_data">Дөрөҫ булмаған юлдағы мәғлүмәт: %1$s</string>
+    <string name="incorrect_line">Дөрөҫ булмаған юл: %1$s</string>
+    <string name="error_reading_file">Файлды уҡыу ваҡытында хаталар</string>
+    <string name="dialog_title">Мәғлүмәт</string>
+    <string name="dialog_message">Көйләүҙәрҙе ҡулланыу өсөн, ҡушымтаны яңынан асырға кәрәк.</string>
+    <string name="dialog_button_ok">ОК</string>
+    <string name="empty_list_stations">Станциялар исемлеге буш</string>
+    <string name="error_playing_station">Станцияны уйнатыуҙа хата</string>
+    <string name="error_message">Хата: </string>
+    <string name="save_favorite_message">Ағымдағы станцияны яратҡанға һаҡларға</string>
+    <string name="save">Һаҡларға</string>
+    <string name="cancel">Баш тартырға</string>
+    <string name="station_saved_to_favorite">Станция яратҡанға һаҡланды</string>
+    <string name="no_station_saved_to_favorite">Яратҡан станциялар юҡ</string>
+    <string name="add">Өҫтәргә</string>
+    <string name="share">Бүлешергә</string>
+    <string name="import_str">Импорт</string>
+    <string name="back">Кире</string>
+    <string name="autoplay_last_station">Һуңғы станцияны автоматик уйнау</string>
+    <string name="enable_screensaver">Экран һаҡсыһын йәлеп итеү</string>
+    <string name="reset_all_settings">Бөтә көйләүҙәрҙе яңынан ҡуйыу</string>
+    <string name="play_stop">Уйнатырға/Туҡтатырға</string>
+    <string name="vol_plus">Тауыш+</string>
+    <string name="vol_minus">Тауыш-</string>
+    <string name="prev">Алдағы</string>
+    <string name="forward">Алға</string>
+    <string name="favorite_3">Яратҡан 3</string>
+    <string name="favorite_2">Яратҡан 2</string>
+    <string name="favorite_1">Яратҡан 1</string>
+    <string name="list">исемлек</string>
+    <string name="settings">көйләүҙәр</string>
+    <string name="radio_station_name">Радиостанцияның исеме</string>
+    <string name="name_station">Станцияның исеме</string>
+    <string name="url_station">Станцияның URL-ы</string>
+    <string name="language">Телен</string>
+</resources>
