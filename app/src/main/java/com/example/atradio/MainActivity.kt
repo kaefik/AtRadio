@@ -447,7 +447,7 @@ class MainActivity : AppCompatActivity() {
                onErrorPlay()
             }
 
-        } ?: Toast.makeText(this, getString(R.string.no_station_saved_to_favorite) + (favIndex + 1), Toast.LENGTH_SHORT).show()
+        } ?: Toast.makeText(this, getString(R.string.no_station_saved_to_favorite) + " ${favIndex + 1}", Toast.LENGTH_SHORT).show()
     }
 
     // обработка ошибки проигрывания музыки
