@@ -75,8 +75,8 @@ class SettingsActivity : AppCompatActivity() {
             finish()
         }
 
-        // Настройка спиннера выбора языка приложения
-        val languages = arrayOf("en", "ru", "tt")
+        // Настройка спиннера выбора языtка приложения
+        val languages = arrayOf("en", "tt", "ba", "ru")
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, languages)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         languageSpinner.adapter = adapter
@@ -121,8 +121,9 @@ class SettingsActivity : AppCompatActivity() {
     private fun getLanguageIndex(language: String): Int {
         return when (language) {
             "en" -> 0
-            "ru" -> 1
-            "tt" -> 2
+            "tt" -> 1
+            "ba" -> 2
+            "ru" -> 3
             else -> 0 // По умолчанию English
         }
     }

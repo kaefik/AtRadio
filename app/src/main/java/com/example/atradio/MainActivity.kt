@@ -585,19 +585,22 @@ class MainActivity : AppCompatActivity() {
     // локализация приложения под различные языки
 
     private fun showLanguageDialog() {
-        val languages = arrayOf("English", "Русский", "Татар")
+        val languages = arrayOf("English", "Татарча", "Башҡортса", "Русский")
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Выберите язык")
+        builder.setTitle("Select the language app")
         builder.setSingleChoiceItems(languages, -1) { dialog, which ->
             when (which) {
                 0 -> {
                     setLocale("en")
                 }
                 1 -> {
-                    setLocale("ru")
+                    setLocale("tt")
                 }
                 2 -> {
-                    setLocale("tt")
+                    setLocale("ba")
+                }
+                3 -> {
+                    setLocale("ru")
                 }
             }
             dialog.dismiss()
