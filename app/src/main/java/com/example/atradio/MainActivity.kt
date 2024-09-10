@@ -425,7 +425,7 @@ class MainActivity : AppCompatActivity() {
             .setPositiveButton(getString(R.string.save)) { _, _ ->
                 appSettings.favoriteStations[favIndex] = appSettings.radioStations[appSettings.lastRadioStationIndex]
                 saveAppSettings(appSettings)
-                Toast.makeText(this, "Station saved to favorite"+" ${favIndex + 1}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.save_station_favorite)+" ${favIndex + 1}", Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton(getString(R.string.cancel), null)
             .show()
