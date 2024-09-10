@@ -229,7 +229,9 @@ class MainActivity : AppCompatActivity() {
                 statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
                 buttonPlay.setImageResource(R.drawable.stop_64)
 //                radioService?.stopMusic()
-                stopService(radioServiceIntent)
+                if (::radioServiceIntent.isInitialized) {
+                    stopService(radioServiceIntent)
+                }
                 val radioStationUrl = appSettings.radioStations[appSettings.lastRadioStationIndex].url
 
                 // Создаем Intent для старта сервиса
@@ -258,7 +260,9 @@ class MainActivity : AppCompatActivity() {
                 if (appSettings.radioStations.isEmpty()) {
 //                    stopMusic()
 //                    radioService?.stopMusic()
-                    stopService(radioServiceIntent)
+                    if (::radioServiceIntent.isInitialized) {
+                        stopService(radioServiceIntent)
+                    }
                     statusPlay = false
                     buttonPlay.setImageResource(R.drawable.play_64)
                     statusRadio.text = getString(R.string.empty_list_stations)
@@ -279,7 +283,9 @@ class MainActivity : AppCompatActivity() {
                     statusRadio.text = selectedStation.name
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
                     buttonPlay.setImageResource(R.drawable.stop_64)
-                    stopService(radioServiceIntent)
+                    if (::radioServiceIntent.isInitialized) {
+                        stopService(radioServiceIntent)
+                    }
 //                    radioService?.stopMusic()
                     val radioStationUrl = appSettings.radioStations[appSettings.lastRadioStationIndex].url
                     // Создаем Intent для старта сервиса
@@ -352,7 +358,9 @@ class MainActivity : AppCompatActivity() {
             if (appSettings.radioStations.isEmpty()) {
                 appSettings.lastRadioStationIndex = 0
 //                radioService?.stopMusic()
-                stopService(radioServiceIntent)
+                if (::radioServiceIntent.isInitialized) {
+                    stopService(radioServiceIntent)
+                }
                 statusRadio.text = "Empty list stations"
             } else {
                 appSettings.lastRadioStationIndex += 1
@@ -362,7 +370,9 @@ class MainActivity : AppCompatActivity() {
                 statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
                 if (statusPlay) {
 //                    radioService?.stopMusic()
-                    stopService(radioServiceIntent)
+                    if (::radioServiceIntent.isInitialized) {
+                        stopService(radioServiceIntent)
+                    }
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
                     val radioStationUrl = appSettings.radioStations[appSettings.lastRadioStationIndex].url
 
@@ -377,7 +387,9 @@ class MainActivity : AppCompatActivity() {
 
                 } else {
 //                    radioService?.stopMusic()
-                    stopService(radioServiceIntent)
+                    if (::radioServiceIntent.isInitialized) {
+                        stopService(radioServiceIntent)
+                    }
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
                 }
             }
@@ -388,7 +400,9 @@ class MainActivity : AppCompatActivity() {
                 appSettings.lastRadioStationIndex = 0
 //                stopMusic()
 //                radioService?.stopMusic()
-                stopService(radioServiceIntent)
+                if (::radioServiceIntent.isInitialized) {
+                    stopService(radioServiceIntent)
+                }
                 statusRadio.text = "Empty list stations"
             } else {
                 appSettings.lastRadioStationIndex -= 1
@@ -400,7 +414,9 @@ class MainActivity : AppCompatActivity() {
 
                 if (statusPlay) {
 //                    radioService?.stopMusic()
-                    stopService(radioServiceIntent)
+                    if (::radioServiceIntent.isInitialized) {
+                        stopService(radioServiceIntent)
+                    }
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
                     val radioStationUrl = appSettings.radioStations[appSettings.lastRadioStationIndex].url
                     // Создаем Intent для старта сервиса
@@ -434,7 +450,9 @@ class MainActivity : AppCompatActivity() {
             if (appSettings.radioStations.isEmpty()) {
                 appSettings.lastRadioStationIndex = 0
 //                radioService?.stopMusic()
-                stopService(radioServiceIntent)
+                if (::radioServiceIntent.isInitialized) {
+                    stopService(radioServiceIntent)
+                }
                 statusRadio.text = "Empty list stations"
                 statusPlay = false
                 statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
@@ -446,7 +464,9 @@ class MainActivity : AppCompatActivity() {
                     buttonPlay.setImageResource(R.drawable.play_64)
                     statusPlay = false
 //                    radioService?.stopMusic()
-                    stopService(radioServiceIntent)
+                    if (::radioServiceIntent.isInitialized) {
+                        stopService(radioServiceIntent)
+                    }
                 } else {
                     buttonPlay.setImageResource(R.drawable.stop_64)
                     statusPlay = true
@@ -502,7 +522,9 @@ class MainActivity : AppCompatActivity() {
             if (statusPlay) {
 //                stopMusic()
 //                radioService?.stopMusic()
-                stopService(radioServiceIntent)
+                if (::radioServiceIntent.isInitialized) {
+                    stopService(radioServiceIntent)
+                }
             }
             statusPlay = true
             appSettings.lastRadioStationIndex = appSettings.radioStations.indexOf(it)
