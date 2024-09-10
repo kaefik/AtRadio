@@ -1,15 +1,11 @@
 package com.example.atradio
 
-import android.annotation.SuppressLint
 import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Binder
-import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
@@ -47,40 +43,24 @@ class RadioService : Service() {
 
     fun startMusic(url: String): Boolean {
         stopMusic()
-//        mediaPlayer = MediaPlayer().apply {
-//            setDataSource(url)
-//            prepareAsync()
-//            setOnPreparedListener { start() }
-//            setOnErrorListener { _, what, extra ->
-//                handleError(what, extra)
-//                stopMusic()
-//                false // Возвращаем false, чтобы не воспринимать ошибку как успешное воспроизведение
-//            }
-//        }
                 return try {
             mediaPlayer = MediaPlayer().apply {
                 setDataSource(url)
-
                 setOnPreparedListener {
-//                    progressBar.visibility = View.GONE
-                    start()
+                start()
                 }
 
                 setOnErrorListener { _, what, extra ->
                     stopMusic()
-//                    progressBar.visibility = View.GONE
                     handleError(what, extra)
                     stopMusic()
                     false
                 }
-
-//                progressBar.visibility = View.VISIBLE
                 prepareAsync()
             }
             true
         } catch (e: Exception) {
             Toast.makeText(this, getString(R.string.error_message) + e.message, Toast.LENGTH_LONG).show()
-//            onErrorPlay()
             false // Возвращаем false, если произошло исключение
         }
 
