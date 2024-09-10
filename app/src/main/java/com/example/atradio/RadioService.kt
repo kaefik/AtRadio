@@ -11,6 +11,7 @@ import android.media.MediaPlayer
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
 
@@ -44,14 +45,45 @@ class RadioService : Service() {
             .build()
     }
 
-    fun startMusic(url: String) {
+    fun startMusic(url: String): Boolean {
         stopMusic()
-        mediaPlayer = MediaPlayer().apply {
-            setDataSource(url)
-            prepareAsync()
-            setOnPreparedListener { start() }
-            setOnErrorListener { _, _, _ -> stopMusic(); false }
+//        mediaPlayer = MediaPlayer().apply {
+//            setDataSource(url)
+//            prepareAsync()
+//            setOnPreparedListener { start() }
+//            setOnErrorListener { _, what, extra ->
+//                handleError(what, extra)
+//                stopMusic()
+//                false // Возвращаем false, чтобы не воспринимать ошибку как успешное воспроизведение
+//            }
+//        }
+                return try {
+            mediaPlayer = MediaPlayer().apply {
+                setDataSource(url)
+
+                setOnPreparedListener {
+//                    progressBar.visibility = View.GONE
+                    start()
+                }
+
+                setOnErrorListener { _, what, extra ->
+                    stopMusic()
+//                    progressBar.visibility = View.GONE
+                    handleError(what, extra)
+                    stopMusic()
+                    false
+                }
+
+//                progressBar.visibility = View.VISIBLE
+                prepareAsync()
+            }
+            true
+        } catch (e: Exception) {
+            Toast.makeText(this, getString(R.string.error_message) + e.message, Toast.LENGTH_LONG).show()
+//            onErrorPlay()
+            false // Возвращаем false, если произошло исключение
         }
+
     }
 
     fun stopMusic() {
@@ -60,6 +92,22 @@ class RadioService : Service() {
             release()
         }
         mediaPlayer = null
+    }
+
+    private fun handleError(what: Int, extra: Int) {
+        val errorMessage = when (what) {
+            MediaPlayer.MEDIA_ERROR_IO -> "Input/Output error"
+            MediaPlayer.MEDIA_ERROR_MALFORMED -> "Malformed media"
+            MediaPlayer.MEDIA_ERROR_UNSUPPORTED -> "Unsupported media"
+            MediaPlayer.MEDIA_ERROR_TIMED_OUT -> "Timed out"
+            else -> "Unknown error"
+        }
+
+        // Логирование ошибки (можно использовать Logcat для этого)
+        Log.e("RadioService", "MediaPlayer error: $errorMessage, extra: $extra")
+
+        // Отправка уведомления пользователю (если это применимо)
+        // sendNotification("Error", errorMessage)
     }
 
     override fun onDestroy() {
