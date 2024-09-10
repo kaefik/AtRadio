@@ -47,8 +47,6 @@ class MainActivity : AppCompatActivity() {
 
     private var kol = 0
 
-//    private var mediaPlayer: MediaPlayer? = null
-
     // для сервиса плеера
     private var radioService: RadioService? = null
     private var isBound = false
@@ -211,11 +209,6 @@ class MainActivity : AppCompatActivity() {
                 statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
                 statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
                 buttonPlay.setImageResource(R.drawable.stop_64)
-//                stopMusic()
-//                val isNotErrorPlay = startMusic(appSettings.radioStations[appSettings.lastRadioStationIndex], progressBar)
-//                if (!isNotErrorPlay) {
-//                    onErrorPlay()
-//                }
                 radioService?.stopMusic()
                 val radioStationUrl = appSettings.radioStations[appSettings.lastRadioStationIndex].url
                 val isNotErrorPlay = radioService?.startMusic(radioStationUrl)
@@ -262,11 +255,6 @@ class MainActivity : AppCompatActivity() {
                     statusRadio.text = selectedStation.name
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
                     buttonPlay.setImageResource(R.drawable.stop_64)
-//                    stopMusic()
-//                    val isNotErrorPlay = startMusic(selectedStation, progressBar)
-//                    if (!isNotErrorPlay) {
-//                        onErrorPlay()
-//                    }
                     radioService?.stopMusic()
                     val radioStationUrl = appSettings.radioStations[appSettings.lastRadioStationIndex].url
                     val isNotErrorPlay = radioService?.startMusic(radioStationUrl)
@@ -282,7 +270,6 @@ class MainActivity : AppCompatActivity() {
             if (result.resultCode == Activity.RESULT_OK) {
                 appSettings = loadAppSettings() // Перезагружаем все настройки
                 setLocale(appSettings.language)
-//                restartApp(this)
                 recreate()
             }
             resetTimers()
@@ -290,7 +277,6 @@ class MainActivity : AppCompatActivity() {
 
         buttonSettings.setOnClickListenerWithScreenSaverReset {
             val intent = Intent(this, SettingsActivity::class.java)
-////            intent.putParcelableArrayListExtra("radioStations", ArrayList(appSettings.radioStations))
             settingAppLauncher.launch(intent)
 
         }
@@ -332,7 +318,6 @@ class MainActivity : AppCompatActivity() {
         buttonForward.setOnClickListenerWithScreenSaverReset {
             if (appSettings.radioStations.isEmpty()) {
                 appSettings.lastRadioStationIndex = 0
-//                stopMusic()
                 radioService?.stopMusic()
                 statusRadio.text = "Empty list stations"
             } else {
@@ -342,21 +327,15 @@ class MainActivity : AppCompatActivity() {
                 saveAppSettings(appSettings)
                 statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
                 if (statusPlay) {
-//                    stopMusic()
                     radioService?.stopMusic()
 
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
-//                    val isNotErrorPlay = startMusic(appSettings.radioStations[appSettings.lastRadioStationIndex], progressBar)
-//                    if (!isNotErrorPlay) {
-//                        onErrorPlay()
-//                    }
                     val radioStationUrl = appSettings.radioStations[appSettings.lastRadioStationIndex].url
                     val isNotErrorPlay = radioService?.startMusic(radioStationUrl)
                     if (!isNotErrorPlay!!) {
                         onErrorPlay()
                     }
                 } else {
-//                    stopMusic()
                     radioService?.stopMusic()
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
                 }
@@ -378,20 +357,14 @@ class MainActivity : AppCompatActivity() {
                 statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
 
                 if (statusPlay) {
-//                    stopMusic()
                     radioService?.stopMusic()
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
-//                    val isNotErrorPlay = startMusic(appSettings.radioStations[appSettings.lastRadioStationIndex], progressBar)
-//                    if (!isNotErrorPlay) {
-//                        onErrorPlay()
-//                    }
                     val radioStationUrl = appSettings.radioStations[appSettings.lastRadioStationIndex].url
                     val isNotErrorPlay = radioService?.startMusic(radioStationUrl)
                     if (!isNotErrorPlay!!) {
                         onErrorPlay()
                     }
                 } else {
-//                    stopMusic()
                     radioService?.stopMusic()
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
                 }
@@ -407,15 +380,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         buttonPlay.setOnClickListenerWithScreenSaverReset {
-//            if (statusPlay) {
-//                radioService?.stopMusic()
-//                updateUIForStopped()
-//            } else {
-//                val radioStationUrl = appSettings.radioStations[appSettings.lastRadioStationIndex].url
-//                radioService?.startMusic(radioStationUrl)
-//                updateUIForPlaying()
-//            }
-//            statusPlay = !statusPlay
             if (appSettings.radioStations.isEmpty()) {
                 appSettings.lastRadioStationIndex = 0
                 radioService?.stopMusic()
@@ -457,48 +421,6 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-
-    // если все проходит без ошибок, то возвр-ся true, иначе false
-//    private fun startMusic(radioStation: RadioStation, progressBar: ProgressBar): Boolean {
-//        stopMusic()
-//
-//        return try {
-//            mediaPlayer = MediaPlayer().apply {
-//                setDataSource(radioStation.url)
-//
-//                setOnPreparedListener {
-//                    progressBar.visibility = View.GONE
-//                    start()
-//                }
-//
-//                setOnErrorListener { _, _, _ ->
-//                    stopMusic()
-//                    progressBar.visibility = View.GONE
-//                    Toast.makeText(this@MainActivity, getString(R.string.error_playing_station), Toast.LENGTH_SHORT).show()
-//                    onErrorPlay()
-//                    false
-//                }
-//
-//                progressBar.visibility = View.VISIBLE
-//                prepareAsync()
-//
-//            }
-//            true
-//        } catch (e: Exception) {
-//            Toast.makeText(this, getString(R.string.error_message) + e.message, Toast.LENGTH_LONG).show()
-//            onErrorPlay()
-//            false // Возвращаем false, если произошло исключение
-//        }
-//    }
-//
-//    private fun stopMusic() {
-//        mediaPlayer?.apply {
-//            stop()
-//            release()
-//        }
-//        mediaPlayer = null
-//    }
-
     private fun showSaveDialog(favIndex: Int) {
         AlertDialog.Builder(this)
             .setMessage(getString(R.string.save_favorite_message) + (favIndex + 1) + "?")
@@ -520,13 +442,6 @@ class MainActivity : AppCompatActivity() {
             statusPlay = true
             appSettings.lastRadioStationIndex = appSettings.radioStations.indexOf(it)
             statusRadio.text = it.name
-//            val isNotErrorPlay = startMusic(it, progressBar)
-//            if (isNotErrorPlay) {
-//                statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
-//                buttonPlay.setImageResource(R.drawable.stop_64)
-//            } else {
-//               onErrorPlay()
-//            }
             val radioStationUrl = it.url
             val isNotErrorPlay = radioService?.startMusic(radioStationUrl)
             if (!isNotErrorPlay!!) {
@@ -713,8 +628,6 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         // Освобождение ресурсов MediaPlayer при завершении активности
-//        mediaPlayer?.release()
-//        mediaPlayer = null
         if (isBound) {
             unbindService(serviceConnection)
             isBound = false
