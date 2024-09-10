@@ -50,13 +50,32 @@ class MainActivity : AppCompatActivity() {
     // для сервиса плеера
     private var radioService: RadioService? = null
     private var isBound = false
+    private var serviceReadyCallback: ((RadioService) -> Unit)? = null
 
+
+
+//    private val serviceConnection = object : ServiceConnection {
+//        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+//            val binder = service as RadioService.LocalBinder
+//            radioService = binder.getService()
+//            isBound = true
+//        }
+//
+//        override fun onServiceDisconnected(name: ComponentName?) {
+//            radioService = null
+//            isBound = false
+//        }
+//    }
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             val binder = service as RadioService.LocalBinder
             radioService = binder.getService()
             isBound = true
+
+            // Вызываем отложенный колбэк
+            serviceReadyCallback?.invoke(radioService!!)
+            serviceReadyCallback = null
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -212,9 +231,11 @@ class MainActivity : AppCompatActivity() {
                 buttonPlay.setImageResource(R.drawable.stop_64)
                 radioService?.stopMusic()
                 val radioStationUrl = appSettings.radioStations[appSettings.lastRadioStationIndex].url
-                val isNotErrorPlay = radioService?.startMusic(radioStationUrl)?: false
-                if (!isNotErrorPlay) {
-                    onErrorPlay()
+                onRadioServiceReady { service ->
+                    val isNotErrorPlay = service.startMusic(radioStationUrl)
+                    if (!isNotErrorPlay) {
+                        onErrorPlay()
+                    }
                 }
             } else {
                 statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
@@ -258,9 +279,11 @@ class MainActivity : AppCompatActivity() {
                     buttonPlay.setImageResource(R.drawable.stop_64)
                     radioService?.stopMusic()
                     val radioStationUrl = appSettings.radioStations[appSettings.lastRadioStationIndex].url
-                    val isNotErrorPlay = radioService?.startMusic(radioStationUrl)?: false
-                    if (!isNotErrorPlay) {
-                        onErrorPlay()
+                    onRadioServiceReady { service ->
+                        val isNotErrorPlay = service.startMusic(radioStationUrl)
+                        if (!isNotErrorPlay) {
+                            onErrorPlay()
+                        }
                     }
                 }
 
@@ -332,9 +355,11 @@ class MainActivity : AppCompatActivity() {
 
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
                     val radioStationUrl = appSettings.radioStations[appSettings.lastRadioStationIndex].url
-                    val isNotErrorPlay = radioService?.startMusic(radioStationUrl)?: false
-                    if (!isNotErrorPlay) {
-                        onErrorPlay()
+                    onRadioServiceReady { service ->
+                        val isNotErrorPlay = service.startMusic(radioStationUrl)
+                        if (!isNotErrorPlay) {
+                            onErrorPlay()
+                        }
                     }
                 } else {
                     radioService?.stopMusic()
@@ -361,9 +386,11 @@ class MainActivity : AppCompatActivity() {
                     radioService?.stopMusic()
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
                     val radioStationUrl = appSettings.radioStations[appSettings.lastRadioStationIndex].url
-                    val isNotErrorPlay = radioService?.startMusic(radioStationUrl)?: false
-                    if (!isNotErrorPlay) {
-                        onErrorPlay()
+                    onRadioServiceReady { service ->
+                        val isNotErrorPlay = service.startMusic(radioStationUrl)
+                        if (!isNotErrorPlay) {
+                            onErrorPlay()
+                        }
                     }
                 } else {
                     radioService?.stopMusic()
@@ -402,9 +429,11 @@ class MainActivity : AppCompatActivity() {
                     statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
                     val radioStationUrl = appSettings.radioStations[appSettings.lastRadioStationIndex].url
-                    val isNotErrorPlay = radioService?.startMusic(radioStationUrl)?: false
-                    if (!isNotErrorPlay) {
-                        onErrorPlay()
+                    onRadioServiceReady { service ->
+                        val isNotErrorPlay = service.startMusic(radioStationUrl)
+                        if (!isNotErrorPlay) {
+                            onErrorPlay()
+                        }
                     }
                 }
             }
@@ -444,9 +473,11 @@ class MainActivity : AppCompatActivity() {
             appSettings.lastRadioStationIndex = appSettings.radioStations.indexOf(it)
             statusRadio.text = it.name
             val radioStationUrl = it.url
-            val isNotErrorPlay = radioService?.startMusic(radioStationUrl)?: false
-            if (!isNotErrorPlay) {
-                onErrorPlay()
+            onRadioServiceReady { service ->
+                val isNotErrorPlay = service.startMusic(radioStationUrl)
+                if (!isNotErrorPlay) {
+                    onErrorPlay()
+                }
             }
 
         } ?: Toast.makeText(this, getString(R.string.no_station_saved_to_favorite) + " ${favIndex + 1}", Toast.LENGTH_SHORT).show()
@@ -651,6 +682,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // сервис проигрывания станций
+
+    fun onRadioServiceReady(callback: (RadioService) -> Unit) {
+        if (radioService != null) {
+            callback(radioService!!)
+        } else {
+            // Ожидаем привязку сервиса
+            serviceReadyCallback = callback
+        }
+    }
 
 
 }
