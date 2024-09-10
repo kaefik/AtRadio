@@ -38,7 +38,9 @@ import java.util.*
 
 import android.app.AlarmManager
 import android.app.PendingIntent
+import android.content.BroadcastReceiver
 import android.content.ComponentName
+import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.os.IBinder
 import kotlin.system.exitProcess
@@ -48,17 +50,28 @@ class MainActivity : AppCompatActivity() {
     private var kol = 0
 
     // для сервиса плеера
-    private var radioService: RadioService? = null
-    private var isBound = false
-    private var serviceReadyCallback: ((RadioService) -> Unit)? = null
+//    private var radioService: RadioService? = null
+//    private var isBound = false
+//    private var serviceReadyCallback: ((RadioService) -> Unit)? = null
 
+    private lateinit var radioServiceIntent: Intent
 
+    private val errorReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val errorMessage = intent?.getStringExtra("ERROR_MESSAGE")
+            Toast.makeText(this@MainActivity, "Error playing station: $errorMessage", Toast.LENGTH_LONG).show()
+        }
+    }
 
 //    private val serviceConnection = object : ServiceConnection {
 //        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
 //            val binder = service as RadioService.LocalBinder
 //            radioService = binder.getService()
 //            isBound = true
+//
+//            // Вызываем отложенный колбэк
+//            serviceReadyCallback?.invoke(radioService!!)
+//            serviceReadyCallback = null
 //        }
 //
 //        override fun onServiceDisconnected(name: ComponentName?) {
@@ -66,23 +79,6 @@ class MainActivity : AppCompatActivity() {
 //            isBound = false
 //        }
 //    }
-
-    private val serviceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            val binder = service as RadioService.LocalBinder
-            radioService = binder.getService()
-            isBound = true
-
-            // Вызываем отложенный колбэк
-            serviceReadyCallback?.invoke(radioService!!)
-            serviceReadyCallback = null
-        }
-
-        override fun onServiceDisconnected(name: ComponentName?) {
-            radioService = null
-            isBound = false
-        }
-    }
 
     // END для сервиса плеера
 
@@ -156,9 +152,12 @@ class MainActivity : AppCompatActivity() {
         appSettings = loadAppSettings()
 
         // Привязка к сервису плееера
-        Intent(this, RadioService::class.java).also { intent ->
-            bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
-        }
+//        Intent(this, RadioService::class.java).also { intent ->
+//            bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+//        }
+
+        // Регистрируем BroadcastReceiver для получения ошибок от сервиса
+        registerReceiver(errorReceiver, IntentFilter("com.example.atradio.ERROR"))
 
 
         // локализация приложения
@@ -229,14 +228,16 @@ class MainActivity : AppCompatActivity() {
                 statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
                 statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
                 buttonPlay.setImageResource(R.drawable.stop_64)
-                radioService?.stopMusic()
+//                radioService?.stopMusic()
+                stopService(radioServiceIntent)
                 val radioStationUrl = appSettings.radioStations[appSettings.lastRadioStationIndex].url
-                onRadioServiceReady { service ->
-                    val isNotErrorPlay = service.startMusic(radioStationUrl)
-                    if (!isNotErrorPlay) {
-                        onErrorPlay()
-                    }
+
+                // Создаем Intent для старта сервиса
+                radioServiceIntent = Intent(this, RadioService::class.java).apply {
+                    putExtra("RADIO_STATION_URL", radioStationUrl)
                 }
+                startService(radioServiceIntent)
+
             } else {
                 statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
                 statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
@@ -256,7 +257,8 @@ class MainActivity : AppCompatActivity() {
 
                 if (appSettings.radioStations.isEmpty()) {
 //                    stopMusic()
-                    radioService?.stopMusic()
+//                    radioService?.stopMusic()
+                    stopService(radioServiceIntent)
                     statusPlay = false
                     buttonPlay.setImageResource(R.drawable.play_64)
                     statusRadio.text = getString(R.string.empty_list_stations)
@@ -277,14 +279,21 @@ class MainActivity : AppCompatActivity() {
                     statusRadio.text = selectedStation.name
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
                     buttonPlay.setImageResource(R.drawable.stop_64)
-                    radioService?.stopMusic()
+                    stopService(radioServiceIntent)
+//                    radioService?.stopMusic()
                     val radioStationUrl = appSettings.radioStations[appSettings.lastRadioStationIndex].url
-                    onRadioServiceReady { service ->
-                        val isNotErrorPlay = service.startMusic(radioStationUrl)
-                        if (!isNotErrorPlay) {
-                            onErrorPlay()
-                        }
+                    // Создаем Intent для старта сервиса
+                    radioServiceIntent = Intent(this, RadioService::class.java).apply {
+                        putExtra("RADIO_STATION_URL", radioStationUrl)
                     }
+                    startService(radioServiceIntent)
+//                    onRadioServiceReady { service ->
+//                        val isNotErrorPlay = service.startMusic(radioStationUrl)
+//                        if (!isNotErrorPlay) {
+//                            onErrorPlay()
+//                        }
+//                    }
+
                 }
 
             }
@@ -342,7 +351,8 @@ class MainActivity : AppCompatActivity() {
         buttonForward.setOnClickListenerWithScreenSaverReset {
             if (appSettings.radioStations.isEmpty()) {
                 appSettings.lastRadioStationIndex = 0
-                radioService?.stopMusic()
+//                radioService?.stopMusic()
+                stopService(radioServiceIntent)
                 statusRadio.text = "Empty list stations"
             } else {
                 appSettings.lastRadioStationIndex += 1
@@ -351,18 +361,23 @@ class MainActivity : AppCompatActivity() {
                 saveAppSettings(appSettings)
                 statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
                 if (statusPlay) {
-                    radioService?.stopMusic()
-
+//                    radioService?.stopMusic()
+                    stopService(radioServiceIntent)
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
                     val radioStationUrl = appSettings.radioStations[appSettings.lastRadioStationIndex].url
-                    onRadioServiceReady { service ->
-                        val isNotErrorPlay = service.startMusic(radioStationUrl)
-                        if (!isNotErrorPlay) {
-                            onErrorPlay()
+
+                        // Создаем Intent для старта сервиса
+                        radioServiceIntent = Intent(this, RadioService::class.java).apply {
+                            putExtra("RADIO_STATION_URL", radioStationUrl)
                         }
-                    }
+                        startService(radioServiceIntent)
+//                        if (!isNotErrorPlay) {
+//                            onErrorPlay()
+//                        }
+
                 } else {
-                    radioService?.stopMusic()
+//                    radioService?.stopMusic()
+                    stopService(radioServiceIntent)
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
                 }
             }
@@ -372,7 +387,8 @@ class MainActivity : AppCompatActivity() {
             if (appSettings.radioStations.isEmpty()) {
                 appSettings.lastRadioStationIndex = 0
 //                stopMusic()
-                radioService?.stopMusic()
+//                radioService?.stopMusic()
+                stopService(radioServiceIntent)
                 statusRadio.text = "Empty list stations"
             } else {
                 appSettings.lastRadioStationIndex -= 1
@@ -383,17 +399,24 @@ class MainActivity : AppCompatActivity() {
                 statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
 
                 if (statusPlay) {
-                    radioService?.stopMusic()
+//                    radioService?.stopMusic()
+                    stopService(radioServiceIntent)
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
                     val radioStationUrl = appSettings.radioStations[appSettings.lastRadioStationIndex].url
-                    onRadioServiceReady { service ->
-                        val isNotErrorPlay = service.startMusic(radioStationUrl)
-                        if (!isNotErrorPlay) {
-                            onErrorPlay()
-                        }
+                    // Создаем Intent для старта сервиса
+                    radioServiceIntent = Intent(this, RadioService::class.java).apply {
+                        putExtra("RADIO_STATION_URL", radioStationUrl)
                     }
+                    startService(radioServiceIntent)
+//                    onRadioServiceReady { service ->
+//                        val isNotErrorPlay = service.startMusic(radioStationUrl)
+//                        if (!isNotErrorPlay) {
+//                            onErrorPlay()
+//                        }
+//                    }
                 } else {
-                    radioService?.stopMusic()
+//                    radioService?.stopMusic()
+                    stopService(radioServiceIntent)
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
                 }
             }
@@ -410,7 +433,8 @@ class MainActivity : AppCompatActivity() {
         buttonPlay.setOnClickListenerWithScreenSaverReset {
             if (appSettings.radioStations.isEmpty()) {
                 appSettings.lastRadioStationIndex = 0
-                radioService?.stopMusic()
+//                radioService?.stopMusic()
+                stopService(radioServiceIntent)
                 statusRadio.text = "Empty list stations"
                 statusPlay = false
                 statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
@@ -421,20 +445,30 @@ class MainActivity : AppCompatActivity() {
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
                     buttonPlay.setImageResource(R.drawable.play_64)
                     statusPlay = false
-                    radioService?.stopMusic()
+//                    radioService?.stopMusic()
+                    stopService(radioServiceIntent)
                 } else {
                     buttonPlay.setImageResource(R.drawable.stop_64)
                     statusPlay = true
-                    radioService?.stopMusic()
+//                    radioService?.stopMusic()
+
+                    if (::radioServiceIntent.isInitialized) {
+                        stopService(radioServiceIntent)
+                    }
                     statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
                     val radioStationUrl = appSettings.radioStations[appSettings.lastRadioStationIndex].url
-                    onRadioServiceReady { service ->
-                        val isNotErrorPlay = service.startMusic(radioStationUrl)
-                        if (!isNotErrorPlay) {
-                            onErrorPlay()
-                        }
+                    // Создаем Intent для старта сервиса
+                    radioServiceIntent = Intent(this, RadioService::class.java).apply {
+                        putExtra("RADIO_STATION_URL", radioStationUrl)
                     }
+                    startService(radioServiceIntent)
+//                    onRadioServiceReady { service ->
+//                        val isNotErrorPlay = service.startMusic(radioStationUrl)
+//                        if (!isNotErrorPlay) {
+//                            onErrorPlay()
+//                        }
+//                    }
                 }
             }
         }
@@ -467,18 +501,18 @@ class MainActivity : AppCompatActivity() {
         appSettings.favoriteStations[favIndex]?.let {
             if (statusPlay) {
 //                stopMusic()
-                radioService?.stopMusic()
+//                radioService?.stopMusic()
+                stopService(radioServiceIntent)
             }
             statusPlay = true
             appSettings.lastRadioStationIndex = appSettings.radioStations.indexOf(it)
             statusRadio.text = it.name
             val radioStationUrl = it.url
-            onRadioServiceReady { service ->
-                val isNotErrorPlay = service.startMusic(radioStationUrl)
-                if (!isNotErrorPlay) {
-                    onErrorPlay()
-                }
+            // Создаем Intent для старта сервиса
+            radioServiceIntent = Intent(this, RadioService::class.java).apply {
+                putExtra("RADIO_STATION_URL", radioStationUrl)
             }
+            startService(radioServiceIntent)
 
         } ?: Toast.makeText(this, getString(R.string.no_station_saved_to_favorite) + " ${favIndex + 1}", Toast.LENGTH_SHORT).show()
     }
@@ -660,38 +694,41 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         // Освобождение ресурсов MediaPlayer при завершении активности
-        if (isBound) {
-            unbindService(serviceConnection)
-            isBound = false
-        }
+        // Отменяем регистрацию BroadcastReceiver при уничтожении активности
+        unregisterReceiver(errorReceiver)
+
+//        if (isBound) {
+//            unbindService(serviceConnection)
+//            isBound = false
+//        }
     }
 
 
     override fun onStart() {
         super.onStart()
-        Intent(this, RadioService::class.java).also { intent ->
-            bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
-        }
+//        Intent(this, RadioService::class.java).also { intent ->
+//            bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+//        }
     }
 
     override fun onStop() {
         super.onStop()
-        if (isBound) {
-            unbindService(serviceConnection)
-            isBound = false
-        }
+//        if (isBound) {
+//            unbindService(serviceConnection)
+//            isBound = false
+//        }
     }
 
     // сервис проигрывания станций
 
-    fun onRadioServiceReady(callback: (RadioService) -> Unit) {
-        if (radioService != null) {
-            callback(radioService!!)
-        } else {
-            // Ожидаем привязку сервиса
-            serviceReadyCallback = callback
-        }
-    }
+//    fun onRadioServiceReady(callback: (RadioService) -> Unit) {
+//        if (radioService != null) {
+//            callback(radioService!!)
+//        } else {
+//            // Ожидаем привязку сервиса
+//            serviceReadyCallback = callback
+//        }
+//    }
 
 
 }
