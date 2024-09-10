@@ -218,7 +218,10 @@ class MainActivity : AppCompatActivity() {
 //                }
                 radioService?.stopMusic()
                 val radioStationUrl = appSettings.radioStations[appSettings.lastRadioStationIndex].url
-                radioService?.startMusic(radioStationUrl)
+                val isNotErrorPlay = radioService?.startMusic(radioStationUrl)
+                if (!isNotErrorPlay!!) {
+                    onErrorPlay()
+                }
             } else {
                 statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
                 statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
@@ -266,7 +269,10 @@ class MainActivity : AppCompatActivity() {
 //                    }
                     radioService?.stopMusic()
                     val radioStationUrl = appSettings.radioStations[appSettings.lastRadioStationIndex].url
-                    radioService?.startMusic(radioStationUrl)
+                    val isNotErrorPlay = radioService?.startMusic(radioStationUrl)
+                    if (!isNotErrorPlay!!) {
+                        onErrorPlay()
+                    }
                 }
 
             }
@@ -345,7 +351,10 @@ class MainActivity : AppCompatActivity() {
 //                        onErrorPlay()
 //                    }
                     val radioStationUrl = appSettings.radioStations[appSettings.lastRadioStationIndex].url
-                    radioService?.startMusic(radioStationUrl)
+                    val isNotErrorPlay = radioService?.startMusic(radioStationUrl)
+                    if (!isNotErrorPlay!!) {
+                        onErrorPlay()
+                    }
                 } else {
 //                    stopMusic()
                     radioService?.stopMusic()
@@ -377,7 +386,10 @@ class MainActivity : AppCompatActivity() {
 //                        onErrorPlay()
 //                    }
                     val radioStationUrl = appSettings.radioStations[appSettings.lastRadioStationIndex].url
-                    radioService?.startMusic(radioStationUrl)
+                    val isNotErrorPlay = radioService?.startMusic(radioStationUrl)
+                    if (!isNotErrorPlay!!) {
+                        onErrorPlay()
+                    }
                 } else {
 //                    stopMusic()
                     radioService?.stopMusic()
@@ -395,41 +407,42 @@ class MainActivity : AppCompatActivity() {
         }
 
         buttonPlay.setOnClickListenerWithScreenSaverReset {
-            if (statusPlay) {
-                radioService?.stopMusic()
-                updateUIForStopped()
-            } else {
-                val radioStationUrl = appSettings.radioStations[appSettings.lastRadioStationIndex].url
-                radioService?.startMusic(radioStationUrl)
-                updateUIForPlaying()
-            }
-            statusPlay = !statusPlay
-//            if (appSettings.radioStations.isEmpty()) {
-//                appSettings.lastRadioStationIndex = 0
-//                stopMusic()
-//                statusRadio.text = "Empty list stations"
-//                statusPlay = false
-//                statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
-//                buttonPlay.setImageResource(R.drawable.play_64)
+//            if (statusPlay) {
+//                radioService?.stopMusic()
+//                updateUIForStopped()
 //            } else {
-//                if (statusPlay) {
-//                    statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
-//                    statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
-//                    buttonPlay.setImageResource(R.drawable.play_64)
-//                    statusPlay = false
-//                    stopMusic()
-//                } else {
-//                    buttonPlay.setImageResource(R.drawable.stop_64)
-//                    statusPlay = true
-//                    stopMusic()
-//                    statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
-//                    statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
-//                    val isNotErrorPlay = startMusic(appSettings.radioStations[appSettings.lastRadioStationIndex], progressBar)
-//                    if (!isNotErrorPlay) {
-//                        onErrorPlay()
-//                    }
-//                }
+//                val radioStationUrl = appSettings.radioStations[appSettings.lastRadioStationIndex].url
+//                radioService?.startMusic(radioStationUrl)
+//                updateUIForPlaying()
 //            }
+//            statusPlay = !statusPlay
+            if (appSettings.radioStations.isEmpty()) {
+                appSettings.lastRadioStationIndex = 0
+                radioService?.stopMusic()
+                statusRadio.text = "Empty list stations"
+                statusPlay = false
+                statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
+                buttonPlay.setImageResource(R.drawable.play_64)
+            } else {
+                if (statusPlay) {
+                    statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
+                    statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
+                    buttonPlay.setImageResource(R.drawable.play_64)
+                    statusPlay = false
+                    radioService?.stopMusic()
+                } else {
+                    buttonPlay.setImageResource(R.drawable.stop_64)
+                    statusPlay = true
+                    radioService?.stopMusic()
+                    statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
+                    statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
+                    val radioStationUrl = appSettings.radioStations[appSettings.lastRadioStationIndex].url
+                    val isNotErrorPlay = radioService?.startMusic(radioStationUrl)
+                    if (!isNotErrorPlay!!) {
+                        onErrorPlay()
+                    }
+                }
+            }
         }
     }
 
@@ -515,7 +528,10 @@ class MainActivity : AppCompatActivity() {
 //               onErrorPlay()
 //            }
             val radioStationUrl = it.url
-            radioService?.startMusic(radioStationUrl)
+            val isNotErrorPlay = radioService?.startMusic(radioStationUrl)
+            if (!isNotErrorPlay!!) {
+                onErrorPlay()
+            }
 
         } ?: Toast.makeText(this, getString(R.string.no_station_saved_to_favorite) + " ${favIndex + 1}", Toast.LENGTH_SHORT).show()
     }
