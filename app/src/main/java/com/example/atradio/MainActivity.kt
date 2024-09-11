@@ -286,7 +286,7 @@ class MainActivity : AppCompatActivity() {
             if (result.resultCode == Activity.RESULT_OK) {
                 appSettings = loadAppSettings() // Перезагружаем все настройки
                 setLocale(appSettings.language)
-                recreate()
+//                recreate()
             }
             resetTimers()
         }
