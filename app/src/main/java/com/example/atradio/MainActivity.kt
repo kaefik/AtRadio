@@ -2,6 +2,7 @@ package com.example.atradio
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.ActivityManager
 import android.app.AlertDialog
 import android.os.Bundle
 import android.widget.TextView
@@ -213,7 +214,13 @@ class MainActivity : AppCompatActivity() {
                 radioServiceIntent = Intent(this, RadioService::class.java).apply {
                     putExtra("RADIO_STATION_URL", radioStationUrl)
                 }
-                startService(radioServiceIntent)
+                if (!isMyServiceRunning(RadioService::class.java)) {
+                    // Сервис не работает, можно запустить
+                    radioServiceIntent = Intent(this, RadioService::class.java).apply {
+                        putExtra("RADIO_STATION_URL", radioStationUrl)
+                    }
+                    startService(radioServiceIntent)
+                }
 
             } else {
                 statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
@@ -264,7 +271,13 @@ class MainActivity : AppCompatActivity() {
                     radioServiceIntent = Intent(this, RadioService::class.java).apply {
                         putExtra("RADIO_STATION_URL", radioStationUrl)
                     }
-                    startService(radioServiceIntent)
+                    if (!isMyServiceRunning(RadioService::class.java)) {
+                        // Сервис не работает, можно запустить
+                        radioServiceIntent = Intent(this, RadioService::class.java).apply {
+                            putExtra("RADIO_STATION_URL", radioStationUrl)
+                        }
+                        startService(radioServiceIntent)
+                    }
                 }
             }
         }
@@ -342,7 +355,13 @@ class MainActivity : AppCompatActivity() {
                         radioServiceIntent = Intent(this, RadioService::class.java).apply {
                             putExtra("RADIO_STATION_URL", radioStationUrl)
                         }
+                    if (!isMyServiceRunning(RadioService::class.java)) {
+                        // Сервис не работает, можно запустить
+                        radioServiceIntent = Intent(this, RadioService::class.java).apply {
+                            putExtra("RADIO_STATION_URL", radioStationUrl)
+                        }
                         startService(radioServiceIntent)
+                    }
                 } else {
                     if (::radioServiceIntent.isInitialized) {
                         stopService(radioServiceIntent)
@@ -377,7 +396,13 @@ class MainActivity : AppCompatActivity() {
                     radioServiceIntent = Intent(this, RadioService::class.java).apply {
                         putExtra("RADIO_STATION_URL", radioStationUrl)
                     }
-                    startService(radioServiceIntent)
+                    if (!isMyServiceRunning(RadioService::class.java)) {
+                        // Сервис не работает, можно запустить
+                        radioServiceIntent = Intent(this, RadioService::class.java).apply {
+                            putExtra("RADIO_STATION_URL", radioStationUrl)
+                        }
+                        startService(radioServiceIntent)
+                    }
                 } else {
                     stopService(radioServiceIntent)
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
@@ -429,7 +454,13 @@ class MainActivity : AppCompatActivity() {
                     radioServiceIntent = Intent(this, RadioService::class.java).apply {
                         putExtra("RADIO_STATION_URL", radioStationUrl)
                     }
-                    startService(radioServiceIntent)
+                    if (!isMyServiceRunning(RadioService::class.java)) {
+                        // Сервис не работает, можно запустить
+                        radioServiceIntent = Intent(this, RadioService::class.java).apply {
+                            putExtra("RADIO_STATION_URL", radioStationUrl)
+                        }
+                        startService(radioServiceIntent)
+                    }
                 }
             }
         }
@@ -473,8 +504,13 @@ class MainActivity : AppCompatActivity() {
             radioServiceIntent = Intent(this, RadioService::class.java).apply {
                 putExtra("RADIO_STATION_URL", radioStationUrl)
             }
-            startService(radioServiceIntent)
-
+            if (!isMyServiceRunning(RadioService::class.java)) {
+                // Сервис не работает, можно запустить
+                radioServiceIntent = Intent(this, RadioService::class.java).apply {
+                    putExtra("RADIO_STATION_URL", radioStationUrl)
+                }
+                startService(radioServiceIntent)
+            }
         } ?: Toast.makeText(this, getString(R.string.no_station_saved_to_favorite) + " ${favIndex + 1}", Toast.LENGTH_SHORT).show()
     }
 
@@ -672,7 +708,16 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-
+    // метод для проверки, работает ли сервис
+    private fun isMyServiceRunning(serviceClass: Class<*>): Boolean {
+        val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        for (service in manager.getRunningServices(Int.MAX_VALUE)) {
+            if (serviceClass.name == service.service.className) {
+                return true
+            }
+        }
+        return false
+    }
 
 
 }
