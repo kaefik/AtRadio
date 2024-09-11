@@ -22,30 +22,11 @@ class RadioService : Service() {
         fun getService(): RadioService = this@RadioService
     }
 
-//    override fun onBind(intent: Intent?): IBinder? = binder
     override fun onBind(intent: Intent?): IBinder? {
         // Не используем привязку в этом варианте, возвращаем null
         return null
     }
 
-//    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-//        // Обработка запуска службы
-//        startForeground(1, createNotification())
-//        return START_NOT_STICKY
-//    }
-//
-//    private fun createNotification(): Notification {
-//        val notificationIntent = Intent(this, MainActivity::class.java)
-//        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
-//
-//        return NotificationCompat.Builder(this, "radio_channel")
-//            .setContentTitle("Online Radio")
-//            .setContentText("Слушаете радио")
-//            .setSmallIcon(R.drawable.logo)
-//            .setContentIntent(pendingIntent)
-//            .setPriority(NotificationCompat.PRIORITY_LOW)
-//            .build()
-//    }
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val radioStationUrl = intent?.getStringExtra("RADIO_STATION_URL")
 
@@ -58,31 +39,6 @@ class RadioService : Service() {
     }
 
 
-
-//    fun startMusic(url: String): Boolean {
-//        stopMusic()
-//                return try {
-//            mediaPlayer = MediaPlayer().apply {
-//                setDataSource(url)
-//                setOnPreparedListener {
-//                start()
-//                }
-//
-//                setOnErrorListener { _, what, extra ->
-//                    stopMusic()
-//                    handleError(what, extra)
-//                    stopMusic()
-//                    false
-//                }
-//                prepareAsync()
-//            }
-//            true
-//        } catch (e: Exception) {
-//            Toast.makeText(this, getString(R.string.error_message) + e.message, Toast.LENGTH_LONG).show()
-//            false // Возвращаем false, если произошло исключение
-//        }
-//
-//    }
     fun startMusic(radioStationUrl: String): Boolean {
         try {
             mediaPlayer = MediaPlayer().apply {
@@ -128,10 +84,6 @@ class RadioService : Service() {
         // sendNotification("Error", errorMessage)
     }
 
-//    override fun onDestroy() {
-//        super.onDestroy()
-//        stopMusic()
-//    }
 
     override fun onDestroy() {
         super.onDestroy()
