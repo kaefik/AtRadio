@@ -253,12 +253,14 @@ class MainActivity : AppCompatActivity() {
                     statusPlay = false
                     buttonPlay.setImageResource(R.drawable.play_64)
                     statusRadio.text = getString(R.string.empty_list_stations)
+                    currentStation = RadioStation("empty", "empty")
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
                 } else {
                     if (appSettings.lastRadioStationIndex >= appSettings.radioStations.size) {
                         appSettings.lastRadioStationIndex = 0
                     }
                     statusRadio.text = appSettings.radioStations[appSettings.lastRadioStationIndex].name
+                    currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
                 }
 
@@ -268,6 +270,7 @@ class MainActivity : AppCompatActivity() {
                     saveAppSettings(appSettings)
                     statusPlay = true
                     statusRadio.text = selectedStation.name
+                    currentStation = selectedStation
                     statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
                     buttonPlay.setImageResource(R.drawable.stop_64)
                     if (::radioServiceIntent.isInitialized) {
