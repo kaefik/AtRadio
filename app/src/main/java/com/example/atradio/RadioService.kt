@@ -1,11 +1,14 @@
 package com.example.atradio
 
 import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Binder
+import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
@@ -34,10 +37,34 @@ class RadioService : Service() {
             startMusic(radioStationUrl)
         }
 
+        // Запуск сервиса в foreground
+        startForeground(1, createNotification())
+
         // Если сервис завершится самостоятельно, он будет перезапущен (при необходимости)
         return START_STICKY
     }
 
+    private fun createNotification(): Notification {
+        val channelId = "radio_playback_channel"
+        val channelName = "Radio Playback"
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW)
+            val notificationManager = getSystemService(NotificationManager::class.java)
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        val notificationIntent = Intent(this, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
+        return NotificationCompat.Builder(this, channelId)
+            .setContentTitle("Playing Radio")
+            .setContentText("Radio is playing in the background")
+            .setSmallIcon(R.drawable.logo)
+            .setContentIntent(pendingIntent)
+            .setOngoing(true)
+            .build()
+    }
 
     fun startMusic(radioStationUrl: String): Boolean {
         try {
