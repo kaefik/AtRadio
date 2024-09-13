@@ -22,13 +22,6 @@
 
         <!-- Объявление вашего сервиса -->
         <service
-            android:name=".RadioService"
-            android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="mediaPlayback"
-            tools:ignore="ForegroundServicePermission" />
-
-        <service
             android:name=".RadioNotificationService"
             android:enabled="true"
             android:exported="false"
