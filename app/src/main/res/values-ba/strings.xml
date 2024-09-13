@@ -52,4 +52,10 @@
     <string name="language">Телен</string>
     <string name="slogan">Бөтөн донъяның радиоһы — һинең кеҫәңдә</string>
     <string name="save_station_favorite">Станция һайланғандар араһына һаҡланды</string>
+    <string name="title_showPermissionRationaleDialog">Хәбәрнамәгә рөхсәт талап ителә</string>
+    <string name="message_showPermissionRationaleDialog">Радио уйнау тураһында һеҙҙе хәбәр итеп тороу өсөн, был ҡушымтаға хәбәрнамәгә рөхсәт талап ителә.</string>
+    <string name="positive_showPermissionRationaleDialog">Рөхсәт биреү</string>
+    <string name="title_showPermissionDeniedDialog">Рөхсәт кире ҡағылды</string>
+    <string name="message_showPermissionDeniedDialog">Хәбәрнамәгә рөхсәт булмаһа, һеҙ радио уйнау тураһында яңыртыуҙарҙы алмайһығыҙ. Был рөхсәтте ҡушымта көйләүҙәрендә бирә алаһығыҙ.</string>
+    <string name="positive_showPermissionDeniedDialog">Көйләүҙәрҙе асыу</string>
 </resources>

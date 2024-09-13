@@ -51,4 +51,10 @@
     <string name="language">Language</string>
     <string name="slogan">All the world\'s radio — right in your pocket</string>
     <string name="save_station_favorite">Station saved to favorite</string>
+    <string name="title_showPermissionRationaleDialog">Notification Permission Required</string>
+    <string name="message_showPermissionRationaleDialog">This app needs notification permission to keep you updated about the radio playback</string>
+    <string name="positive_showPermissionRationaleDialog">Grant Permission</string>
+    <string name="title_showPermissionDeniedDialog">Permission Denied</string>
+    <string name="message_showPermissionDeniedDialog">Without notification permission, you won\'t receive updates about the radio playback. You can grant this permission in the app settings.</string>
+    <string name="positive_showPermissionDeniedDialog">Open Settings</string>
 </resources>

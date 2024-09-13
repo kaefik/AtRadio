@@ -51,4 +51,10 @@
     <string name="language">Тел</string>
     <string name="slogan">Бөтен дөнья радиосы — синең кесәңдә</string>
     <string name="save_station_favorite">Станция сайланганнарга сакланды</string>
+    <string name="title_showPermissionRationaleDialog">Хәбәрнамә рөхсәте таләп ителә</string>
+    <string name="message_showPermissionRationaleDialog">Бу кушымтага радионы уйнау турында сезне хәбәрдар итеп тору өчен хәбәрнамә рөхсәте кирәк.</string>
+    <string name="positive_showPermissionRationaleDialog">Рөхсәт бирү</string>
+    <string name="title_showPermissionDeniedDialog">Рөхсәт кире кагылды</string>
+    <string name="message_showPermissionDeniedDialog">Хәбәрнамә рөхсәте булмаса, сез радионы уйнау турында яңартуларны алмыйсыз. Бу рөхсәтне кушымта көйләүләрендә бирә аласыз.</string>
+    <string name="positive_showPermissionDeniedDialog">Open Settings</string>
 </resources>

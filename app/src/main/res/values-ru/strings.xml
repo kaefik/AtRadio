@@ -50,4 +50,10 @@
     <string name="language">Язык</string>
     <string name="slogan">Всё радио мира — у тебя в кармане</string>
     <string name="save_station_favorite">Станция сохранена в избранное</string>
+    <string name="title_showPermissionRationaleDialog">Требуется разрешение на уведомления</string>
+    <string name="message_showPermissionRationaleDialog">Приложению необходимо разрешение на уведомления, чтобы держать вас в курсе воспроизведения радио.</string>
+    <string name="positive_showPermissionRationaleDialog">Предоставить разрешение</string>
+    <string name="title_showPermissionDeniedDialog">Разрешение отклонено</string>
+    <string name="message_showPermissionDeniedDialog">Без разрешения на уведомления вы не будете получать обновления о воспроизведении радио. Вы можете предоставить это разрешение в настройках приложения.</string>
+    <string name="positive_showPermissionDeniedDialog">Открыть настройки</string>
 </resources>
