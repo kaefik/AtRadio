@@ -13,16 +13,14 @@ import android.util.Log
 class RadioNotificationService : Service() {
     private var mediaPlayer: MediaPlayer? = null
     private var currentStation: RadioStation? = null
-    private var currentStartId: Int = -1 // Новая переменная для хранения startId
-
 
     override fun onBind(intent: Intent?): IBinder? = null
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        currentStartId = startId // Сохраняем startId
+//        currentStartId = startId // Сохраняем startId
         Log.d("iAtRadio RadioService", "onStartCommand called with action: ${intent?.action} ")
-        Log.d("iAtRadio RadioService", "onStartCommand startID = $currentStartId")
+//        Log.d("iAtRadio RadioService", "onStartCommand startID = $currentStartId")
 
         // Создание уведомления и запуск как Foreground Service
         val notification = createNotification()
@@ -76,7 +74,7 @@ class RadioNotificationService : Service() {
             @Suppress("DEPRECATION")
             stopForeground(true)
         }
-        stopSelf(currentStartId) // Используем сохраненный startId
+        stopSelf() // Используем сохраненный startId
 //        currentStartId=-1
         Log.d("iAtRadio RadioService", "Service stopped")
     }
