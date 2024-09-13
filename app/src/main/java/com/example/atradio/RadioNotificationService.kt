@@ -27,6 +27,8 @@ class RadioNotificationService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d("RadioService", "Service started with startId: $startId and action: ${intent?.action}")
 
+        startForeground(NOTIFICATION_ID, createNotification())
+
         // Если уже выполняется задача, остановите текущую перед выполнением новой
         if (isTaskRunning) {
             Log.d("iAtRadio RadioService", "Task is already running, stopping current task...")
@@ -77,8 +79,8 @@ class RadioNotificationService : Service() {
                 setOnPreparedListener {
                     start()
                     updateNotification()
-                    // Добавляем startForeground после начала воспроизведения
-                    startForeground(NOTIFICATION_ID, createNotification())
+
+//                    startForeground(NOTIFICATION_ID, createNotification())
                 }
                 setOnErrorListener { _, what, extra ->
                     Log.e("RadioService", "Playback error: $what, extra: $extra")
@@ -101,13 +103,13 @@ class RadioNotificationService : Service() {
         }
         mediaPlayer = null
         currentStation = null
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            stopForeground(STOP_FOREGROUND_REMOVE)
-        } else {
-            @Suppress("DEPRECATION")
-            stopForeground(true)
-        }
-        stopSelf(currentStartId) // Используем сохраненный startId
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+//            stopForeground(STOP_FOREGROUND_REMOVE)
+//        } else {
+//            @Suppress("DEPRECATION")
+//            stopForeground(true)
+//        }
+//        stopSelf(currentStartId) // Используем сохраненный startId
 //        currentStartId=-1
         Log.d("iAtRadio RadioService", "Service stopped")
     }
@@ -128,14 +130,27 @@ class RadioNotificationService : Service() {
         val stopIntent = Intent(this, RadioNotificationService::class.java).apply { action = ACTION_STOP }
         val stopPendingIntent = PendingIntent.getService(this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
-        return NotificationCompat.Builder(this, channelId)
+        val playIntent = Intent(this, RadioNotificationService::class.java).apply {
+            action = ACTION_PLAY
+            putExtra(EXTRA_STATION, currentStation)
+        }
+        val playPendingIntent = PendingIntent.getService(this, 1, playIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
+        val builder = NotificationCompat.Builder(this, channelId)
             .setContentTitle("Онлайн Радио")
             .setContentText(currentStation?.name ?: "Подготовка...")
             .setSmallIcon(R.drawable.logo)
             .setContentIntent(pendingIntent)
-            .addAction(R.drawable.stop_64, "Остановить", stopPendingIntent)
             .setOngoing(true) // уведомление не исчезнет при свайпе
-            .build()
+
+        // Добавляем кнопку воспроизведения или остановки в зависимости от текущего состояния
+        if (mediaPlayer?.isPlaying == true) {
+            builder.addAction(R.drawable.stop_64, "Остановить", stopPendingIntent)
+        } else {
+            builder.addAction(R.drawable.play_64, "Воспроизвести", playPendingIntent)
+        }
+
+        return builder.build()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
