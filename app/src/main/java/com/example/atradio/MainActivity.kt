@@ -43,14 +43,31 @@ import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.IntentFilter
 import android.content.ServiceConnection
+import android.content.pm.PackageManager
 import android.os.IBinder
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import kotlin.system.exitProcess
+import android.provider.Settings
+
+private const val s = "Notification Permission Required"
 
 class MainActivity : AppCompatActivity() {
 
     private var kol = 0
+
+    // для запроса
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // Permission granted, proceed with your app logic
+            Log.d("MainActivity", "Notification permission granted")
+        } else {
+            // Permission denied, show a dialog explaining why the permission is needed
+            showPermissionDeniedDialog()
+        }
+    }
 
     // текущая радиостанция которая играет
     private var currentStation: RadioStation = RadioStation("empty", "empty")
@@ -157,6 +174,10 @@ class MainActivity : AppCompatActivity() {
             setContentView(R.layout.activity_main)
         }
         // END локализация приложения
+
+
+        // проверка есть права на уведомления
+        checkNotificationPermission()
 
         // заставка - сринсейвер
         dimView = findViewById(R.id.dim_view)
@@ -652,6 +673,70 @@ class MainActivity : AppCompatActivity() {
     }
 
     // END упраление проигрыванием станций
+
+    // запрос разрешения на уведомления от приложения
+    private fun checkNotificationPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            when {
+                ContextCompat.checkSelfPermission(
+                    this,
+                    android.Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED -> {
+                    // Permission is already granted, proceed with your app logic
+                    Log.d("iAtRadio MainActivity", "Notification permission already granted")
+                }
+                shouldShowRequestPermissionRationale(android.Manifest.permission.POST_NOTIFICATIONS) -> {
+                    // Show an explanation to the user before requesting the permission
+                    showPermissionRationaleDialog()
+                }
+                else -> {
+                    // Request the permission
+                    requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                }
+            }
+        } else {
+            // For Android versions below 13, notification permission is granted by default
+            Log.d("iAtRadio MainActivity", "Notification permission not required for this Android version")
+        }
+    }
+
+    private fun showPermissionRationaleDialog() {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.title_showPermissionRationaleDialog))
+            .setMessage(getString(R.string.message_showPermissionRationaleDialog))
+            .setPositiveButton(getString(R.string.positive_showPermissionRationaleDialog)) { _, _ ->
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                }
+            }
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun showPermissionDeniedDialog() {
+        AlertDialog.Builder(this)
+            .setTitle(getString(R.string.title_showPermissionDeniedDialog))
+            .setMessage(getString(R.string.message_showPermissionDeniedDialog))
+            .setPositiveButton(getString(R.string.positive_showPermissionDeniedDialog)) { _, _ ->
+                openAppSettings()
+            }
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun openAppSettings() {
+        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+            data = android.net.Uri.parse("package:$packageName")
+            addCategory(Intent.CATEGORY_DEFAULT)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(this)
+        }
+    }
+    // END запрос разрешения на уведомления от приложения
 
 }
 
