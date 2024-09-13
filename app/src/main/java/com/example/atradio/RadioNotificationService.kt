@@ -56,7 +56,7 @@ class RadioNotificationService : Service() {
             }
         }
 
-        return START_NOT_STICKY
+        return START_STICKY
     }
 
 
@@ -76,6 +76,8 @@ class RadioNotificationService : Service() {
                 setOnPreparedListener {
                     start()
                     updateNotification()
+                    // Добавляем startForeground после начала воспроизведения
+                    startForeground(NOTIFICATION_ID, createNotification())
                 }
                 setOnErrorListener { _, what, extra ->
                     Log.e("RadioService", "Playback error: $what, extra: $extra")
