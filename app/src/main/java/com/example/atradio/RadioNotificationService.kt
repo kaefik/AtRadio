@@ -14,31 +14,50 @@ class RadioNotificationService : Service() {
     private var mediaPlayer: MediaPlayer? = null
     private var currentStation: RadioStation? = null
 
+    private var currentStartId: Int = 0
+    private var isTaskRunning: Boolean = false // для того чтобы была запущена одна задача
+
+
+
     override fun onBind(intent: Intent?): IBinder? = null
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-//        currentStartId = startId // Сохраняем startId
-        Log.d("iAtRadio RadioService", "onStartCommand called with action: ${intent?.action} ")
-//        Log.d("iAtRadio RadioService", "onStartCommand startID = $currentStartId")
+        Log.d("RadioService", "Service started with startId: $startId and action: ${intent?.action}")
 
-        // Создание уведомления и запуск как Foreground Service
-        val notification = createNotification()
-        startForeground(NOTIFICATION_ID, notification)
+        // Если уже выполняется задача, остановите текущую перед выполнением новой
+        if (isTaskRunning) {
+            Log.d("iAtRadio RadioService", "Task is already running, stopping current task...")
+            stopPlayback() // Останавливаем текущую задачу перед началом новой
+        }
+
+        // Сохраняем текущий startId
+        currentStartId = startId
+
+
 
         when (intent?.action) {
             ACTION_PLAY -> {
                 val station = intent.getParcelableExtra<RadioStation>(EXTRA_STATION)
                 station?.let {
                     currentStation = it
+                    isTaskRunning = true  // Указываем, что задача запущена
                     playStation(it)
                 }
             }
-            ACTION_STOP -> stopPlayback()
-            null -> Log.w("iAtRadio RadioService", "Service started with null intent")
+            ACTION_STOP -> {
+                stopPlayback()
+//                stopSelf(startId)  // Останавливаем сервис
+            }
+            else -> {
+                Log.w("iAtRadio RadioService", "Unknown action")
+                stopSelf(startId)  // Останавливаем сервис при неизвестном действии
+            }
         }
+
         return START_NOT_STICKY
     }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun playStation(station: RadioStation) {
@@ -74,7 +93,7 @@ class RadioNotificationService : Service() {
             @Suppress("DEPRECATION")
             stopForeground(true)
         }
-        stopSelf() // Используем сохраненный startId
+        stopSelf(currentStartId) // Используем сохраненный startId
 //        currentStartId=-1
         Log.d("iAtRadio RadioService", "Service stopped")
     }
