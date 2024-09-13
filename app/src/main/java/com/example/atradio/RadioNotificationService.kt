@@ -8,16 +8,23 @@ import android.os.Build
 import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import android.util.Log
 
 class RadioNotificationService : Service() {
     private var mediaPlayer: MediaPlayer? = null
     private var currentStation: RadioStation? = null
+    private var currentStartId: Int = -1 // Новая переменная для хранения startId
+
 
     override fun onBind(intent: Intent?): IBinder? = null
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        // Сразу же создаем уведомление и запускаем сервис как Foreground Service
+        currentStartId = startId // Сохраняем startId
+        Log.d("iAtRadio RadioService", "onStartCommand called with action: ${intent?.action} ")
+        Log.d("iAtRadio RadioService", "onStartCommand startID = $currentStartId")
+
+        // Создание уведомления и запуск как Foreground Service
         val notification = createNotification()
         startForeground(NOTIFICATION_ID, notification)
 
@@ -30,13 +37,15 @@ class RadioNotificationService : Service() {
                 }
             }
             ACTION_STOP -> stopPlayback()
+            null -> Log.w("iAtRadio RadioService", "Service started with null intent")
         }
         return START_NOT_STICKY
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun playStation(station: RadioStation) {
-        stopPlayback()
+        Log.d("iAtRadio RadioService", "playStation запуск станции $station")
+//        stopPlayback()
         mediaPlayer = MediaPlayer().apply {
             setAudioAttributes(
                 AudioAttributes.Builder()
@@ -54,16 +63,27 @@ class RadioNotificationService : Service() {
     }
 
     private fun stopPlayback() {
-        mediaPlayer?.stop()
-        mediaPlayer?.release()
+        Log.d("iAtRadio RadioService", "stopPlayback called")
+        mediaPlayer?.apply {
+            stop()
+            release()
+        }
         mediaPlayer = null
         currentStation = null
-        stopForeground(true)
-        stopSelf()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            stopForeground(STOP_FOREGROUND_REMOVE)
+        } else {
+            @Suppress("DEPRECATION")
+            stopForeground(true)
+        }
+        stopSelf(currentStartId) // Используем сохраненный startId
+//        currentStartId=-1
+        Log.d("iAtRadio RadioService", "Service stopped")
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotification(): Notification {
+        Log.d("iAtRadio RadioService", "createNotification start")
         val channelId = "radio_playback_channel"
         val channelName = "Radio Playback"
         val importance = NotificationManager.IMPORTANCE_DEFAULT
@@ -89,6 +109,7 @@ class RadioNotificationService : Service() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun updateNotification() {
+        Log.d("iAtRadio RadioService", "updateNotification start")
         val notification = createNotification()
         val notificationManager = getSystemService(NotificationManager::class.java)
         notificationManager.notify(NOTIFICATION_ID, notification)
