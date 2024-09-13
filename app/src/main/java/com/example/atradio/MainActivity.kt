@@ -45,6 +45,7 @@ import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.os.IBinder
 import android.util.Log
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
@@ -54,6 +55,19 @@ class MainActivity : AppCompatActivity() {
     // текущая радиостанция которая играет
     private var currentStation: RadioStation = RadioStation("empty", "empty")
 
+
+    private val errorReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val errorMessage = intent?.getStringExtra("ERROR_MESSAGE")
+            errorMessage?.let {
+                Log.e("MainActivity", "Error received: $it")
+                Toast.makeText(this@MainActivity, "Ошибка: $it", Toast.LENGTH_SHORT).show()
+                // Здесь можно выполнить любые действия на основе ошибки
+                statusPlay = false
+                updateUIForStopped()
+            }
+        }
+    }
 
     private lateinit var volumeControl: VolumeControl
     private lateinit var appSettings: AppSettings
@@ -127,8 +141,8 @@ class MainActivity : AppCompatActivity() {
         // Привязка к сервису плееера
 
         // Регистрируем BroadcastReceiver для получения ошибок от сервиса
-//        registerReceiver(errorReceiver, IntentFilter("com.example.atradio.ERROR"),
-//            Context.RECEIVER_NOT_EXPORTED)
+        LocalBroadcastManager.getInstance(this)
+            .registerReceiver(errorReceiver, IntentFilter("com.example.atradio.ERROR"))
 
 
         // локализация приложения
@@ -603,6 +617,8 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         stopPlayback()
+        // Отмена регистрации BroadcastReceiver при уничтожении активности
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(errorReceiver)
     }
 
 
