@@ -2,7 +2,6 @@ package com.example.atradio
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.ActivityManager
 import android.app.AlertDialog
 import android.os.Bundle
 import android.widget.TextView
@@ -11,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
-import android.media.MediaPlayer
 import android.widget.ProgressBar
 import android.view.View
 import com.google.gson.Gson
@@ -37,24 +35,16 @@ import android.content.Context
 import android.content.res.Configuration
 import java.util.*
 
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.content.BroadcastReceiver
-import android.content.ComponentName
 import android.content.IntentFilter
-import android.content.ServiceConnection
 import android.content.pm.PackageManager
-import android.os.IBinder
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import kotlin.system.exitProcess
 import android.provider.Settings
 
-private const val s = "Notification Permission Required"
 
 class MainActivity : AppCompatActivity() {
 
-    private var kol = 0
 
     // для запроса
     private val requestPermissionLauncher = registerForActivityResult(
@@ -397,7 +387,6 @@ class MainActivity : AppCompatActivity() {
             stopPlayback()
             if (appSettings.radioStations.isEmpty()) {
                 appSettings.lastRadioStationIndex = 0
-//                stopPlayback()
                 statusRadio.text = "Empty list stations"
                 currentStation = RadioStation("empty", "empty")
                 statusPlay = false
@@ -411,7 +400,6 @@ class MainActivity : AppCompatActivity() {
                     statusRadio.text = currentStation.name
                     updateUIForStopped()
                     statusPlay = false
-//                    stopPlayback()
                     Log.d("iAtRadio", "buttonPlay -> press Stop")
                 } else {
                     // возможно здесь currentStation удалить
@@ -420,7 +408,6 @@ class MainActivity : AppCompatActivity() {
 //                    currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
                     statusRadio.text = currentStation.name
                     Log.d("iAtRadio", "buttonPlay -> press Play")
-//                    stopPlayback()
                     playStation(currentStation)
                 }
             }
@@ -461,12 +448,6 @@ class MainActivity : AppCompatActivity() {
             playStation(currentStation)
 
         } ?: Toast.makeText(this, getString(R.string.no_station_saved_to_favorite) + " ${favIndex + 1}", Toast.LENGTH_SHORT).show()
-    }
-
-    // обработка ошибки проигрывания музыки
-    private fun onErrorPlay(){
-        statusPlay = false
-        updateUIForStopped()
     }
 
     // сохранение настроек приложения
@@ -641,18 +622,6 @@ class MainActivity : AppCompatActivity() {
         // Отмена регистрации BroadcastReceiver при уничтожении активности
         LocalBroadcastManager.getInstance(this).unregisterReceiver(errorReceiver)
     }
-
-
-    override fun onStart() {
-        super.onStart()
-
-    }
-
-    override fun onStop() {
-        super.onStop()
-
-    }
-
 
     // упраление проигрыванием станций
     private fun playStation(station: RadioStation) {
