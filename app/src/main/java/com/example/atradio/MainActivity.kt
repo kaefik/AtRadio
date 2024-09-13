@@ -304,9 +304,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         buttonForward.setOnClickListenerWithScreenSaverReset {
+            stopPlayback()
             if (appSettings.radioStations.isEmpty()) {
                 appSettings.lastRadioStationIndex = 0
-                stopPlayback()
                 statusRadio.text = "Empty list stations"
             } else {
                 appSettings.lastRadioStationIndex += 1
@@ -319,11 +319,9 @@ class MainActivity : AppCompatActivity() {
                 // запуск сервиса
                 if (statusPlay) {
                     updateUIForPlaying()
-                    stopPlayback()
                     playStation(currentStation)
 
                 } else {
-                    stopPlayback()
                     currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
                     updateUIForStopped()
                 }
@@ -332,26 +330,22 @@ class MainActivity : AppCompatActivity() {
         }
 
         buttonPrev.setOnClickListenerWithScreenSaverReset {
+            stopPlayback()
             if (appSettings.radioStations.isEmpty()) {
                 appSettings.lastRadioStationIndex = 0
-                stopPlayback()
                 statusRadio.text = "Empty list stations"
             } else {
                 appSettings.lastRadioStationIndex -= 1
                 if (appSettings.lastRadioStationIndex < 0)
                     appSettings.lastRadioStationIndex = appSettings.radioStations.size - 1
-
                 saveAppSettings(appSettings)
                 currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
                 statusRadio.text = currentStation.name
-
                 if (statusPlay) {
                     updateUIForPlaying()
-                    stopPlayback()
                     playStation(currentStation)
                 } else {
                     updateUIForStopped()
-                    stopPlayback()
                 }
             }
         }
@@ -365,9 +359,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         buttonPlay.setOnClickListenerWithScreenSaverReset {
+            stopPlayback()
             if (appSettings.radioStations.isEmpty()) {
                 appSettings.lastRadioStationIndex = 0
-                stopPlayback()
+//                stopPlayback()
                 statusRadio.text = "Empty list stations"
                 currentStation = RadioStation("empty", "empty")
                 statusPlay = false
@@ -381,7 +376,7 @@ class MainActivity : AppCompatActivity() {
                     statusRadio.text = currentStation.name
                     updateUIForStopped()
                     statusPlay = false
-                    stopPlayback()
+//                    stopPlayback()
                     Log.d("iAtRadio", "buttonPlay -> press Stop")
                 } else {
                     // возможно здесь currentStation удалить
