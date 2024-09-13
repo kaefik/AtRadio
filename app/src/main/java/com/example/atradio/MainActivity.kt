@@ -44,23 +44,12 @@ import android.content.ComponentName
 import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.os.IBinder
+import android.util.Log
 import kotlin.system.exitProcess
 
 class MainActivity : AppCompatActivity() {
 
     private var kol = 0
-
-    // для сервиса плеера
-//    private lateinit var radioServiceIntent: Intent
-//
-//    private val errorReceiver = object : BroadcastReceiver() {
-//        override fun onReceive(context: Context?, intent: Intent?) {
-//            val errorMessage = intent?.getStringExtra("ERROR_MESSAGE")
-//            Toast.makeText(this@MainActivity, "Error playing station: $errorMessage", Toast.LENGTH_LONG).show()
-//        }
-//    }
-
-    // END для сервиса плеера
 
     // текущая радиостанция которая играет
     private var currentStation: RadioStation = RadioStation("empty", "empty")
@@ -248,7 +237,6 @@ class MainActivity : AppCompatActivity() {
                     }
                     currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
                     statusRadio.text = currentStation.name
-                    updateUIForStopped()
                 }
 
                 val selectedStation = result.data?.getParcelableExtra<RadioStation>("selectedStation")
@@ -260,6 +248,7 @@ class MainActivity : AppCompatActivity() {
                     statusRadio.text = currentStation.name
                     updateUIForPlaying()
                     // запуск сервера
+                    stopPlayback()
                     playStation(currentStation)
                     // END запуск сервера
                 }
@@ -317,9 +306,7 @@ class MainActivity : AppCompatActivity() {
         buttonForward.setOnClickListenerWithScreenSaverReset {
             if (appSettings.radioStations.isEmpty()) {
                 appSettings.lastRadioStationIndex = 0
-
                 stopPlayback()
-
                 statusRadio.text = "Empty list stations"
             } else {
                 appSettings.lastRadioStationIndex += 1
@@ -332,6 +319,7 @@ class MainActivity : AppCompatActivity() {
                 // запуск сервиса
                 if (statusPlay) {
                     updateUIForPlaying()
+                    stopPlayback()
                     playStation(currentStation)
 
                 } else {
@@ -359,10 +347,11 @@ class MainActivity : AppCompatActivity() {
 
                 if (statusPlay) {
                     updateUIForPlaying()
+                    stopPlayback()
                     playStation(currentStation)
                 } else {
-                    stopPlayback()
                     updateUIForStopped()
+                    stopPlayback()
                 }
             }
         }
@@ -380,24 +369,28 @@ class MainActivity : AppCompatActivity() {
                 appSettings.lastRadioStationIndex = 0
                 stopPlayback()
                 statusRadio.text = "Empty list stations"
+                currentStation = RadioStation("empty", "empty")
                 statusPlay = false
                 updateUIForStopped()
+
+                Log.d("iAtRadio", "buttonPlay -> empty $currentStation")
+
             } else {
                 if (statusPlay) {
                     currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
                     statusRadio.text = currentStation.name
                     updateUIForStopped()
                     statusPlay = false
-
-                    // остановка сервиса
                     stopPlayback()
+                    Log.d("iAtRadio", "buttonPlay -> press Stop")
                 } else {
                     // возможно здесь currentStation удалить
                     statusPlay = true
                     updateUIForPlaying()
 //                    currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
                     statusRadio.text = currentStation.name
-
+                    Log.d("iAtRadio", "buttonPlay -> press Play")
+//                    stopPlayback()
                     playStation(currentStation)
                 }
             }
@@ -434,7 +427,7 @@ class MainActivity : AppCompatActivity() {
             statusRadio.text = it.name
             currentStation= it
             updateUIForPlaying()
-
+            stopPlayback()
             playStation(currentStation)
 
         } ?: Toast.makeText(this, getString(R.string.no_station_saved_to_favorite) + " ${favIndex + 1}", Toast.LENGTH_SHORT).show()
@@ -635,29 +628,20 @@ class MainActivity : AppCompatActivity() {
             action = RadioNotificationService.ACTION_PLAY
             putExtra(RadioNotificationService.EXTRA_STATION, station)
         }
-        ContextCompat.startForegroundService(this, intent)
+        Log.d("iAtRadio", "playStation -> $intent")
+        startService(intent)
     }
 
     private fun stopPlayback() {
         val intent = Intent(this, RadioNotificationService::class.java).apply {
             action = RadioNotificationService.ACTION_STOP
         }
-        ContextCompat.startForegroundService(this, intent)
+        Log.d("iAtRadio", "stopPlayback -> $intent")
+        startService(intent)
     }
 
     // END упраление проигрыванием станций
 
-
-//    // метод для проверки, работает ли сервис
-//    private fun isMyServiceRunning(serviceClass: Class<*>): Boolean {
-//        val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-//        for (service in manager.getRunningServices(Int.MAX_VALUE)) {
-//            if (serviceClass.name == service.service.className) {
-//                return true
-//            }
-//        }
-//        return false
-//    }
 }
 
 // Описание функции-расширения должно быть вне класса MainActivity
