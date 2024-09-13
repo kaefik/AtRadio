@@ -1,6 +1,7 @@
 package com.example.atradio
 
 import android.app.*
+import android.content.Context
 import android.content.Intent
 import android.media.AudioAttributes
 import android.media.MediaPlayer
@@ -125,7 +126,7 @@ class RadioNotificationService : Service() {
         val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
 
         val stopIntent = Intent(this, RadioNotificationService::class.java).apply { action = ACTION_STOP }
-        val stopPendingIntent = PendingIntent.getService(this, 0, stopIntent, PendingIntent.FLAG_IMMUTABLE)
+        val stopPendingIntent = PendingIntent.getService(this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         return NotificationCompat.Builder(this, channelId)
             .setContentTitle("Онлайн Радио")
@@ -133,7 +134,7 @@ class RadioNotificationService : Service() {
             .setSmallIcon(R.drawable.logo)
             .setContentIntent(pendingIntent)
             .addAction(R.drawable.stop_64, "Остановить", stopPendingIntent)
-            .setOngoing(true)
+            .setOngoing(true) // уведомление не исчезнет при свайпе
             .build()
     }
 
@@ -141,7 +142,7 @@ class RadioNotificationService : Service() {
     private fun updateNotification() {
         Log.d("iAtRadio RadioService", "updateNotification start")
         val notification = createNotification()
-        val notificationManager = getSystemService(NotificationManager::class.java)
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager //getSystemService(NotificationManager::class.java)
         notificationManager.notify(NOTIFICATION_ID, notification)
     }
 
