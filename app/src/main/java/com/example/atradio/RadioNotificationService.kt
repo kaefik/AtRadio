@@ -9,6 +9,7 @@ import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import android.util.Log
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 class RadioNotificationService : Service() {
     private var mediaPlayer: MediaPlayer? = null
@@ -62,20 +63,30 @@ class RadioNotificationService : Service() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun playStation(station: RadioStation) {
         Log.d("iAtRadio RadioService", "playStation запуск станции $station")
-//        stopPlayback()
-        mediaPlayer = MediaPlayer().apply {
-            setAudioAttributes(
-                AudioAttributes.Builder()
-                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                    .setUsage(AudioAttributes.USAGE_MEDIA)
-                    .build()
-            )
-            setDataSource(station.url)
-            prepareAsync()
-            setOnPreparedListener {
-                start()
-                updateNotification()
+        try {
+            mediaPlayer = MediaPlayer().apply {
+                setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .build()
+                )
+                setDataSource(station.url)
+                prepareAsync()
+                setOnPreparedListener {
+                    start()
+                    updateNotification()
+                }
+                setOnErrorListener { _, what, extra ->
+                    Log.e("RadioService", "Playback error: $what, extra: $extra")
+                    sendErrorBroadcast("Ошибка воспроизведения: код $what")
+                    true // Возвращаем true, чтобы указать, что ошибка обработана
+                }
+
             }
+        } catch (e: Exception) {
+            Log.e("RadioService", "Error initializing MediaPlayer: ${e.message}")
+            sendErrorBroadcast("Ошибка при инициализации MediaPlayer: ${e.message}")
         }
     }
 
@@ -130,6 +141,13 @@ class RadioNotificationService : Service() {
         val notification = createNotification()
         val notificationManager = getSystemService(NotificationManager::class.java)
         notificationManager.notify(NOTIFICATION_ID, notification)
+    }
+
+    private fun sendErrorBroadcast(message: String) {
+        val intent = Intent("com.example.atradio.ERROR").apply {
+            putExtra("ERROR_MESSAGE", message)
+        }
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 
     companion object {
