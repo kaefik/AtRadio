@@ -219,16 +219,14 @@ class MainActivity : AppCompatActivity() {
             currentStation = appSettings.radioStations[0]
             statusRadio.text = currentStation.name
             updateUIForStopped()
+            stopPlayback()
         } else {
             if (appSettings.isAutoPlayEnabled ) {
                 statusPlay = true
                 currentStation= appSettings.radioStations[appSettings.lastRadioStationIndex]
-
 //                println("currentStation = $currentStation")
-
                 statusRadio.text = currentStation.name
                 updateUIForPlaying()
-
                 // запуск сервиса
                 playStation(currentStation)
                 // END запуск сервиса
@@ -236,6 +234,8 @@ class MainActivity : AppCompatActivity() {
                 currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
                 statusRadio.text = currentStation.name
                 updateUIForStopped()
+                setStationNotification(currentStation)
+//                stopPlayback()
             }
         }
 
@@ -347,8 +347,8 @@ class MainActivity : AppCompatActivity() {
                     playStation(currentStation)
 
                 } else {
-                    currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
                     updateUIForStopped()
+                    setStationNotification(currentStation)
                 }
                 // END запуск сервиса
             }
@@ -371,6 +371,7 @@ class MainActivity : AppCompatActivity() {
                     playStation(currentStation)
                 } else {
                     updateUIForStopped()
+                    setStationNotification(currentStation)
                 }
             }
         }
@@ -624,6 +625,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     // упраление проигрыванием станций
+
+    // передаем текущую радиостанцию в сервис
+    private fun setStationNotification(station: RadioStation) {
+        val intent = Intent(this, RadioNotificationService::class.java).apply {
+            action = RadioNotificationService.ACTION_CURRENT_STATION
+            putExtra(RadioNotificationService.EXTRA_STATION, station)
+        }
+        Log.d("iAtRadio", "setStationNotification -> $intent")
+        startService(intent)
+    }
+
+
     private fun playStation(station: RadioStation) {
         val intent = Intent(this, RadioNotificationService::class.java).apply {
             action = RadioNotificationService.ACTION_PLAY
