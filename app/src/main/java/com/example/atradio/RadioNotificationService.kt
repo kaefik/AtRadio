@@ -20,31 +20,33 @@ class RadioNotificationService : Service() {
     private var isTaskRunning: Boolean = false // для того чтобы была запущена одна задача
 
 
-
     override fun onBind(intent: Intent?): IBinder? = null
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d("RadioService", "Service started with startId: $startId and action: ${intent?.action}")
 
-        startForeground(NOTIFICATION_ID, createNotification())
-
         // Если уже выполняется задача, остановите текущую перед выполнением новой
         if (isTaskRunning) {
             Log.d("iAtRadio RadioService", "Task is already running, stopping current task...")
             stopPlayback() // Останавливаем текущую задачу перед началом новой
         }
-
         // Сохраняем текущий startId
         currentStartId = startId
-
-
-
         when (intent?.action) {
+            ACTION_CURRENT_STATION -> {
+                val station = intent.getParcelableExtra<RadioStation>(EXTRA_STATION)
+                station?.let {
+                    currentStation = it
+                    Log.d("iAtRadio RadioService", "onStartCommand -> ACTION_CURRENT_STATION -> станция: $it")
+                    isTaskRunning = false  // Указываем, что задача запущена
+                }
+            }
             ACTION_PLAY -> {
                 val station = intent.getParcelableExtra<RadioStation>(EXTRA_STATION)
                 station?.let {
                     currentStation = it
+                    Log.d("iAtRadio RadioService", "onStartCommand -> ACTION_PLAY -> станция: $it")
                     isTaskRunning = true  // Указываем, что задача запущена
                     playStation(it)
                 }
@@ -55,9 +57,12 @@ class RadioNotificationService : Service() {
             }
             else -> {
                 Log.w("iAtRadio RadioService", "Unknown action")
+                isTaskRunning = false
                 stopSelf(startId)  // Останавливаем сервис при неизвестном действии
             }
         }
+
+        startForeground(NOTIFICATION_ID, createNotification())
 
         return START_STICKY
     }
@@ -79,6 +84,7 @@ class RadioNotificationService : Service() {
                 setOnPreparedListener {
                     start()
                     updateNotification()
+//                    createNotification()
 
 //                    startForeground(NOTIFICATION_ID, createNotification())
                 }
@@ -95,14 +101,18 @@ class RadioNotificationService : Service() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun stopPlayback() {
         Log.d("iAtRadio RadioService", "stopPlayback called")
+        Log.d("iAtRadio RadioService", "stopPlayback текущая станция $currentStation")
+
         mediaPlayer?.apply {
             stop()
             release()
         }
         mediaPlayer = null
-        currentStation = null
+        updateNotification()
+//        currentStation = null
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
 //            stopForeground(STOP_FOREGROUND_REMOVE)
 //        } else {
@@ -135,6 +145,7 @@ class RadioNotificationService : Service() {
             putExtra(EXTRA_STATION, currentStation)
         }
         val playPendingIntent = PendingIntent.getService(this, 1, playIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+        Log.d("iAtRadio RadioService", "createNotification -> playPendingIntent ACTION_PLAY -> станция: $currentStation")
 
         val builder = NotificationCompat.Builder(this, channelId)
             .setContentTitle("Онлайн Радио")
@@ -170,6 +181,7 @@ class RadioNotificationService : Service() {
 
     companion object {
         const val ACTION_PLAY = "com.example.atradio.ACTION_PLAY"
+        const val ACTION_CURRENT_STATION = "com.example.atradio.ACTION_CURRENT_STATION"
         const val ACTION_STOP = "com.example.atradio.ACTION_STOP"
         const val EXTRA_STATION = "com.example.atradio.EXTRA_STATION"
         const val NOTIFICATION_ID = 1
