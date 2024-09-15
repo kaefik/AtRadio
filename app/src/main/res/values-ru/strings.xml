@@ -59,4 +59,5 @@
     <string name="stop">Стоп</string>
     <string name="play">Играть</string>
     <string name="text_preparing">Подготовка</string>
+    <string name="close">Закрыть</string>
 </resources>

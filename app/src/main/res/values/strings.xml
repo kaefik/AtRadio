@@ -60,4 +60,5 @@
     <string name="stop">Stop</string>
     <string name="play">Play</string>
     <string name="text_preparing">Preparation</string>
+    <string name="close">Close</string>
 </resources>
