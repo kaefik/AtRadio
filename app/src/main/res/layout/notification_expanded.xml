@@ -28,7 +28,7 @@
         android:id="@+id/button_play_stop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/play_24"
+        android:src="@drawable/play3_24"
         android:contentDescription="@string/play_stop"
         android:layout_gravity="center_vertical"
         android:padding="8dp"/>
@@ -37,20 +37,20 @@
         android:id="@+id/button_next"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/forward_24"
+        android:src="@drawable/forward_24s"
         android:contentDescription="@string/forward"
         android:layout_gravity="center_vertical"
         android:padding="8dp"/>
 
     <TextView
-        android:layout_width="20dp"
+        android:layout_width="10dp"
         android:layout_height="match_parent"/>
 
     <ImageView
         android:id="@+id/button_close"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/close_24"
+        android:src="@drawable/close2_24"
         android:contentDescription="@string/close"
         android:layout_gravity="center_vertical"
         android:padding="8dp"/>

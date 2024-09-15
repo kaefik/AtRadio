@@ -174,7 +174,7 @@ class RadioNotificationService : Service() {
         )
 
         // Устанавливаем иконку в зависимости от состояния воспроизведения
-        val buttonIcon = if (mediaPlayer?.isPlaying == true) R.drawable.stop_24 else R.drawable.play_24
+        val buttonIcon = if (mediaPlayer?.isPlaying == true) R.drawable.stop3_24 else R.drawable.play3_24
         expandedView.setImageViewResource(R.id.button_play_stop, buttonIcon)
 
         // Устанавливаем действия для кнопок

@@ -71,6 +71,7 @@ class MainActivity : AppCompatActivity() {
                 statusPlay = true
                 updateUIForPlaying()
             } else {
+                statusPlay = false
                 updateUIForStopped()
             }
 
