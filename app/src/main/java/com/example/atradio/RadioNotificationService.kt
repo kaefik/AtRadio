@@ -132,17 +132,22 @@ class RadioNotificationService : Service() {
         Log.d("iAtRadio RadioService", "Service stopped")
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     private fun createNotification(): Notification {
         Log.d("iAtRadio RadioService", "createNotification start")
-        val channelId = "radio_playback_channel"
-        val channelName = "Radio Playback"
-        val importance = NotificationManager.IMPORTANCE_LOW
-        val channel = NotificationChannel(channelId, channelName, importance).apply {
-            setSound(null, null)  // Отключаем звук для канала
+
+        val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channelId = "radio_playback_channel"
+            val channelName = "Radio Playback"
+            val importance = NotificationManager.IMPORTANCE_LOW
+            val channel = NotificationChannel(channelId, channelName, importance).apply {
+                setSound(null, null)
+            }
+            val notificationManager = getSystemService(NotificationManager::class.java)
+            notificationManager.createNotificationChannel(channel)
+            NotificationCompat.Builder(this, channelId)
+        } else {
+            NotificationCompat.Builder(this)
         }
-        val notificationManager = getSystemService(NotificationManager::class.java)
-        notificationManager.createNotificationChannel(channel)
 
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
@@ -173,28 +178,24 @@ class RadioNotificationService : Service() {
             currentStation?.name ?: (getString(R.string.text_preparing) + "...")
         )
 
-        // Устанавливаем иконку в зависимости от состояния воспроизведения
         val buttonIcon = if (mediaPlayer?.isPlaying == true) R.drawable.stop3_24 else R.drawable.play3_24
         expandedView.setImageViewResource(R.id.button_play_stop, buttonIcon)
 
-        // Устанавливаем действия для кнопок
         expandedView.setOnClickPendingIntent(R.id.button_play_stop, togglePendingIntent)
         expandedView.setOnClickPendingIntent(R.id.button_previous, previousPendingIntent)
         expandedView.setOnClickPendingIntent(R.id.button_next, nextPendingIntent)
         expandedView.setOnClickPendingIntent(R.id.button_close, closePendingIntent)
 
-        val builder = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.logo)
+        builder.setSmallIcon(R.drawable.logo)
             .setContentIntent(pendingIntent)
             .setCustomContentView(expandedView)
             .setCustomBigContentView(expandedView)
             .setStyle(NotificationCompat.DecoratedCustomViewStyle())
             .setOngoing(true)
-            .setPriority(NotificationCompat.PRIORITY_LOW)  // Устанавливаем низкий приоритет
-            .setSound(null)  // Отключаем звук для уведомления
-            .setVibrate(null)  // Отключаем вибрацию
-            .setDefaults(0)  // Отключаем все стандартные эффекты уведомления
-
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .setSound(null)
+            .setVibrate(null)
+            .setDefaults(0)
 
         return builder.build()
     }
