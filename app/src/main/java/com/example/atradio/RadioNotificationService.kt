@@ -135,8 +135,10 @@ class RadioNotificationService : Service() {
         Log.d("iAtRadio RadioService", "createNotification start")
         val channelId = "radio_playback_channel"
         val channelName = "Radio Playback"
-        val importance = NotificationManager.IMPORTANCE_DEFAULT
-        val channel = NotificationChannel(channelId, channelName, importance)
+        val importance = NotificationManager.IMPORTANCE_LOW
+        val channel = NotificationChannel(channelId, channelName, importance).apply {
+            setSound(null, null)  // Отключаем звук для канала
+        }
         val notificationManager = getSystemService(NotificationManager::class.java)
         notificationManager.createNotificationChannel(channel)
 
@@ -186,6 +188,11 @@ class RadioNotificationService : Service() {
             .setCustomBigContentView(expandedView)
             .setStyle(NotificationCompat.DecoratedCustomViewStyle())
             .setOngoing(true)
+            .setPriority(NotificationCompat.PRIORITY_LOW)  // Устанавливаем низкий приоритет
+            .setSound(null)  // Отключаем звук для уведомления
+            .setVibrate(null)  // Отключаем вибрацию
+            .setDefaults(0)  // Отключаем все стандартные эффекты уведомления
+
 
         return builder.build()
     }
