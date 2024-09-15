@@ -221,29 +221,29 @@ class MainActivity : AppCompatActivity() {
             updateUIForStopped()
             stopPlayback()
         } else {
+
+            if (appSettings.currentStation.url!=""){
+                // найти в списке радиостанций корректный индекс радиостанции
+                appSettings.lastRadioStationIndex = appSettings.radioStations.indexOf(appSettings.currentStation)
+                if (appSettings.lastRadioStationIndex ==-1) {
+                    appSettings.lastRadioStationIndex=0
+                }
+            } else {
+                appSettings.currentStation =
+                    appSettings.radioStations[appSettings.lastRadioStationIndex]
+            }
+
             if (appSettings.isAutoPlayEnabled ) {
                 statusPlay = true
-                if (appSettings.currentStation.url!=""){
-                    // найти в списке радиостанций корректный индекс радиостанции
-                    appSettings.lastRadioStationIndex = appSettings.radioStations.indexOf(appSettings.currentStation)
-                    if (appSettings.lastRadioStationIndex ==-1) {
-                        appSettings.lastRadioStationIndex=0
-                    }
-                } else {
-                    appSettings.currentStation =
-                        appSettings.radioStations[appSettings.lastRadioStationIndex]
-               }
                 statusRadio.text = appSettings.currentStation.name
                 updateUIForPlaying()
                 // запуск сервиса
                 playStation(appSettings.currentStation)
                 // END запуск сервиса
             } else {
-                appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
                 statusRadio.text = appSettings.currentStation.name
                 updateUIForStopped()
                 setStationNotification(appSettings.currentStation)
-//                stopPlayback()
             }
         }
 
@@ -262,7 +262,7 @@ class MainActivity : AppCompatActivity() {
                     statusPlay = false
                     updateUIForStopped()
                     statusRadio.text = getString(R.string.empty_list_stations)
-                    appSettings.currentStation = RadioStation("empty", "empty")
+                    appSettings.currentStation = RadioStation("", "")
 
                 } else {
                     if (appSettings.lastRadioStationIndex >= appSettings.radioStations.size) {
