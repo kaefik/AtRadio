@@ -10,8 +10,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:textSize="14sp"
-        android:maxLines="1"
+        android:textSize="13sp"
+        android:maxLines="2"
         android:ellipsize="end"
         android:layout_gravity="center_vertical"/>
 
