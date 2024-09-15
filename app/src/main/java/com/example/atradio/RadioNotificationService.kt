@@ -138,22 +138,23 @@ class RadioNotificationService : Service() {
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
 
-        val stopIntent = Intent(this, RadioNotificationService::class.java).apply { action = ACTION_STOP }
-        val stopPendingIntent = PendingIntent.getService(this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-
-        val playIntent = Intent(this, RadioNotificationService::class.java).apply {
-            action = ACTION_PLAY
+        val toggleIntent = Intent(this, RadioNotificationService::class.java).apply {
+            action = if (mediaPlayer?.isPlaying == true) ACTION_STOP else ACTION_PLAY
             putExtra(EXTRA_STATION, currentStation)
         }
-        val playPendingIntent = PendingIntent.getService(this, 1, playIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-        Log.d("iAtRadio RadioService", "createNotification -> playPendingIntent ACTION_PLAY -> станция: $currentStation")
+        val togglePendingIntent = PendingIntent.getService(this, 0, toggleIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
-        // Создаем развернутый вид уведомления
         val expandedView = RemoteViews(packageName, R.layout.notification_expanded)
-        expandedView.setTextViewText(R.id.text_artist,
+        expandedView.setTextViewText(R.id.text_station_name,
             currentStation?.name ?: (getString(R.string.text_preparing) + "...")
         )
 
+        // Устанавливаем иконку в зависимости от состояния воспроизведения
+        val buttonIcon = if (mediaPlayer?.isPlaying == true) R.drawable.stop_24 else R.drawable.play_24
+        expandedView.setImageViewResource(R.id.button_play_stop, buttonIcon)
+
+        // Устанавливаем действие для кнопки
+        expandedView.setOnClickPendingIntent(R.id.button_play_stop, togglePendingIntent)
 
         val builder = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.logo)
@@ -161,20 +162,10 @@ class RadioNotificationService : Service() {
             .setCustomContentView(expandedView)
             .setCustomBigContentView(expandedView)
             .setStyle(NotificationCompat.DecoratedCustomViewStyle())
-            .setOngoing(true) // уведомление не исчезнет при свайпе
-
-
-
-        // Добавляем кнопку воспроизведения или остановки в зависимости от текущего состояния
-        if (mediaPlayer?.isPlaying == true) {
-            builder.addAction(R.drawable.stop_64, getString(R.string.stop), stopPendingIntent)
-        } else {
-            builder.addAction(R.drawable.play_64, getString(R.string.play), playPendingIntent)
-        }
+            .setOngoing(true)
 
         return builder.build()
     }
-
     @RequiresApi(Build.VERSION_CODES.O)
     private fun updateNotification() {
         Log.d("iAtRadio RadioService", "updateNotification start")
