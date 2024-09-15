@@ -57,4 +57,7 @@
     <string name="title_showPermissionDeniedDialog">Рөхсәт кире кагылды</string>
     <string name="message_showPermissionDeniedDialog">Хәбәрнамә рөхсәте булмаса, сез радионы уйнау турында яңартуларны алмыйсыз. Бу рөхсәтне кушымта көйләүләрендә бирә аласыз.</string>
     <string name="positive_showPermissionDeniedDialog">Open Settings</string>
+    <string name="stop">Тукта</string>
+    <string name="play">Уйнау</string>
+    <string name="text_preparing">Әзерлек</string>
 </resources>

@@ -56,4 +56,7 @@
     <string name="title_showPermissionDeniedDialog">Разрешение отклонено</string>
     <string name="message_showPermissionDeniedDialog">Без разрешения на уведомления вы не будете получать обновления о воспроизведении радио. Вы можете предоставить это разрешение в настройках приложения.</string>
     <string name="positive_showPermissionDeniedDialog">Открыть настройки</string>
+    <string name="stop">Стоп</string>
+    <string name="play">Играть</string>
+    <string name="text_preparing">Подготовка</string>
 </resources>

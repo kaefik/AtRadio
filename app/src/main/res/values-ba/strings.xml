@@ -58,4 +58,7 @@
     <string name="title_showPermissionDeniedDialog">Рөхсәт кире ҡағылды</string>
     <string name="message_showPermissionDeniedDialog">Хәбәрнамәгә рөхсәт булмаһа, һеҙ радио уйнау тураһында яңыртыуҙарҙы алмайһығыҙ. Был рөхсәтте ҡушымта көйләүҙәрендә бирә алаһығыҙ.</string>
     <string name="positive_showPermissionDeniedDialog">Көйләүҙәрҙе асыу</string>
+    <string name="stop">Туҡтат</string>
+    <string name="play">Уйнау</string>
+    <string name="text_preparing">Әҙерлек</string>
 </resources>
