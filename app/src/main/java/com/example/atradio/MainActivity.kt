@@ -63,6 +63,20 @@ class MainActivity : AppCompatActivity() {
 //    private var currentStation: RadioStation = RadioStation("empty", "empty")
 
 
+    private val infoReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val isPlayed = intent?.getBooleanExtra("PLAY", false)
+
+            if(isPlayed == true){
+                statusPlay = true
+                updateUIForPlaying()
+            } else {
+                updateUIForStopped()
+            }
+
+        }
+    }
+
     private val errorReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val errorMessage = intent?.getStringExtra("ERROR_MESSAGE")
@@ -149,7 +163,11 @@ class MainActivity : AppCompatActivity() {
 
         // Регистрируем BroadcastReceiver для получения ошибок от сервиса
         LocalBroadcastManager.getInstance(this)
-            .registerReceiver(errorReceiver, IntentFilter("com.example.atradio.ERROR"))
+            .registerReceiver(errorReceiver, IntentFilter(RadioNotificationService.ACTION_ERROR))
+
+        // Регистрируем BroadcastReceiver для получения информации от сервиса
+        LocalBroadcastManager.getInstance(this)
+            .registerReceiver(infoReceiver, IntentFilter(RadioNotificationService.ACTION_INFO))
 
 
         // локализация приложения
@@ -632,6 +650,7 @@ class MainActivity : AppCompatActivity() {
         stopPlayback()
         // Отмена регистрации BroadcastReceiver при уничтожении активности
         LocalBroadcastManager.getInstance(this).unregisterReceiver(errorReceiver)
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(infoReceiver)
     }
 
     // упраление проигрыванием станций

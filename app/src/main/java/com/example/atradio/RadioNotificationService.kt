@@ -99,6 +99,7 @@ class RadioNotificationService : Service() {
                 setOnPreparedListener {
                     start()
                     updateNotification()
+                    sendInfoBroadcast(true)
 //                    createNotification()
 
 //                    startForeground(NOTIFICATION_ID, createNotification())
@@ -124,6 +125,7 @@ class RadioNotificationService : Service() {
         mediaPlayer?.apply {
             stop()
             release()
+            sendInfoBroadcast(false)
         }
         mediaPlayer = null
         updateNotification()
@@ -207,8 +209,16 @@ class RadioNotificationService : Service() {
     }
 
     private fun sendErrorBroadcast(message: String) {
-        val intent = Intent("com.example.atradio.ERROR").apply {
+        val intent = Intent(ACTION_ERROR).apply {
             putExtra("ERROR_MESSAGE", message)
+        }
+        LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+    }
+
+    // для отправки информации из сервиса
+    private fun sendInfoBroadcast(isPlayed: Boolean) {
+        val intent = Intent(ACTION_INFO).apply {
+            putExtra("PLAY", isPlayed)
         }
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
@@ -220,6 +230,8 @@ class RadioNotificationService : Service() {
         const val ACTION_CLOSE = "com.example.atradio.ACTION_CLOSE"
         const val ACTION_PREVIOUS = "com.example.atradio.ACTION_PREVIOUS"
         const val ACTION_NEXT = "com.example.atradio.ACTION_NEXT"
+        const val ACTION_ERROR = "com.example.atradio.ERROR" // для отправки ошибок из сервиса
+        const val ACTION_INFO = "com.example.atradio.INFO" // для отправки информации из сервиса
         const val EXTRA_STATION = "com.example.atradio.EXTRA_STATION"
         const val NOTIFICATION_ID = 1
     }
