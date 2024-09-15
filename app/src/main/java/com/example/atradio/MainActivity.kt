@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // текущая радиостанция которая играет
-    private var currentStation: RadioStation = RadioStation("empty", "empty")
+//    private var currentStation: RadioStation = RadioStation("empty", "empty")
 
 
     private val errorReceiver = object : BroadcastReceiver() {
@@ -110,7 +110,7 @@ class MainActivity : AppCompatActivity() {
         radioText.visibility = View.VISIBLE
         var newText = getString(R.string.at_radio)
         if (appSettings.radioStations.isNotEmpty()){
-            newText = currentStation.name
+            newText = appSettings.currentStation.name
             val newSizeText = 15
             if (newText.length > newSizeText) {
                 newText = newText.substring(0, newSizeText) + "..."
@@ -216,25 +216,33 @@ class MainActivity : AppCompatActivity() {
 
             saveAppSettings(appSettings)
             appSettings.lastRadioStationIndex = 0
-            currentStation = appSettings.radioStations[0]
-            statusRadio.text = currentStation.name
+            appSettings.currentStation = appSettings.radioStations[0]
+            statusRadio.text = appSettings.currentStation.name
             updateUIForStopped()
             stopPlayback()
         } else {
             if (appSettings.isAutoPlayEnabled ) {
                 statusPlay = true
-                currentStation= appSettings.radioStations[appSettings.lastRadioStationIndex]
-//                println("currentStation = $currentStation")
-                statusRadio.text = currentStation.name
+                if (appSettings.currentStation.url!=""){
+                    // найти в списке радиостанций корректный индекс радиостанции
+                    appSettings.lastRadioStationIndex = appSettings.radioStations.indexOf(appSettings.currentStation)
+                    if (appSettings.lastRadioStationIndex ==-1) {
+                        appSettings.lastRadioStationIndex=0
+                    }
+                } else {
+                    appSettings.currentStation =
+                        appSettings.radioStations[appSettings.lastRadioStationIndex]
+               }
+                statusRadio.text = appSettings.currentStation.name
                 updateUIForPlaying()
                 // запуск сервиса
-                playStation(currentStation)
+                playStation(appSettings.currentStation)
                 // END запуск сервиса
             } else {
-                currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
-                statusRadio.text = currentStation.name
+                appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
+                statusRadio.text = appSettings.currentStation.name
                 updateUIForStopped()
-                setStationNotification(currentStation)
+                setStationNotification(appSettings.currentStation)
 //                stopPlayback()
             }
         }
@@ -254,14 +262,14 @@ class MainActivity : AppCompatActivity() {
                     statusPlay = false
                     updateUIForStopped()
                     statusRadio.text = getString(R.string.empty_list_stations)
-                    currentStation = RadioStation("empty", "empty")
+                    appSettings.currentStation = RadioStation("empty", "empty")
 
                 } else {
                     if (appSettings.lastRadioStationIndex >= appSettings.radioStations.size) {
                         appSettings.lastRadioStationIndex = 0
                     }
-                    currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
-                    statusRadio.text = currentStation.name
+                    appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
+                    statusRadio.text = appSettings.currentStation.name
                 }
 
                 val selectedStation = result.data?.getParcelableExtra<RadioStation>("selectedStation")
@@ -269,12 +277,12 @@ class MainActivity : AppCompatActivity() {
                     appSettings.lastRadioStationIndex = appSettings.radioStations.indexOf(selectedStation)
                     saveAppSettings(appSettings)
                     statusPlay = true
-                    currentStation = selectedStation
-                    statusRadio.text = currentStation.name
+                    appSettings.currentStation = selectedStation
+                    statusRadio.text = appSettings.currentStation.name
                     updateUIForPlaying()
                     // запуск сервера
                     stopPlayback()
-                    playStation(currentStation)
+                    playStation(appSettings.currentStation)
                     // END запуск сервера
                 }
             }
@@ -338,20 +346,21 @@ class MainActivity : AppCompatActivity() {
                 if (appSettings.radioStations.size <= appSettings.lastRadioStationIndex)
                     appSettings.lastRadioStationIndex = 0
                 saveAppSettings(appSettings)
-                currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
-                statusRadio.text = currentStation.name
+                appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
+                statusRadio.text = appSettings.currentStation.name
 
                 // запуск сервиса
                 if (statusPlay) {
                     updateUIForPlaying()
-                    playStation(currentStation)
+                    playStation(appSettings.currentStation)
 
                 } else {
                     updateUIForStopped()
-                    setStationNotification(currentStation)
+                    setStationNotification(appSettings.currentStation)
                 }
                 // END запуск сервиса
             }
+
         }
 
         buttonPrev.setOnClickListenerWithScreenSaverReset {
@@ -364,14 +373,14 @@ class MainActivity : AppCompatActivity() {
                 if (appSettings.lastRadioStationIndex < 0)
                     appSettings.lastRadioStationIndex = appSettings.radioStations.size - 1
                 saveAppSettings(appSettings)
-                currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
-                statusRadio.text = currentStation.name
+                appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
+                statusRadio.text = appSettings.currentStation.name
                 if (statusPlay) {
                     updateUIForPlaying()
-                    playStation(currentStation)
+                    playStation(appSettings.currentStation)
                 } else {
                     updateUIForStopped()
-                    setStationNotification(currentStation)
+                    setStationNotification(appSettings.currentStation)
                 }
             }
         }
@@ -389,27 +398,27 @@ class MainActivity : AppCompatActivity() {
             if (appSettings.radioStations.isEmpty()) {
                 appSettings.lastRadioStationIndex = 0
                 statusRadio.text = "Empty list stations"
-                currentStation = RadioStation("empty", "empty")
+                appSettings.currentStation = RadioStation("empty", "empty")
                 statusPlay = false
                 updateUIForStopped()
 
-                Log.d("iAtRadio", "buttonPlay -> empty $currentStation")
+                Log.d("iAtRadio", "buttonPlay -> empty $appSettings.currentStation")
 
             } else {
                 if (statusPlay) {
-                    currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
-                    statusRadio.text = currentStation.name
+                    appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
+                    statusRadio.text = appSettings.currentStation.name
                     updateUIForStopped()
                     statusPlay = false
                     Log.d("iAtRadio", "buttonPlay -> press Stop")
                 } else {
-                    // возможно здесь currentStation удалить
+                    // возможно здесь appSettings.currentStation удалить
                     statusPlay = true
                     updateUIForPlaying()
-//                    currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
-                    statusRadio.text = currentStation.name
+//                    appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
+                    statusRadio.text = appSettings.currentStation.name
                     Log.d("iAtRadio", "buttonPlay -> press Play")
-                    playStation(currentStation)
+                    playStation(appSettings.currentStation)
                 }
             }
         }
@@ -443,10 +452,11 @@ class MainActivity : AppCompatActivity() {
             statusPlay = true
             appSettings.lastRadioStationIndex = appSettings.radioStations.indexOf(it)
             statusRadio.text = it.name
-            currentStation= it
+            appSettings.currentStation= it
+            saveAppSettings(appSettings)
             updateUIForPlaying()
             stopPlayback()
-            playStation(currentStation)
+            playStation(appSettings.currentStation)
 
         } ?: Toast.makeText(this, getString(R.string.no_station_saved_to_favorite) + " ${favIndex + 1}", Toast.LENGTH_SHORT).show()
     }
