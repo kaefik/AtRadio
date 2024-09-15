@@ -57,4 +57,7 @@
     <string name="title_showPermissionDeniedDialog">Permission Denied</string>
     <string name="message_showPermissionDeniedDialog">Without notification permission, you won\'t receive updates about the radio playback. You can grant this permission in the app settings.</string>
     <string name="positive_showPermissionDeniedDialog">Open Settings</string>
+    <string name="stop">Stop</string>
+    <string name="play">Play</string>
+    <string name="text_preparing">Preparation</string>
 </resources>
