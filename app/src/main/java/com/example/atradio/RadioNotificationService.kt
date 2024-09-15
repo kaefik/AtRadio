@@ -10,6 +10,7 @@ import android.os.IBinder
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import android.util.Log
+import android.widget.RemoteViews
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 class RadioNotificationService : Service() {
@@ -147,12 +148,20 @@ class RadioNotificationService : Service() {
         val playPendingIntent = PendingIntent.getService(this, 1, playIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         Log.d("iAtRadio RadioService", "createNotification -> playPendingIntent ACTION_PLAY -> станция: $currentStation")
 
+        // Создаем развернутый вид уведомления
+        val expandedView = RemoteViews(packageName, R.layout.notification_expanded)
+        expandedView.setTextViewText(R.id.text_artist, currentStation?.name ?: "Подготовка...")
+
+
         val builder = NotificationCompat.Builder(this, channelId)
-            .setContentTitle("Онлайн Радио")
-            .setContentText(currentStation?.name ?: "Подготовка...")
             .setSmallIcon(R.drawable.logo)
             .setContentIntent(pendingIntent)
+            .setCustomContentView(expandedView)
+            .setCustomBigContentView(expandedView)
+            .setStyle(NotificationCompat.DecoratedCustomViewStyle())
             .setOngoing(true) // уведомление не исчезнет при свайпе
+
+
 
         // Добавляем кнопку воспроизведения или остановки в зависимости от текущего состояния
         if (mediaPlayer?.isPlaying == true) {
@@ -168,7 +177,7 @@ class RadioNotificationService : Service() {
     private fun updateNotification() {
         Log.d("iAtRadio RadioService", "updateNotification start")
         val notification = createNotification()
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager //getSystemService(NotificationManager::class.java)
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(NOTIFICATION_ID, notification)
     }
 
