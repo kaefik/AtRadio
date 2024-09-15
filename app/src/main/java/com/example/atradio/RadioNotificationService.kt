@@ -56,6 +56,20 @@ class RadioNotificationService : Service() {
                 stopPlayback()
 //                stopSelf(startId)  // Останавливаем сервис
             }
+            ACTION_CLOSE -> {
+                stopPlayback()
+                stopSelf(startId)  // Останавливаем сервис
+            }
+            ACTION_PREVIOUS -> {
+                Log.d("iAtRadio RadioService", "onStartCommand -> ACTION_PREVIOUS -> станция: ")
+//                stopPlayback()
+//                stopSelf(startId)  // Останавливаем сервис
+            }
+            ACTION_NEXT -> {
+                Log.d("iAtRadio RadioService", "onStartCommand -> ACTION_NEXT -> станция: ")
+//                stopPlayback()
+//                stopSelf(startId)  // Останавливаем сервис
+            }
             else -> {
                 Log.w("iAtRadio RadioService", "Unknown action")
                 isTaskRunning = false
@@ -113,15 +127,6 @@ class RadioNotificationService : Service() {
         }
         mediaPlayer = null
         updateNotification()
-//        currentStation = null
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-//            stopForeground(STOP_FOREGROUND_REMOVE)
-//        } else {
-//            @Suppress("DEPRECATION")
-//            stopForeground(true)
-//        }
-//        stopSelf(currentStartId) // Используем сохраненный startId
-//        currentStartId=-1
         Log.d("iAtRadio RadioService", "Service stopped")
     }
 
@@ -144,6 +149,21 @@ class RadioNotificationService : Service() {
         }
         val togglePendingIntent = PendingIntent.getService(this, 0, toggleIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
+        val previousIntent = Intent(this, RadioNotificationService::class.java).apply {
+            action = ACTION_PREVIOUS
+        }
+        val previousPendingIntent = PendingIntent.getService(this, 1, previousIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
+        val nextIntent = Intent(this, RadioNotificationService::class.java).apply {
+            action = ACTION_NEXT
+        }
+        val nextPendingIntent = PendingIntent.getService(this, 2, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
+        val closeIntent = Intent(this, RadioNotificationService::class.java).apply {
+            action = ACTION_CLOSE
+        }
+        val closePendingIntent = PendingIntent.getService(this, 3, closeIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
         val expandedView = RemoteViews(packageName, R.layout.notification_expanded)
         expandedView.setTextViewText(R.id.text_station_name,
             currentStation?.name ?: (getString(R.string.text_preparing) + "...")
@@ -153,8 +173,11 @@ class RadioNotificationService : Service() {
         val buttonIcon = if (mediaPlayer?.isPlaying == true) R.drawable.stop_24 else R.drawable.play_24
         expandedView.setImageViewResource(R.id.button_play_stop, buttonIcon)
 
-        // Устанавливаем действие для кнопки
+        // Устанавливаем действия для кнопок
         expandedView.setOnClickPendingIntent(R.id.button_play_stop, togglePendingIntent)
+        expandedView.setOnClickPendingIntent(R.id.button_previous, previousPendingIntent)
+        expandedView.setOnClickPendingIntent(R.id.button_next, nextPendingIntent)
+        expandedView.setOnClickPendingIntent(R.id.button_close, closePendingIntent)
 
         val builder = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.logo)
@@ -166,6 +189,8 @@ class RadioNotificationService : Service() {
 
         return builder.build()
     }
+
+
     @RequiresApi(Build.VERSION_CODES.O)
     private fun updateNotification() {
         Log.d("iAtRadio RadioService", "updateNotification start")
@@ -185,6 +210,9 @@ class RadioNotificationService : Service() {
         const val ACTION_PLAY = "com.example.atradio.ACTION_PLAY"
         const val ACTION_CURRENT_STATION = "com.example.atradio.ACTION_CURRENT_STATION"
         const val ACTION_STOP = "com.example.atradio.ACTION_STOP"
+        const val ACTION_CLOSE = "com.example.atradio.ACTION_CLOSE"
+        const val ACTION_PREVIOUS = "com.example.atradio.ACTION_PREVIOUS"
+        const val ACTION_NEXT = "com.example.atradio.ACTION_NEXT"
         const val EXTRA_STATION = "com.example.atradio.EXTRA_STATION"
         const val NOTIFICATION_ID = 1
     }
