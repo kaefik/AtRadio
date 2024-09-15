@@ -41,7 +41,8 @@ data class AppSettings(
     var isScreenSaverEnabled: Boolean, // флаг включения скринсейвера
     var lastRadioStationIndex: Int,     // номер последней проигранной станции
     var radioStations: MutableList<RadioStation>, // список станций
-    var language: String // язык интерфейса
+    var language: String, // язык интерфейса
+    var currentStation: RadioStation // текущая радиостанция
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         mutableListOf<RadioStation?>().apply {
@@ -53,7 +54,9 @@ data class AppSettings(
         mutableListOf<RadioStation>().apply {
             parcel.readTypedList(this, RadioStation.CREATOR) // Исправлено для чтения списка радиостанций
         },
-        parcel.readString() ?: "en" // чтение языка интерфейса с дефолтным значением
+        parcel.readString() ?: "en", // чтение языка интерфейса с дефолтным значением
+        parcel.readParcelable(RadioStation::class.java.classLoader) ?: RadioStation("", "") // Чтение текущей станции с дефолтным значением
+
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -63,6 +66,7 @@ data class AppSettings(
         parcel.writeInt(lastRadioStationIndex)
         parcel.writeTypedList(radioStations) // Используем writeTypedList для записи списка
         parcel.writeString(language) // Сохраняем язык интерфейса
+        parcel.writeParcelable(currentStation, flags) // Запись текущей станции
     }
 
     override fun describeContents(): Int {
@@ -118,12 +122,18 @@ fun initAppSettings(context: Context): AppSettings {
         isScreenSaverEnabled = true, // Значение по умолчанию
         lastRadioStationIndex = 0, // Первая радиостанция в списке
         radioStations = mutableListOf(), // Пустой список радиостанций
-        language = ""
+        language = "",
+        currentStation = RadioStation("", "") // По умолчанию пустая станция
     )
 
     // Загрузка радиостанций из CSV
     appSettings.radioStations.clear()
     appSettings.radioStations.addAll(loadRadioStationsFromRaw(context, R.raw.radio_stations_default))
+
+    // Если список радиостанций не пуст, устанавливаем первую станцию как текущую
+    if (appSettings.radioStations.isNotEmpty()) {
+        appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
+    }
 
     return appSettings
 }
