@@ -150,7 +150,9 @@ class RadioNotificationService : Service() {
 
         // Создаем развернутый вид уведомления
         val expandedView = RemoteViews(packageName, R.layout.notification_expanded)
-        expandedView.setTextViewText(R.id.text_artist, currentStation?.name ?: "Подготовка...")
+        expandedView.setTextViewText(R.id.text_artist,
+            currentStation?.name ?: (getString(R.string.text_preparing) + "...")
+        )
 
 
         val builder = NotificationCompat.Builder(this, channelId)
@@ -165,9 +167,9 @@ class RadioNotificationService : Service() {
 
         // Добавляем кнопку воспроизведения или остановки в зависимости от текущего состояния
         if (mediaPlayer?.isPlaying == true) {
-            builder.addAction(R.drawable.stop_64, "Остановить", stopPendingIntent)
+            builder.addAction(R.drawable.stop_64, getString(R.string.stop), stopPendingIntent)
         } else {
-            builder.addAction(R.drawable.play_64, "Воспроизвести", playPendingIntent)
+            builder.addAction(R.drawable.play_64, getString(R.string.play), playPendingIntent)
         }
 
         return builder.build()
