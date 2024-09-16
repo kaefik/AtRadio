@@ -3,6 +3,7 @@ package com.example.atradio
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.Build
@@ -11,6 +12,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import android.util.Log
 import android.widget.RemoteViews
+import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
 class RadioNotificationService : Service() {
@@ -173,14 +175,34 @@ class RadioNotificationService : Service() {
         }
         val closePendingIntent = PendingIntent.getService(this, 3, closeIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
+        // Определяем активен ли ночной режим
+        val isNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+
         val expandedView = RemoteViews(packageName, R.layout.notification_expanded)
-        expandedView.setTextViewText(R.id.text_station_name,
+        // Установка текста
+        expandedView.setTextViewText(
+            R.id.text_station_name,
             currentStation?.name ?: (getString(R.string.text_preparing) + "...")
         )
+        val textColor = if (isNightMode) {
+            ContextCompat.getColor(this, R.color.textColorDark) // Цвет для темной темы
+        } else {
+            ContextCompat.getColor(this, R.color.textColorLight) // Цвет для светлой темы
+        }
+        expandedView.setTextColor(R.id.text_station_name, textColor)
 
-        val buttonIcon = if (mediaPlayer?.isPlaying == true) R.drawable.stop3_24 else R.drawable.play3_24
+
+
+        val buttonIcon = if (mediaPlayer?.isPlaying == true) {
+            if (isNightMode) R.drawable.stop3_24_dark else R.drawable.stop3_24
+        } else {
+            if (isNightMode) R.drawable.play3_24_dark else R.drawable.play3_24
+        }
+
+        // добавить замену остальных кнопок управления
+
+
         expandedView.setImageViewResource(R.id.button_play_stop, buttonIcon)
-
         expandedView.setOnClickPendingIntent(R.id.button_play_stop, togglePendingIntent)
         expandedView.setOnClickPendingIntent(R.id.button_previous, previousPendingIntent)
         expandedView.setOnClickPendingIntent(R.id.button_next, nextPendingIntent)
