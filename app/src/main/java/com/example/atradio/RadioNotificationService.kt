@@ -21,17 +21,19 @@ class RadioNotificationService : Service() {
 
     private var currentStartId: Int = 0
     private var isTaskRunning: Boolean = false // для того чтобы была запущена одна задача
+    private var isNotificationRunning: Boolean = false // запущено ли было  createNotification
+
 
 
     override fun onBind(intent: Intent?): IBinder? = null
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d("RadioService", "Service started with startId: $startId and action: ${intent?.action}")
+        Log.d("iAtRadio", "RadioService -> Service started with startId: $startId and action: ${intent?.action}")
 
         // Если уже выполняется задача, остановите текущую перед выполнением новой
         if (isTaskRunning) {
-            Log.d("iAtRadio RadioService", "Task is already running, stopping current task...")
+            Log.d("iAtRadio", "RadioService -> Task is already running, stopping current task...")
             stopPlayback() // Останавливаем текущую задачу перед началом новой
         }
         // Сохраняем текущий startId
@@ -41,7 +43,7 @@ class RadioNotificationService : Service() {
                 val station = intent.getParcelableExtra<RadioStation>(EXTRA_STATION)
                 station?.let {
                     currentStation = it
-                    Log.d("iAtRadio RadioService", "onStartCommand -> ACTION_CURRENT_STATION -> станция: $it")
+                    Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_CURRENT_STATION -> станция: $it")
                     isTaskRunning = false  // Указываем, что задача запущена
                 }
             }
@@ -49,7 +51,7 @@ class RadioNotificationService : Service() {
                 val station = intent.getParcelableExtra<RadioStation>(EXTRA_STATION)
                 station?.let {
                     currentStation = it
-                    Log.d("iAtRadio RadioService", "onStartCommand -> ACTION_PLAY -> станция: $it")
+                    Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_PLAY -> станция: $it")
                     isTaskRunning = true  // Указываем, что задача запущена
                     playStation(it)
                 }
@@ -63,23 +65,27 @@ class RadioNotificationService : Service() {
                 stopSelf(startId)  // Останавливаем сервис
             }
             ACTION_PREVIOUS -> {
-                Log.d("iAtRadio RadioService", "onStartCommand -> ACTION_PREVIOUS -> станция: ")
+                Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_PREVIOUS -> станция: ")
 //                stopPlayback()
 //                stopSelf(startId)  // Останавливаем сервис
             }
             ACTION_NEXT -> {
-                Log.d("iAtRadio RadioService", "onStartCommand -> ACTION_NEXT -> станция: ")
+                Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_NEXT -> станция: ")
 //                stopPlayback()
 //                stopSelf(startId)  // Останавливаем сервис
             }
             else -> {
-                Log.w("iAtRadio RadioService", "Unknown action")
+                Log.w("iAtRadio", "RadioService -> Unknown action")
                 isTaskRunning = false
                 stopSelf(startId)  // Останавливаем сервис при неизвестном действии
             }
         }
 
-        startForeground(NOTIFICATION_ID, createNotification())
+        if (!isNotificationRunning) {
+            isNotificationRunning = true
+            startForeground(NOTIFICATION_ID, createNotification())
+            Log.w("iAtRadio", "RadioService -> startForeground createNotification")
+        }
 
         return START_STICKY
     }
@@ -87,7 +93,7 @@ class RadioNotificationService : Service() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun playStation(station: RadioStation) {
-        Log.d("iAtRadio RadioService", "playStation запуск станции $station")
+        Log.d("iAtRadio", "RadioService -> playStation запуск станции $station")
         try {
             mediaPlayer = MediaPlayer().apply {
                 setAudioAttributes(
@@ -107,22 +113,22 @@ class RadioNotificationService : Service() {
 //                    startForeground(NOTIFICATION_ID, createNotification())
                 }
                 setOnErrorListener { _, what, extra ->
-                    Log.e("RadioService", "Playback error: $what, extra: $extra")
+                    Log.e("iAtRadio", "RadioService -> Playback error: $what, extra: $extra")
                     sendErrorBroadcast("Ошибка воспроизведения: код $what")
                     true // Возвращаем true, чтобы указать, что ошибка обработана
                 }
 
             }
         } catch (e: Exception) {
-            Log.e("RadioService", "Error initializing MediaPlayer: ${e.message}")
+            Log.e("iAtRadio", "RadioService -> Error initializing MediaPlayer: ${e.message}")
             sendErrorBroadcast("Ошибка при инициализации MediaPlayer: ${e.message}")
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun stopPlayback() {
-        Log.d("iAtRadio RadioService", "stopPlayback called")
-        Log.d("iAtRadio RadioService", "stopPlayback текущая станция $currentStation")
+        Log.d("iAtRadio", "RadioService -> stopPlayback called")
+        Log.d("iAtRadio", "RadioService -> stopPlayback текущая станция $currentStation")
 
         mediaPlayer?.apply {
             stop()
@@ -131,11 +137,11 @@ class RadioNotificationService : Service() {
         }
         mediaPlayer = null
         updateNotification()
-        Log.d("iAtRadio RadioService", "Service stopped")
+        Log.d("iAtRadio", "RadioService -> Service stopped")
     }
 
     private fun createNotification(): Notification {
-        Log.d("iAtRadio RadioService", "createNotification start")
+        Log.d("iAtRadio", "RadioService -> createNotification start")
 
         val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channelId = "radio_playback_channel"
@@ -225,7 +231,7 @@ class RadioNotificationService : Service() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun updateNotification() {
-        Log.d("iAtRadio RadioService", "updateNotification start")
+        Log.d("iAtRadio", "RadioService -> updateNotification start")
         val notification = createNotification()
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.notify(NOTIFICATION_ID, notification)

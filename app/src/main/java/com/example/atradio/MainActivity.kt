@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
     ) { isGranted: Boolean ->
         if (isGranted) {
             // Permission granted, proceed with your app logic
-            Log.d("MainActivity", "Notification permission granted")
+            Log.d("iAtRadio", " MainActivity Notification permission granted")
         } else {
             // Permission denied, show a dialog explaining why the permission is needed
             showPermissionDeniedDialog()
@@ -82,7 +82,7 @@ class MainActivity : AppCompatActivity() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val errorMessage = intent?.getStringExtra("ERROR_MESSAGE")
             errorMessage?.let {
-                Log.e("MainActivity", "Error received: $it")
+                Log.e("iAtRadio", "MainActivity -> Error received: $it")
                 Toast.makeText(this@MainActivity, "Ошибка: $it", Toast.LENGTH_SHORT).show()
                 // Здесь можно выполнить любые действия на основе ошибки
                 statusPlay = false
@@ -356,7 +356,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         buttonForward.setOnClickListenerWithScreenSaverReset {
-            stopPlayback()
+//            stopPlayback()
             if (appSettings.radioStations.isEmpty()) {
                 appSettings.lastRadioStationIndex = 0
                 statusRadio.text = "Empty list stations"
@@ -383,7 +383,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         buttonPrev.setOnClickListenerWithScreenSaverReset {
-            stopPlayback()
+//            stopPlayback()
             if (appSettings.radioStations.isEmpty()) {
                 appSettings.lastRadioStationIndex = 0
                 statusRadio.text = "Empty list stations"
@@ -421,7 +421,7 @@ class MainActivity : AppCompatActivity() {
                 statusPlay = false
                 updateUIForStopped()
 
-                Log.d("iAtRadio", "buttonPlay -> empty $appSettings.currentStation")
+                Log.d("iAtRadio", "MainActivity buttonPlay -> empty $appSettings.currentStation")
 
             } else {
                 if (statusPlay) {
@@ -429,14 +429,14 @@ class MainActivity : AppCompatActivity() {
                     statusRadio.text = appSettings.currentStation.name
                     updateUIForStopped()
                     statusPlay = false
-                    Log.d("iAtRadio", "buttonPlay -> press Stop")
+                    Log.d("iAtRadio", "MainActivity buttonPlay -> press Stop")
                 } else {
                     // возможно здесь appSettings.currentStation удалить
                     statusPlay = true
                     updateUIForPlaying()
 //                    appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
                     statusRadio.text = appSettings.currentStation.name
-                    Log.d("iAtRadio", "buttonPlay -> press Play")
+                    Log.d("iAtRadio", "MainActivity buttonPlay -> press Play")
                     playStation(appSettings.currentStation)
                 }
             }
@@ -662,7 +662,7 @@ class MainActivity : AppCompatActivity() {
             action = RadioNotificationService.ACTION_CURRENT_STATION
             putExtra(RadioNotificationService.EXTRA_STATION, station)
         }
-        Log.d("iAtRadio", "setStationNotification -> $intent")
+        Log.d("iAtRadio", "MainActivity setStationNotification -> $intent")
         startService(intent)
     }
 
@@ -672,7 +672,7 @@ class MainActivity : AppCompatActivity() {
             action = RadioNotificationService.ACTION_PLAY
             putExtra(RadioNotificationService.EXTRA_STATION, station)
         }
-        Log.d("iAtRadio", "playStation -> $intent")
+        Log.d("iAtRadio", "MainActivity playStation -> $intent")
         startService(intent)
     }
 
@@ -680,7 +680,7 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(this, RadioNotificationService::class.java).apply {
             action = RadioNotificationService.ACTION_STOP
         }
-        Log.d("iAtRadio", "stopPlayback -> $intent")
+        Log.d("iAtRadio", "MainActivity stopPlayback -> $intent")
         startService(intent)
     }
 
@@ -695,7 +695,7 @@ class MainActivity : AppCompatActivity() {
                     android.Manifest.permission.POST_NOTIFICATIONS
                 ) == PackageManager.PERMISSION_GRANTED -> {
                     // Permission is already granted, proceed with your app logic
-                    Log.d("iAtRadio MainActivity", "Notification permission already granted")
+                    Log.d("iAtRadio", "MainActivity -> Notification permission already granted")
                 }
                 shouldShowRequestPermissionRationale(android.Manifest.permission.POST_NOTIFICATIONS) -> {
                     // Show an explanation to the user before requesting the permission
@@ -708,7 +708,7 @@ class MainActivity : AppCompatActivity() {
             }
         } else {
             // For Android versions below 13, notification permission is granted by default
-            Log.d("iAtRadio MainActivity", "Notification permission not required for this Android version")
+            Log.d("iAtRadio", "MainActivity -> Notification permission not required for this Android version")
         }
     }
 
