@@ -32,10 +32,10 @@ class RadioNotificationService : Service() {
         Log.d("iAtRadio", "RadioService -> Service started with startId: $startId and action: ${intent?.action}")
 
         // Если уже выполняется задача, остановите текущую перед выполнением новой
-        if (isTaskRunning) {
-            Log.d("iAtRadio", "RadioService -> Task is already running, stopping current task...")
-            stopPlayback() // Останавливаем текущую задачу перед началом новой
-        }
+//        if (isTaskRunning) {
+//            Log.d("iAtRadio", "RadioService -> Task is already running, stopping current task...")
+//            stopPlayback() // Останавливаем текущую задачу перед началом новой
+//        }
         // Сохраняем текущий startId
         currentStartId = startId
         when (intent?.action) {

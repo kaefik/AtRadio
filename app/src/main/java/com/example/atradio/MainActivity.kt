@@ -413,14 +413,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         buttonPlay.setOnClickListenerWithScreenSaverReset {
-            stopPlayback()
+//            stopPlayback()
             if (appSettings.radioStations.isEmpty()) {
                 appSettings.lastRadioStationIndex = 0
                 statusRadio.text = "Empty list stations"
                 appSettings.currentStation = RadioStation("empty", "empty")
                 statusPlay = false
                 updateUIForStopped()
-
+                stopPlayback()
                 Log.d("iAtRadio", "MainActivity buttonPlay -> empty $appSettings.currentStation")
 
             } else {
@@ -428,6 +428,7 @@ class MainActivity : AppCompatActivity() {
                     appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
                     statusRadio.text = appSettings.currentStation.name
                     updateUIForStopped()
+                    stopPlayback()
                     statusPlay = false
                     Log.d("iAtRadio", "MainActivity buttonPlay -> press Stop")
                 } else {
