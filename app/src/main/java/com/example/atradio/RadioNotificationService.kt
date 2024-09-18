@@ -32,10 +32,6 @@ class RadioNotificationService : Service() {
         Log.d("iAtRadio", "RadioService -> Service started with startId: $startId and action: ${intent?.action}")
 
         // Если уже выполняется задача, остановите текущую перед выполнением новой
-//        if (isTaskRunning) {
-//            Log.d("iAtRadio", "RadioService -> Task is already running, stopping current task...")
-//            stopPlayback() // Останавливаем текущую задачу перед началом новой
-//        }
         // Сохраняем текущий startId
         currentStartId = startId
         when (intent?.action) {
@@ -47,32 +43,57 @@ class RadioNotificationService : Service() {
                     isTaskRunning = false  // Указываем, что задача запущена
                 }
             }
-            ACTION_PLAY -> {
+            ACTION_PLAY -> {  // данное действие получается от вызвающего активити
                 val station = intent.getParcelableExtra<RadioStation>(EXTRA_STATION)
                 station?.let {
                     currentStation = it
                     Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_PLAY -> станция: $it")
                     isTaskRunning = true  // Указываем, что задача запущена
-                    playStation(it)
+                    playStation(it, false)
                 }
             }
+
+            ACTION_PLAY_PANEL -> {  // данное действие получается от панели управления плеером
+                val station = intent.getParcelableExtra<RadioStation>(EXTRA_STATION)
+                station?.let {
+                    currentStation = it
+                    Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_PLAY -> станция: $it")
+                    isTaskRunning = true  // Указываем, что задача запущена
+                    playStation(it, true)
+                }
+            }
+
             ACTION_STOP -> {
-                stopPlayback()
-//                stopSelf(startId)  // Останавливаем сервис
+                stopPlayback(false)
+            }
+            ACTION_STOP_PANEL -> {
+                stopPlayback(true)
             }
             ACTION_CLOSE -> {
-                stopPlayback()
+                stopPlayback(false)
                 stopSelf(startId)  // Останавливаем сервис
             }
             ACTION_PREVIOUS -> {
                 Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_PREVIOUS -> станция: ")
-//                stopPlayback()
-//                stopSelf(startId)  // Останавливаем сервис
+                stopPlayback(false)
+                val station = intent.getParcelableExtra<RadioStation>(EXTRA_STATION)
+                station?.let {
+                    currentStation = it
+                    Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_PREVIOUS -> станция: $it")
+                    isTaskRunning = true  // Указываем, что задача запущена
+                    playStation(it, false)
+                }
             }
             ACTION_NEXT -> {
                 Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_NEXT -> станция: ")
-//                stopPlayback()
-//                stopSelf(startId)  // Останавливаем сервис
+                stopPlayback(false)
+                val station = intent.getParcelableExtra<RadioStation>(EXTRA_STATION)
+                station?.let {
+                    currentStation = it
+                    Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_NEXT -> станция: $it")
+                    isTaskRunning = true  // Указываем, что задача запущена
+                    playStation(it, false)
+                }
             }
             else -> {
                 Log.w("iAtRadio", "RadioService -> Unknown action")
@@ -92,7 +113,8 @@ class RadioNotificationService : Service() {
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun playStation(station: RadioStation) {
+    private fun playStation(station: RadioStation, flagSendInfoBroadcast: Boolean) {
+        // flagSendInfoBroadcast - флаг который говорит что нужно послать инфо откуда вызывали
         Log.d("iAtRadio", "RadioService -> playStation запуск станции $station")
         try {
             mediaPlayer = MediaPlayer().apply {
@@ -107,10 +129,8 @@ class RadioNotificationService : Service() {
                 setOnPreparedListener {
                     start()
                     updateNotification()
-                    sendInfoBroadcast(true)
-//                    createNotification()
-
-//                    startForeground(NOTIFICATION_ID, createNotification())
+                    if (flagSendInfoBroadcast)
+                        sendInfoBroadcast(true)
                 }
                 setOnErrorListener { _, what, extra ->
                     Log.e("iAtRadio", "RadioService -> Playback error: $what, extra: $extra")
@@ -126,14 +146,15 @@ class RadioNotificationService : Service() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun stopPlayback() {
+    private fun stopPlayback(flagSendInfoBroadcast: Boolean) {
         Log.d("iAtRadio", "RadioService -> stopPlayback called")
         Log.d("iAtRadio", "RadioService -> stopPlayback текущая станция $currentStation")
 
         mediaPlayer?.apply {
             stop()
             release()
-            sendInfoBroadcast(false)
+            if (flagSendInfoBroadcast)
+                sendInfoBroadcast(false)
         }
         mediaPlayer = null
         updateNotification()
@@ -161,7 +182,7 @@ class RadioNotificationService : Service() {
         val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
 
         val toggleIntent = Intent(this, RadioNotificationService::class.java).apply {
-            action = if (mediaPlayer?.isPlaying == true) ACTION_STOP else ACTION_PLAY
+            action = if (mediaPlayer?.isPlaying == true) ACTION_STOP_PANEL else ACTION_PLAY_PANEL
             putExtra(EXTRA_STATION, currentStation)
         }
         val togglePendingIntent = PendingIntent.getService(this, 0, toggleIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
@@ -254,11 +275,15 @@ class RadioNotificationService : Service() {
 
     companion object {
         const val ACTION_PLAY = "com.example.atradio.ACTION_PLAY"
+        const val ACTION_PLAY_PANEL = "com.example.atradio.ACTION_PLAY_PANEL" // команда с панели управления плеером
         const val ACTION_CURRENT_STATION = "com.example.atradio.ACTION_CURRENT_STATION"
         const val ACTION_STOP = "com.example.atradio.ACTION_STOP"
+        const val ACTION_STOP_PANEL  = "com.example.atradio.ACTION_STOP_PANEL"
         const val ACTION_CLOSE = "com.example.atradio.ACTION_CLOSE"
         const val ACTION_PREVIOUS = "com.example.atradio.ACTION_PREVIOUS"
+        const val ACTION_PREVIOUS_PANEL  = "com.example.atradio.ACTION_PREVIOUS_PANEL"
         const val ACTION_NEXT = "com.example.atradio.ACTION_NEXT"
+        const val ACTION_NEXT_PANEL  = "com.example.atradio.ACTION_NEXT_PANEL"
         const val ACTION_ERROR = "com.example.atradio.ERROR" // для отправки ошибок из сервиса
         const val ACTION_INFO = "com.example.atradio.INFO" // для отправки информации из сервиса
         const val EXTRA_STATION = "com.example.atradio.EXTRA_STATION"

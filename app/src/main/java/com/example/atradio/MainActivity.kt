@@ -59,14 +59,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // текущая радиостанция которая играет
-//    private var currentStation: RadioStation = RadioStation("empty", "empty")
-
 
     private val infoReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val isPlayed = intent?.getBooleanExtra("PLAY", false)
-
             if(isPlayed == true){
                 statusPlay = true
                 updateUIForPlaying()
@@ -74,7 +70,6 @@ class MainActivity : AppCompatActivity() {
                 statusPlay = false
                 updateUIForStopped()
             }
-
         }
     }
 
@@ -356,51 +351,37 @@ class MainActivity : AppCompatActivity() {
         }
 
         buttonForward.setOnClickListenerWithScreenSaverReset {
-//            stopPlayback()
             if (appSettings.radioStations.isEmpty()) {
                 appSettings.lastRadioStationIndex = 0
                 statusRadio.text = "Empty list stations"
             } else {
+                statusPlay = true
+                updateUIForPlaying()
                 appSettings.lastRadioStationIndex += 1
                 if (appSettings.radioStations.size <= appSettings.lastRadioStationIndex)
                     appSettings.lastRadioStationIndex = 0
                 saveAppSettings(appSettings)
                 appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
                 statusRadio.text = appSettings.currentStation.name
-
-                // запуск сервиса
-                if (statusPlay) {
-                    updateUIForPlaying()
-                    playStation(appSettings.currentStation)
-
-                } else {
-                    updateUIForStopped()
-                    setStationNotification(appSettings.currentStation)
-                }
-                // END запуск сервиса
+                nextPlayback(appSettings.currentStation)
             }
 
         }
 
         buttonPrev.setOnClickListenerWithScreenSaverReset {
-//            stopPlayback()
             if (appSettings.radioStations.isEmpty()) {
                 appSettings.lastRadioStationIndex = 0
                 statusRadio.text = "Empty list stations"
             } else {
+                statusPlay = true
+                updateUIForPlaying()
                 appSettings.lastRadioStationIndex -= 1
                 if (appSettings.lastRadioStationIndex < 0)
                     appSettings.lastRadioStationIndex = appSettings.radioStations.size - 1
                 saveAppSettings(appSettings)
                 appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
                 statusRadio.text = appSettings.currentStation.name
-                if (statusPlay) {
-                    updateUIForPlaying()
-                    playStation(appSettings.currentStation)
-                } else {
-                    updateUIForStopped()
-                    setStationNotification(appSettings.currentStation)
-                }
+                prevPlayback(appSettings.currentStation)
             }
         }
 
@@ -435,7 +416,6 @@ class MainActivity : AppCompatActivity() {
                     // возможно здесь appSettings.currentStation удалить
                     statusPlay = true
                     updateUIForPlaying()
-//                    appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
                     statusRadio.text = appSettings.currentStation.name
                     Log.d("iAtRadio", "MainActivity buttonPlay -> press Play")
                     playStation(appSettings.currentStation)
@@ -445,11 +425,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateUIForPlaying() {
+        Log.d("iAtRadio", "MainActivity -> updateUIForPlaying")
         statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
         buttonPlay.setImageResource(R.drawable.stop_64)
     }
 
     private fun updateUIForStopped() {
+        Log.d("iAtRadio", "MainActivity -> updateUIForStopped")
         statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
         buttonPlay.setImageResource(R.drawable.play_64)
     }
@@ -684,6 +666,26 @@ class MainActivity : AppCompatActivity() {
         Log.d("iAtRadio", "MainActivity stopPlayback -> $intent")
         startService(intent)
     }
+
+
+    private fun nextPlayback(station: RadioStation) {
+        val intent = Intent(this, RadioNotificationService::class.java).apply {
+            action = RadioNotificationService.ACTION_NEXT
+            putExtra(RadioNotificationService.EXTRA_STATION, station)
+        }
+        Log.d("iAtRadio", "MainActivity nextPlayback -> $intent")
+        startService(intent)
+    }
+
+    private fun prevPlayback(station: RadioStation) {
+        val intent = Intent(this, RadioNotificationService::class.java).apply {
+            action = RadioNotificationService.ACTION_PREVIOUS
+            putExtra(RadioNotificationService.EXTRA_STATION, station)
+        }
+        Log.d("iAtRadio", "MainActivity prevPlayback -> $intent")
+        startService(intent)
+    }
+
 
     // END упраление проигрыванием станций
 
