@@ -16,7 +16,11 @@ Name;URL
 Татар радиосы ;https://tatarradio.hostingradio.ru/tatarradio320.mp3
 Болгар радиосы;https://live.bolgarradio.com/b_aac_hifi.m3u8
 Татарстан Авазы;https://listen6.myradio24.com/gtrk
-;
+Роксана радиосы;https://listen1.myradio24.com/2761
+Татарская Народная Музыка;https://pub0302.101.ru:8000/stream/pro/aac/64/262
+Әтнә театры интернет-радиосы;https://atnyateatr.ru/radio1
+ТАТАРСТАН МӘДӘНИЯТЕ;https://atnyateatr.ru/radio2
+Таван радио (Чувашское);http://icecast.ntrk21.ru:8000/tavan
 Ретро Хит;http://retro.volna.top/Retro
 Советская Классика (Русское радио);https://rr-sovclass.hostingradio.ru/sovclass96.aacp
 Лихие 90-е (Русское радио);https://rr-90.hostingradio.ru/rr9096.aacp
@@ -26,15 +30,14 @@ Name;URL
 Русские Каверы (Русское радио);https://rr-covers.hostingradio.ru/rrcovers96.aacp
 Русский Рок (Русское радио);https://rr-russkijrok.hostingradio.ru/russkijrok96.aacp
 Детский Канал (Русское радио);https://rr-detskijkanal.hostingradio.ru/detskijkanal96.aacp
-;
 Радио 7 на семи холмах;https://hls-01-regions.emgsound.ru/13_msk/playlist.m3u8
 Энерджи Радио;http://ic5.101.ru:8000/v1_1
 Детское радио (Дети ФМ);http://ic5.101.ru:8000/v14_1
 Монте Карло;https://montecarlo.hostingradio.ru/montecarlo128.mp3
-;
+Радио Эрмитаж;https://hermitage.hostingradio.ru/hermitage128.mp3
 Пиратская Станция (радио Рекорд);https://radiorecord.hostingradio.ru/ps96.aacp
 Чилаут (Wow Music);http://stream.vyshka24.ru/wowchillout
-;
+Жулдыз FM;http://91.201.214.229:8000/zhulduz
 Бим Радио Казань;https://av.bimradio.ru/bim_mp3_128k
 Дорожное радио (88,9 ФМ) Казань;https://hls-01-regions.emgsound.ru/15_kazan/playlist.m3u8
 Русское радио (90.7) Казань;https://rusradio.hostingradio.ru/rusradio96.aacp
@@ -49,16 +52,12 @@ Name;URL
 Европа Плюс;https://hls-01-regions.emgsound.ru/11_kazan/playlist.m3u8
 D FM;https://dfm.hostingradio.ru/dfm96.aacp
 Радио Шансон (89.7) Казань  ;https://online2.gkvr.ru:8001/chanson_kaz_64.aac
-;
-;
+Радио Гордость (97.2) Казань ;https://rgordost.hostingradio.ru/rgordost128.aacp
+Радио Love (107.8) Казань ;https://stream2.n340.com/12_love_64_reg_44?type=aac&UID=8EE86F9F7653C544191435A1D5C33263
 Старое радио;http://server.audiopedia.su:8000/ices64
 Радио Фантастики;http://fantasyradioru.no-ip.biz:8002/live
-;
 Классические гитары (181 FM - Classical Guitar);http://listen.181fm.com:7080/181-classicalguitar_128k.mp3
 Классик ФМ;http://cfm.jazzandclassic.ru:14536/rcstream.mp3
-;
 Юмор FM. Классика Жанра;http://pub0302.101.ru:8000/stream/pro/aac/64/21
 Юмор FM. Non-Stop;http://pub0302.101.ru:8000/stream/trust/mp3/128/22
 Юмор FM. Стендапы;https://pub0102.101.ru:8443/stream/pro/aac/64/245
-;
-Авторадио - Набережные Челны;https://srv12.gpmradio.ru:8443/stream/reg/mp3/128/region_avto_113
