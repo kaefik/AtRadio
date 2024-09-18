@@ -61,4 +61,6 @@
     <string name="play">Уйнау</string>
     <string name="text_preparing">Әзерлек</string>
     <string name="close">Ябу</string>
+    <string name="error_play_code">Уйнату хатасы: код</string>
+    <string name="error_init_mediaplayer">MediaPlayer ны башлау хатасы</string>
 </resources>

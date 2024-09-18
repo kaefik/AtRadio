@@ -62,4 +62,6 @@
     <string name="play">Уйнау</string>
     <string name="text_preparing">Әҙерлек</string>
     <string name="close">Ябыу</string>
+    <string name="error_play_code">Уйнау хатаһы: код</string>
+    <string name="error_init_mediaplayer">MediaPlayerҙы башлауҙа хата</string>
 </resources>

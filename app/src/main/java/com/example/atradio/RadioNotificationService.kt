@@ -114,14 +114,14 @@ class RadioNotificationService : Service() {
                 }
                 setOnErrorListener { _, what, extra ->
                     Log.e("iAtRadio", "RadioService -> Playback error: $what, extra: $extra")
-                    sendErrorBroadcast("Ошибка воспроизведения: код $what")
+                    sendErrorBroadcast(getString(R.string.error_play_code) + what)
                     true // Возвращаем true, чтобы указать, что ошибка обработана
                 }
 
             }
         } catch (e: Exception) {
             Log.e("iAtRadio", "RadioService -> Error initializing MediaPlayer: ${e.message}")
-            sendErrorBroadcast("Ошибка при инициализации MediaPlayer: ${e.message}")
+            sendErrorBroadcast(getString(R.string.error_init_mediaplayer) + e.message)
         }
     }
 

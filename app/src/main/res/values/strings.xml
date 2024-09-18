@@ -61,4 +61,6 @@
     <string name="play">Play</string>
     <string name="text_preparing">Preparation</string>
     <string name="close">Close</string>
+    <string name="error_play_code">Playback error: code</string>
+    <string name="error_init_mediaplayer">Error initializing MediaPlayer</string>
 </resources>

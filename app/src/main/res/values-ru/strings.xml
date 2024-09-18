@@ -60,4 +60,6 @@
     <string name="play">Играть</string>
     <string name="text_preparing">Подготовка</string>
     <string name="close">Закрыть</string>
+    <string name="error_play_code">Ошибка воспроизведения: код</string>
+    <string name="error_init_mediaplayer">Ошибка при инициализации MediaPlayer</string>
 </resources>
