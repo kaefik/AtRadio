@@ -13,9 +13,9 @@ Name;URL
 ТатРадиоЦентр;https://listen4.myradio24.com/trc
 Белем радиосы;https://radiobelem.ru/belem128
 Тәртип FM (93.1) Казань;https://radio.tatmedia.com:8443/tartipfm
-Татарстан Радиосы (99.2) Казань;
-Татар радиосы ;
+Татар радиосы ;https://tatarradio.hostingradio.ru/tatarradio320.mp3
 Болгар радиосы;https://live.bolgarradio.com/b_aac_hifi.m3u8
+Татарстан Авазы;https://listen6.myradio24.com/gtrk
 ;
 Ретро Хит;http://retro.volna.top/Retro
 Советская Классика (Русское радио);https://rr-sovclass.hostingradio.ru/sovclass96.aacp
@@ -27,7 +27,7 @@ Name;URL
 Русский Рок (Русское радио);https://rr-russkijrok.hostingradio.ru/russkijrok96.aacp
 Детский Канал (Русское радио);https://rr-detskijkanal.hostingradio.ru/detskijkanal96.aacp
 ;
-Радио 7 на семи холмах;
+Радио 7 на семи холмах;https://hls-01-regions.emgsound.ru/13_msk/playlist.m3u8
 Энерджи Радио;http://ic5.101.ru:8000/v1_1
 Детское радио (Дети ФМ);http://ic5.101.ru:8000/v14_1
 Монте Карло;https://montecarlo.hostingradio.ru/montecarlo128.mp3
@@ -41,13 +41,15 @@ Name;URL
 Юмор ФМ Казань;https://srv12.gpmradio.ru:8443/stream/air/aac/64/102
 Студио21 (хип хоп) Казань ;https://hls.studio21.ru/studio21/playlist.m3u8
 Бизнес ФМ Казань;https://stream.volnorez.com/live-app/891608
-Наше радио (96.8) Казань;Наше радио (96.8) Казань
+Наше радио (96.8) Казань;https://nashe1.hostingradio.ru:80/nashe-128.mp3
 Радио Рекорд Казань;https://hls-01-radiorecord.hostingradio.ru/record/112/playlist.m3u8
-Авторадио Казань;https://srv12.gpmradio.ru:8443/stream/reg/aac/64/region_avto_66
+Авторадио Казань;https://srv21.gpmradio.ru:8443/stream/air/aac/64/100
 Релакс ФМ Казань;https://srv02.gpmradio.ru:8443/stream/reg/mp3/128/region_relax_9
 Милицейская волна;https://radiomv.hostingradio.ru:80/radiomv128.mp3
 Европа Плюс;https://hls-01-regions.emgsound.ru/11_kazan/playlist.m3u8
-Миллениум (107.3) Казань;Миллениум (107.3) Казань
+D FM;https://dfm.hostingradio.ru/dfm96.aacp
+Радио Шансон (89.7) Казань  ;https://online2.gkvr.ru:8001/chanson_kaz_64.aac
+;
 ;
 Старое радио;http://server.audiopedia.su:8000/ices64
 Радио Фантастики;http://fantasyradioru.no-ip.biz:8002/live
@@ -60,4 +62,3 @@ Name;URL
 Юмор FM. Стендапы;https://pub0102.101.ru:8443/stream/pro/aac/64/245
 ;
 Авторадио - Набережные Челны;https://srv12.gpmradio.ru:8443/stream/reg/mp3/128/region_avto_113
-D FM Набережные Челны;
