@@ -164,13 +164,7 @@ class MainActivity : AppCompatActivity() {
 
         // Привязка к сервису плееера
 
-        // Регистрируем BroadcastReceiver для получения ошибок от сервиса
-        LocalBroadcastManager.getInstance(this)
-            .registerReceiver(errorReceiver, IntentFilter(RadioNotificationService.ACTION_ERROR))
 
-        // Регистрируем BroadcastReceiver для получения информации от сервиса
-        LocalBroadcastManager.getInstance(this)
-            .registerReceiver(infoReceiver, IntentFilter(RadioNotificationService.ACTION_INFO))
 
 
         // локализация приложения
@@ -670,7 +664,13 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         Log.d("iAtRadio", "MainActivity -> onStart")
+        // Регистрируем BroadcastReceiver для получения ошибок от сервиса
+        LocalBroadcastManager.getInstance(this)
+            .registerReceiver(errorReceiver, IntentFilter(RadioNotificationService.ACTION_ERROR))
 
+        // Регистрируем BroadcastReceiver для получения информации от сервиса
+        LocalBroadcastManager.getInstance(this)
+            .registerReceiver(infoReceiver, IntentFilter(RadioNotificationService.ACTION_INFO))
     }
 
 
