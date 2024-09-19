@@ -360,9 +360,9 @@ class MainActivity : AppCompatActivity() {
                 appSettings.lastRadioStationIndex += 1
                 if (appSettings.radioStations.size <= appSettings.lastRadioStationIndex)
                     appSettings.lastRadioStationIndex = 0
-                saveAppSettings(appSettings)
                 appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
                 statusRadio.text = appSettings.currentStation.name
+                saveAppSettings(appSettings)
                 nextPlayback(appSettings.currentStation)
             }
 
@@ -378,9 +378,9 @@ class MainActivity : AppCompatActivity() {
                 appSettings.lastRadioStationIndex -= 1
                 if (appSettings.lastRadioStationIndex < 0)
                     appSettings.lastRadioStationIndex = appSettings.radioStations.size - 1
-                saveAppSettings(appSettings)
                 appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
                 statusRadio.text = appSettings.currentStation.name
+                saveAppSettings(appSettings)
                 prevPlayback(appSettings.currentStation)
             }
         }

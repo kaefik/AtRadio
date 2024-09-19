@@ -40,7 +40,7 @@ class RadioNotificationService : Service() {
                 station?.let {
                     currentStation = it
                     Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_CURRENT_STATION -> станция: $it")
-                    isTaskRunning = false  // Указываем, что задача запущена
+//                    isTaskRunning = false  // Указываем, что задача запущена
                 }
             }
             ACTION_PLAY -> {  // данное действие получается от вызвающего активити
