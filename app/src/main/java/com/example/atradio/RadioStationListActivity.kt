@@ -181,11 +181,11 @@ class RadioStationListActivity : AppCompatActivity() {
                             if (name.isNotEmpty() && url.isNotEmpty()) {
                                 radioStations.add(RadioStation(name, url))
                             } else {
-                                isValidFile = false
+//                                isValidFile = false
                                 Toast.makeText(context, getString(R.string.incorrect_data, line), Toast.LENGTH_SHORT).show()
                             }
                         } else {
-                            isValidFile = false
+//                            isValidFile = false
                             Toast.makeText(context, getString(R.string.incorrect_line, line), Toast.LENGTH_SHORT).show()
                         }
                     }
