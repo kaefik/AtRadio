@@ -315,6 +315,7 @@ class MainActivity : AppCompatActivity() {
                     statusPlay = true
                     appSettings.currentStation = selectedStation
                     statusRadio.text = appSettings.currentStation.name
+                    saveAppSettings(appSettings)
                     updateUIForPlaying()
                     // запуск сервера
                     stopPlayback()
