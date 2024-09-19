@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var buttonPlay: ImageButton
     private lateinit var statusRadio: TextView
     private lateinit var progressBar: ProgressBar
-    private var statusPlay: Boolean = false // статус проигрывания текущей станции
+    private var statusPlay: Boolean? = null // статус проигрывания текущей станции
 
     //заставка - сринсейвер
     private lateinit var dimView: View
@@ -151,6 +151,13 @@ class MainActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        Log.d("iAtRadio", "MainActivity onCreate -> begin -> statusPlay")
+
+        // Получаем данные из Intent
+        val currentStation = intent.getParcelableExtra<RadioStation>("currentStation")
+        val isPlaying = intent.getBooleanExtra("isPlaying", false)
+
 
         // Загружаем настройки при старте
         appSettings = loadAppSettings()
@@ -224,9 +231,16 @@ class MainActivity : AppCompatActivity() {
             appSettings.lastRadioStationIndex = 0
         }
 
+
+
         if (appSettings.radioStations.isEmpty()) {
             // Загрузка радиостанций из CSV
-            appSettings.radioStations.addAll(loadRadioStationsFromRaw(this, R.raw.radio_stations_default))
+            appSettings.radioStations.addAll(
+                loadRadioStationsFromRaw(
+                    this,
+                    R.raw.radio_stations_default
+                )
+            )
 
             saveAppSettings(appSettings)
             appSettings.lastRadioStationIndex = 0
@@ -236,18 +250,19 @@ class MainActivity : AppCompatActivity() {
             stopPlayback()
         } else {
 
-            if (appSettings.currentStation.url!=""){
+            if (appSettings.currentStation.url != "") {
                 // найти в списке радиостанций корректный индекс радиостанции
-                appSettings.lastRadioStationIndex = appSettings.radioStations.indexOf(appSettings.currentStation)
-                if (appSettings.lastRadioStationIndex ==-1) {
-                    appSettings.lastRadioStationIndex=0
+                appSettings.lastRadioStationIndex =
+                    appSettings.radioStations.indexOf(appSettings.currentStation)
+                if (appSettings.lastRadioStationIndex == -1) {
+                    appSettings.lastRadioStationIndex = 0
                 }
             } else {
                 appSettings.currentStation =
                     appSettings.radioStations[appSettings.lastRadioStationIndex]
             }
 
-            if (appSettings.isAutoPlayEnabled ) {
+            if (appSettings.isAutoPlayEnabled) {
                 statusPlay = true
                 statusRadio.text = appSettings.currentStation.name
                 updateUIForPlaying()
@@ -256,10 +271,17 @@ class MainActivity : AppCompatActivity() {
                 // END запуск сервиса
             } else {
                 statusRadio.text = appSettings.currentStation.name
-                updateUIForStopped()
                 setStationNotification(appSettings.currentStation)
+
+                if(currentStation!=null){
+                    // Восстанавливаем состояние UI и логику если нажали на уведовление сервиса
+                    updateUI(currentStation, isPlaying)
+                } else {
+                    updateUIForStopped()
+                }
             }
         }
+
 
         val listRadioStationLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -405,7 +427,7 @@ class MainActivity : AppCompatActivity() {
                 Log.d("iAtRadio", "MainActivity buttonPlay -> empty $appSettings.currentStation")
 
             } else {
-                if (statusPlay) {
+                if (statusPlay == true) {
                     appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
                     statusRadio.text = appSettings.currentStation.name
                     updateUIForStopped()
@@ -422,6 +444,9 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        Log.d("iAtRadio", "MainActivity onCreate -> end")
+
     }
 
     private fun updateUIForPlaying() {
@@ -499,11 +524,14 @@ class MainActivity : AppCompatActivity() {
     // Добавляем обработку событий onPause и onResume
     override fun onPause() {
         super.onPause()
+        Log.d("iAtRadio", "MainActivity -> onPause -> statusPlay = $statusPlay")
+
         stopScreenSaver() // Остановить скринсейвер
     }
 
     override fun onResume() {
         super.onResume()
+        Log.d("iAtRadio", "MainActivity -> onResume")
         if (appSettings.isScreenSaverEnabled) {
             resetTimers() // Сбрасываем таймеры только если скринсейвер разрешен
         }
@@ -637,6 +665,16 @@ class MainActivity : AppCompatActivity() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(infoReceiver)
     }
 
+
+    override fun onStart() {
+        super.onStart()
+        Log.d("iAtRadio", "MainActivity -> onStart")
+
+    }
+
+
+
+
     // упраление проигрыванием станций
 
     // передаем текущую радиостанцию в сервис
@@ -752,6 +790,20 @@ class MainActivity : AppCompatActivity() {
         }
     }
     // END запрос разрешения на уведомления от приложения
+
+    private fun updateUI(station: RadioStation?, isPlaying: Boolean) {
+        Log.d("iAtRadio", "MainActivity ->  updateUI -> station = $station  ->  isPlaying = $isPlaying")
+        // Обновите UI и логику на основе переданных данных
+        if(station != null) {
+            if(isPlaying){
+                statusPlay = true
+                updateUIForPlaying()
+            } else {
+                statusPlay = false
+                updateUIForStopped()
+            }
+        }
+    }
 
 }
 

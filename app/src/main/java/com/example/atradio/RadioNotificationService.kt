@@ -178,8 +178,15 @@ class RadioNotificationService : Service() {
             NotificationCompat.Builder(this)
         }
 
-        val notificationIntent = Intent(this, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
+//        val notificationIntent = Intent(this, MainActivity::class.java)
+//        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
+
+        val notificationIntent = Intent(this, MainActivity::class.java).apply {
+            putExtra("currentStation", currentStation) // передаем данные
+            putExtra("isPlaying", mediaPlayer?.isPlaying == true) // передаем состояние проигрывания
+        }
+        val pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
 
         val toggleIntent = Intent(this, RadioNotificationService::class.java).apply {
             action = if (mediaPlayer?.isPlaying == true) ACTION_STOP_PANEL else ACTION_PLAY_PANEL
