@@ -3,6 +3,7 @@ package com.example.atradio
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
+import android.bluetooth.BluetoothDevice
 import android.os.Bundle
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -41,6 +42,8 @@ import android.content.pm.PackageManager
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import android.provider.Settings
+import android.Manifest
+import androidx.core.app.ActivityCompat
 
 
 class MainActivity : AppCompatActivity() {
@@ -85,6 +88,43 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    // код запроса разрешения
+    private val REQUEST_BLUETOOTH_PERMISSIONS = 1
+
+    private val bluetoothReceiver =  object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val action = intent.action
+            Log.d("iAtRadio", "MainActivity -> BluetoothReceiver -> begin")
+            if (action == BluetoothDevice.ACTION_ACL_DISCONNECTED) {
+                val device: BluetoothDevice? = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
+                if (device != null) {
+                    if (ActivityCompat.checkSelfPermission(
+                            context,
+                            Manifest.permission.BLUETOOTH_CONNECT
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return
+                    }
+                    Log.d("iAtRadio", "MainActivity -> BluetoothReceiver -> Bluetooth device disconnected: ${device.name}")
+                    // Остановите музыку здесь
+                    statusPlay = false
+                    updateUIForStopped()
+                    stopPlayback()
+                }
+            }
+            Log.d("iAtRadio", "MainActivity -> BluetoothReceiver -> end")
+        }
+    }
+
+
 
     private lateinit var volumeControl: VolumeControl
     private lateinit var appSettings: AppSettings
@@ -165,8 +205,6 @@ class MainActivity : AppCompatActivity() {
         // Привязка к сервису плееера
 
 
-
-
         // локализация приложения
         // Проверяем, был ли уже выбран язык ранее
 
@@ -183,6 +221,32 @@ class MainActivity : AppCompatActivity() {
 
         // проверка есть права на уведомления
         checkNotificationPermission()
+
+
+        // проверка есть права на bluetooth устройства
+        // в частности для того чтобы при отключении блютус устройства останавливается воспроизведение
+        // TODO: сделать более осмысленный запрос объясняющий для чего нужны эти права
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            val permissions = arrayOf(
+                Manifest.permission.BLUETOOTH_SCAN,
+                Manifest.permission.BLUETOOTH_CONNECT
+            )
+            if (!permissions.all { checkSelfPermission(it) == PackageManager.PERMISSION_GRANTED }) {
+                requestPermissions(permissions, REQUEST_BLUETOOTH_PERMISSIONS)
+            }
+        } else {
+            if (checkSelfPermission(Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED ||
+                checkSelfPermission(Manifest.permission.BLUETOOTH_ADMIN) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(
+                    arrayOf(
+                        Manifest.permission.BLUETOOTH,
+                        Manifest.permission.BLUETOOTH_ADMIN
+                    ),
+                    REQUEST_BLUETOOTH_PERMISSIONS
+                )
+            }
+        }
+
 
         // заставка - сринсейвер
         dimView = findViewById(R.id.dim_view)
@@ -655,9 +719,6 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         stopPlayback()
-        // Отмена регистрации BroadcastReceiver при уничтожении активности
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(errorReceiver)
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(infoReceiver)
     }
 
 
@@ -671,8 +732,24 @@ class MainActivity : AppCompatActivity() {
         // Регистрируем BroadcastReceiver для получения информации от сервиса
         LocalBroadcastManager.getInstance(this)
             .registerReceiver(infoReceiver, IntentFilter(RadioNotificationService.ACTION_INFO))
+
+        // Регистрируем BroadcastReceiver для обработки blutooth соединения
+        val filter = IntentFilter().apply {
+            addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
+            addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
+            addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED)
+        }
+        registerReceiver(bluetoothReceiver, filter)
+
     }
 
+    override fun onStop() {
+        super.onStop()
+        unregisterReceiver(bluetoothReceiver)
+        // Отмена регистрации BroadcastReceiver при уничтожении активности
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(errorReceiver)
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(infoReceiver)
+    }
 
 
 
@@ -805,6 +882,27 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    // обработка действий после запроса на права блютус устройств
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        Log.d("iAtRadio", "MainActivity ->  onRequestPermissionsResult")
+
+        if (requestCode == REQUEST_BLUETOOTH_PERMISSIONS) {
+            if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                // Разрешения предоставлены, можно выполнять необходимые действия
+            } else {
+                // Разрешения не предоставлены, уведомить пользователя
+//                Toast.makeText(this, "Bluetooth permissions are required for this feature", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
 
 }
 
