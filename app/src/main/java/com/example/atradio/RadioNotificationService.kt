@@ -7,11 +7,14 @@ import android.content.res.Configuration
 import android.media.AudioAttributes
 import android.media.MediaPlayer
 import android.os.Build
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import android.util.Log
 import android.widget.RemoteViews
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
@@ -23,6 +26,28 @@ class RadioNotificationService : Service() {
     private var isTaskRunning: Boolean = false // для того чтобы была запущена одна задача
     private var isNotificationRunning: Boolean = false // запущено ли было  createNotification
 
+    // для нескольких попыток подключения при ошибке
+    private val maxRetries = 20
+    private var retryCount = 0
+    private val retryDelayMillis = 2000L // Задержка в 3 секунды
+    private val handler = Handler(Looper.getMainLooper())
+    private val retryRunnable = object : Runnable {
+        @RequiresApi(Build.VERSION_CODES.O)
+        override fun run() {
+            if (retryCount < maxRetries) {
+                retryCount++
+                Log.d("iAtRadio", "RadioPlayer -> Попытка подключения №$retryCount")
+                // Попробовать подключиться и воспроизвести музыку
+                stopPlayback(false)
+                currentStation?.let { playStation(it, true) }
+            } else {
+                Log.d("iAtRadio", "RadioPlayer -> Не удалось подключиться после $maxRetries попыток")
+                // Прекратить попытки после достижения максимума
+                stopPlayback(true)
+                resetRetries() // Сбросить счетчик при остановке музыки вручную
+            }
+        }
+    }
 
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -40,7 +65,6 @@ class RadioNotificationService : Service() {
                 station?.let {
                     currentStation = it
                     Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_CURRENT_STATION -> станция: $it")
-//                    isTaskRunning = false  // Указываем, что задача запущена
                 }
             }
             ACTION_PLAY -> {  // данное действие получается от вызвающего активити
@@ -51,6 +75,7 @@ class RadioNotificationService : Service() {
                     isTaskRunning = true  // Указываем, что задача запущена
                     playStation(it, false)
                 }
+
             }
 
             ACTION_PLAY_PANEL -> {  // данное действие получается от панели управления плеером
@@ -65,13 +90,18 @@ class RadioNotificationService : Service() {
 
             ACTION_STOP -> {
                 stopPlayback(false)
+                resetRetries() // Сбросить счетчик при остановке музыки вручную
+
             }
             ACTION_STOP_PANEL -> {
                 stopPlayback(true)
+                resetRetries() // Сбросить счетчик при остановке музыки вручную
+
             }
             ACTION_CLOSE -> {
                 stopPlayback(false)
                 stopSelf(startId)  // Останавливаем сервис
+                resetRetries() // Сбросить счетчик при остановке музыки вручную
             }
             ACTION_PREVIOUS -> {
                 Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_PREVIOUS -> станция: ")
@@ -131,10 +161,12 @@ class RadioNotificationService : Service() {
                     updateNotification()
                     if (flagSendInfoBroadcast)
                         sendInfoBroadcast(true)
+                    resetRetries() // Сбросить счетчик попыток в случае успеха
                 }
                 setOnErrorListener { _, what, extra ->
                     Log.e("iAtRadio", "RadioService -> Playback error: $what, extra: $extra")
                     sendErrorBroadcast(getString(R.string.error_play_code) + what)
+                    scheduleRetry() // Запланировать повторную попытку в случае ошибки
                     true // Возвращаем true, чтобы указать, что ошибка обработана
                 }
 
@@ -278,6 +310,18 @@ class RadioNotificationService : Service() {
             putExtra("PLAY", isPlayed)
         }
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+    }
+
+    // методы для повтора попытки воспроизведения
+    private fun scheduleRetry() {
+        Log.d("iAtRadio", "RadioService -> scheduleRetry")
+        handler.postDelayed(retryRunnable, retryDelayMillis)
+    }
+
+    private fun resetRetries() {
+        Log.d("iAtRadio", "RadioService -> resetRetries")
+        retryCount = 0
+        handler.removeCallbacks(retryRunnable) // Удалить все запланированные попытки
     }
 
     companion object {
