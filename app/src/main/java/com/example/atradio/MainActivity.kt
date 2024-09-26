@@ -636,9 +636,23 @@ class MainActivity : AppCompatActivity() {
         val textWidth = radioText.width
         val textHeight = radioText.height
 
-        // Текущая позиция текста
+        // Если текст изначально выходит за границы, устанавливаем его в допустимые пределы
         var currentX = radioText.translationX
         var currentY = radioText.translationY
+
+        // Проверяем начальное положение по оси X
+        if (currentX < 0) {
+            currentX = 0f // Ставим текст на левую границу
+        } else if (currentX + textWidth > parentWidth) {
+            currentX = (parentWidth - textWidth).toFloat() // Ставим текст на правую границу
+        }
+
+        // Проверяем начальное положение по оси Y
+        if (currentY < 0) {
+            currentY = 0f // Ставим текст на верхнюю границу
+        } else if (currentY + textHeight > parentHeight) {
+            currentY = (parentHeight - textHeight).toFloat() // Ставим текст на нижнюю границу
+        }
 
         // Обновляем позицию текста
         currentX += directionX * velocity
@@ -656,6 +670,7 @@ class MainActivity : AppCompatActivity() {
         radioText.translationX = currentX
         radioText.translationY = currentY
     }
+
 
     // Метод для отключения всех элементов интерфейса
     private fun disableUIElements() {
