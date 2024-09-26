@@ -584,7 +584,6 @@ class MainActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         Log.d("iAtRadio", "MainActivity -> onPause -> statusPlay = $statusPlay")
-
         stopScreenSaver() // Остановить скринсейвер
     }
 
@@ -594,6 +593,7 @@ class MainActivity : AppCompatActivity() {
         if (appSettings.isScreenSaverEnabled) {
             resetTimers() // Сбрасываем таймеры только если скринсейвер разрешен
         }
+        statusPlayFromService(appSettings.currentStation)
     }
 
     // Метод для остановки таймеров и скрытия скринсейвера
@@ -783,6 +783,14 @@ class MainActivity : AppCompatActivity() {
         startService(intent)
     }
 
+    private fun statusPlayFromService(station: RadioStation) {
+        val intent = Intent(this, RadioNotificationService::class.java).apply {
+            action = RadioNotificationService.ACTION_INFO
+            putExtra(RadioNotificationService.EXTRA_STATION, station)
+        }
+        Log.d("iAtRadio", "MainActivity statusPlayFromService -> $intent")
+        startService(intent)
+    }
 
     private fun nextPlayback(station: RadioStation) {
         val intent = Intent(this, RadioNotificationService::class.java).apply {
