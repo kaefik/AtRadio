@@ -369,7 +369,6 @@ class MainActivity : AppCompatActivity() {
                 val selectedStation = result.data?.getParcelableExtra<RadioStation>("selectedStation")
                 if (selectedStation != null) {
                     appSettings.lastRadioStationIndex = appSettings.radioStations.indexOf(selectedStation)
-                    saveAppSettings(appSettings)
                     statusPlay = true
                     appSettings.currentStation = selectedStation
                     statusRadio.text = appSettings.currentStation.name

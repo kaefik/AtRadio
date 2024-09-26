@@ -48,7 +48,7 @@ class RadioNotificationService : Service() {
             Log.d("iAtRadio", "RadioPlayer -> Попытка подключения №$retryCount")
             // Попробовать подключиться и воспроизвести музыку
             stopPlayback(false)
-            currentStation?.let { playStation(it, true) }
+            currentStation?.let { playStation(it) }
         } else {
             Log.d("iAtRadio", "RadioPlayer -> Не удалось подключиться после $maxRetries попыток")
             // Прекратить попытки после достижения максимума
@@ -99,7 +99,7 @@ class RadioNotificationService : Service() {
                     currentStation = it
                     Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_PLAY -> станция: $it")
                     isTaskRunning = true  // Указываем, что задача запущена
-                    playStation(it, false)
+                    playStation(it)
                 }
 
             }
@@ -110,7 +110,7 @@ class RadioNotificationService : Service() {
                     currentStation = it
                     Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_PLAY -> станция: $it")
                     isTaskRunning = true  // Указываем, что задача запущена
-                    playStation(it, true)
+                    playStation(it)
                 }
             }
 
@@ -138,7 +138,7 @@ class RadioNotificationService : Service() {
                     currentStation = it
                     Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_PREVIOUS -> станция: $it")
                     isTaskRunning = true  // Указываем, что задача запущена
-                    playStation(it, false)
+                    playStation(it)
                 }
             }
             ACTION_NEXT -> {
@@ -149,7 +149,7 @@ class RadioNotificationService : Service() {
                     currentStation = it
                     Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_NEXT -> станция: $it")
                     isTaskRunning = true  // Указываем, что задача запущена
-                    playStation(it, false)
+                    playStation(it)
                 }
             }
             else -> {
@@ -170,7 +170,7 @@ class RadioNotificationService : Service() {
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun playStation(station: RadioStation, flagSendInfoBroadcast: Boolean) {
+    private fun playStation(station: RadioStation) { //, flagSendInfoBroadcast: Boolean) {
         // flagSendInfoBroadcast - флаг который говорит что нужно послать инфо откуда вызывали
         Log.d("iAtRadio", "RadioService -> playStation запуск станции $station")
         try {
@@ -187,8 +187,8 @@ class RadioNotificationService : Service() {
                     start()
                     this@RadioNotificationService.isPlaying = true
                     updateNotification()
-                    if (flagSendInfoBroadcast)
-                        sendInfoBroadcast(true)
+//                    if (flagSendInfoBroadcast)
+                    sendInfoBroadcast(true)
                     resetRetries() // Сбросить счетчик попыток в случае успеха
                 }
                 setOnErrorListener { _, what, extra ->
