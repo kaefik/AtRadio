@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.media.AudioAttributes
+import android.media.AudioFocusRequest
+import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Build
 import android.os.Handler
@@ -27,6 +29,13 @@ class RadioNotificationService : Service() {
 
     private var isPlaying: Boolean = false
 
+    // для управлением громкостью при потери звукового фокуса, например, если усть звук от навигатора
+    private var audioManager: AudioManager? = null
+    private var originalVolume: Float = 1.0f  // Для хранения исходной громкости
+
+    // Определяем AudioFocusRequest для API >= 26
+    private var audioFocusRequest: AudioFocusRequest? = null
+
     // для нескольких попыток подключения при ошибке
     private val maxRetries = 20
     private var retryCount = 0
@@ -47,6 +56,15 @@ class RadioNotificationService : Service() {
             resetRetries() // Сбросить счетчик при остановке музыки вручную
         }
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onCreate() {
+        super.onCreate()
+
+        audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        requestAudioFocus()
+    }
+
 
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -343,6 +361,65 @@ class RadioNotificationService : Service() {
     fun isPlaying(): Boolean {
         return mediaPlayer?.isPlaying == true
     }
+
+    // для управлением громкостью при потери звукового фокуса, например, если усть звук от навигатора
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun requestAudioFocus() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            audioFocusRequest = AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                .setOnAudioFocusChangeListener { focusChange -> handleAudioFocusChange(focusChange) }
+                .setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .setUsage(AudioAttributes.USAGE_MEDIA)
+                        .build()
+                )
+                .build()
+
+            val result = audioManager?.requestAudioFocus(audioFocusRequest!!)
+            if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                // Фокус получен
+            }
+        } else {
+            @Suppress("DEPRECATION")
+            val result = audioManager?.requestAudioFocus(
+                { focusChange -> handleAudioFocusChange(focusChange) },
+                AudioManager.STREAM_MUSIC,
+                AudioManager.AUDIOFOCUS_GAIN
+            )
+            if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                // Фокус получен
+            }
+        }
+    }
+
+    // Обработчик изменения аудио-фокуса
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun handleAudioFocusChange(focusChange: Int) {
+        when (focusChange) {
+            AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
+                // Временная потеря фокуса, снижаем громкость на 50%
+                mediaPlayer?.let {
+                    it.setVolume(originalVolume * 0.5f, originalVolume * 0.5f)
+                }
+            }
+            AudioManager.AUDIOFOCUS_GAIN -> {
+                // Фокус возвращен, восстанавливаем громкость
+                mediaPlayer?.let {
+                    it.setVolume(originalVolume, originalVolume)
+                }
+            }
+            AudioManager.AUDIOFOCUS_LOSS -> {
+                // Полная потеря фокуса, останавливаем воспроизведение
+                stopPlayback(true)
+                audioManager?.abandonAudioFocusRequest(audioFocusRequest!!)
+            }
+        }
+    }
+    // END для управлением громкостью при потери звукового фокуса, например, если усть звук от навигатора
+
+
 
     companion object {
         const val ACTION_PLAY = "com.example.atradio.ACTION_PLAY"
