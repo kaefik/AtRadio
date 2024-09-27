@@ -566,6 +566,7 @@ class MainActivity : AppCompatActivity() {
         return when (keyCode) {
             KeyEvent.KEYCODE_VOLUME_UP -> {
                 // Обработка нажатия кнопки увеличения громкости
+                volumeControl.increaseVolume()
                 if (appSettings.isScreenSaverEnabled) {
                     stopScreenSaver()
                 }
@@ -573,6 +574,7 @@ class MainActivity : AppCompatActivity() {
             }
             KeyEvent.KEYCODE_VOLUME_DOWN -> {
                 // Обработка нажатия кнопки уменьшения громкости
+                volumeControl.decreaseVolume()
                 if (appSettings.isScreenSaverEnabled) {
                     stopScreenSaver()
                 }
