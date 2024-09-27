@@ -1,8 +1,13 @@
 package com.example.atradio
 
+import android.Manifest
 import android.app.*
+import android.bluetooth.BluetoothDevice
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.media.AudioAttributes
 import android.media.AudioFocusRequest
@@ -16,6 +21,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import android.util.Log
 import android.widget.RemoteViews
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 
@@ -57,12 +63,60 @@ class RadioNotificationService : Service() {
         }
     }
 
+    private val bluetoothReceiver =  object : BroadcastReceiver() {
+        @RequiresApi(Build.VERSION_CODES.O)
+        override fun onReceive(context: Context, intent: Intent) {
+            val action = intent.action
+            Log.d("iAtRadio", "MainActivity -> BluetoothReceiver -> begin")
+            if (action == BluetoothDevice.ACTION_ACL_DISCONNECTED) {
+                val device: BluetoothDevice? = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
+                if (device != null) {
+                    if (ActivityCompat.checkSelfPermission(
+                            context,
+                            Manifest.permission.BLUETOOTH_CONNECT
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return
+                    }
+                    Log.d("iAtRadio", "MainActivity -> BluetoothReceiver -> Bluetooth device disconnected: ${device.name}")
+                    // Остановите музыку здесь
+//                    statusPlay = false
+//                    updateUIForStopped()
+                    stopPlayback(false)
+                    sendInfoBroadcast(false)
+                }
+            }
+            Log.d("iAtRadio", "MainActivity -> BluetoothReceiver -> end")
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(bluetoothReceiver)
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate() {
         super.onCreate()
 
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         requestAudioFocus()
+
+        // Регистрируем BroadcastReceiver для обработки blutooth соединения
+        val filter = IntentFilter().apply {
+            addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
+            addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
+            addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED)
+        }
+        registerReceiver(bluetoothReceiver, filter)
+
     }
 
 

@@ -92,40 +92,6 @@ class MainActivity : AppCompatActivity() {
     // код запроса разрешения
     private val REQUEST_BLUETOOTH_PERMISSIONS = 1
 
-    private val bluetoothReceiver =  object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            val action = intent.action
-            Log.d("iAtRadio", "MainActivity -> BluetoothReceiver -> begin")
-            if (action == BluetoothDevice.ACTION_ACL_DISCONNECTED) {
-                val device: BluetoothDevice? = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
-                if (device != null) {
-                    if (ActivityCompat.checkSelfPermission(
-                            context,
-                            Manifest.permission.BLUETOOTH_CONNECT
-                        ) != PackageManager.PERMISSION_GRANTED
-                    ) {
-                        // TODO: Consider calling
-                        //    ActivityCompat#requestPermissions
-                        // here to request the missing permissions, and then overriding
-                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                        //                                          int[] grantResults)
-                        // to handle the case where the user grants the permission. See the documentation
-                        // for ActivityCompat#requestPermissions for more details.
-                        return
-                    }
-                    Log.d("iAtRadio", "MainActivity -> BluetoothReceiver -> Bluetooth device disconnected: ${device.name}")
-                    // Остановите музыку здесь
-                    statusPlay = false
-                    updateUIForStopped()
-                    stopPlayback()
-                }
-            }
-            Log.d("iAtRadio", "MainActivity -> BluetoothReceiver -> end")
-        }
-    }
-
-
-
     private lateinit var volumeControl: VolumeControl
     private lateinit var appSettings: AppSettings
     private val gson = Gson()
@@ -746,20 +712,10 @@ class MainActivity : AppCompatActivity() {
         // Регистрируем BroadcastReceiver для получения информации от сервиса
         LocalBroadcastManager.getInstance(this)
             .registerReceiver(infoReceiver, IntentFilter(RadioNotificationService.ACTION_INFO))
-
-        // Регистрируем BroadcastReceiver для обработки blutooth соединения
-        val filter = IntentFilter().apply {
-            addAction(BluetoothDevice.ACTION_ACL_DISCONNECTED)
-            addAction(BluetoothDevice.ACTION_ACL_CONNECTED)
-            addAction(BluetoothDevice.ACTION_ACL_DISCONNECT_REQUESTED)
-        }
-        registerReceiver(bluetoothReceiver, filter)
-
     }
 
     override fun onStop() {
         super.onStop()
-        unregisterReceiver(bluetoothReceiver)
         // Отмена регистрации BroadcastReceiver при уничтожении активности
         LocalBroadcastManager.getInstance(this).unregisterReceiver(errorReceiver)
         LocalBroadcastManager.getInstance(this).unregisterReceiver(infoReceiver)
