@@ -43,6 +43,7 @@ import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import android.provider.Settings
 import android.Manifest
+import android.view.KeyEvent
 import androidx.core.app.ActivityCompat
 
 
@@ -560,6 +561,27 @@ class MainActivity : AppCompatActivity() {
         }
         statusPlayFromService(appSettings.currentStation)
     }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        return when (keyCode) {
+            KeyEvent.KEYCODE_VOLUME_UP -> {
+                // Обработка нажатия кнопки увеличения громкости
+                if (appSettings.isScreenSaverEnabled) {
+                    stopScreenSaver()
+                }
+                true
+            }
+            KeyEvent.KEYCODE_VOLUME_DOWN -> {
+                // Обработка нажатия кнопки уменьшения громкости
+                if (appSettings.isScreenSaverEnabled) {
+                    stopScreenSaver()
+                }
+                true
+            }
+            else -> super.onKeyDown(keyCode, event)
+        }
+    }
+
 
     // Метод для остановки таймеров и скрытия скринсейвера
     private fun stopScreenSaver() {
