@@ -903,6 +903,19 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // обработка смены ориентации активити
+     override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // Обработка смены ориентации на ландшафтную
+            Log.d("iAtRadio", "MainActivity -> Ландшафтный режим")
+        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+            // Обработка смены ориентации на портретную
+            Log.d("iAtRadio", "MainActivity -> Портретный режим")
+        }
+    }
+
+
 
 }
 
