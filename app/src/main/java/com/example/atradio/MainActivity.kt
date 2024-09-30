@@ -176,10 +176,9 @@ class MainActivity : AppCompatActivity() {
 
         // Привязка к сервису плееера
 
-
+        // Начальная инициализация мастера приложений
         // локализация приложения
         // Проверяем, был ли уже выбран язык ранее
-
         if (appSettings.language.isNullOrEmpty()) {
             // Если язык не был выбран, показываем диалог для выбора языка
             showLanguageDialog()
@@ -189,6 +188,8 @@ class MainActivity : AppCompatActivity() {
             setContentView(R.layout.activity_main)
         }
         // END локализация приложения
+
+
 
 
         // проверка есть права на уведомления
@@ -218,7 +219,7 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
-
+        // END Начальная инициализация мастера приложений
 
         // заставка - сринсейвер
         dimView = findViewById(R.id.dim_view)
