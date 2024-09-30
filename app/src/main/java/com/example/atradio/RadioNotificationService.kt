@@ -196,10 +196,10 @@ class RadioNotificationService : Service() {
                 if (appSettings.lastRadioStationIndex < 0)
                     appSettings.lastRadioStationIndex = appSettings.radioStations.size - 1
                 appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
-                sendInfoBroadcast(true)
-                saveAppSettings(appSettings)
-                currentStation=appSettings.currentStation
                 currentStation = appSettings.currentStation
+                updateNotification()
+                saveAppSettings(appSettings)
+                sendInfoBroadcast(true)
                 Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_PREVIOUS -> станция: $currentStation")
                 isTaskRunning = true  // Указываем, что задача запущена
                 playStation(currentStation!!)
@@ -211,9 +211,10 @@ class RadioNotificationService : Service() {
                 if (appSettings.radioStations.size <= appSettings.lastRadioStationIndex)
                     appSettings.lastRadioStationIndex = 0
                 appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
-                sendInfoBroadcast(true)
-                saveAppSettings(appSettings)
                 currentStation=appSettings.currentStation
+                updateNotification()
+                saveAppSettings(appSettings)
+                sendInfoBroadcast(true)
                 Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_NEXT -> станция: $currentStation")
                 isTaskRunning = true  // Указываем, что задача запущена
                 playStation(currentStation!!)
