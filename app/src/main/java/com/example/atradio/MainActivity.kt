@@ -67,11 +67,16 @@ class MainActivity : AppCompatActivity() {
     private val infoReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val isPlayed = intent?.getBooleanExtra("PLAY", false)
+            val stationFromService = intent?.getStringExtra("STATION")
             if(isPlayed == true){
                 statusPlay = true
+                appSettings = loadAppSettings()
+                statusRadio.text = appSettings.currentStation.name
                 updateUIForPlaying()
             } else {
                 statusPlay = false
+                appSettings = loadAppSettings()
+                statusRadio.text = appSettings.currentStation.name
                 updateUIForStopped()
             }
         }
@@ -404,12 +409,12 @@ class MainActivity : AppCompatActivity() {
             } else {
                 statusPlay = true
                 updateUIForPlaying()
-                appSettings.lastRadioStationIndex += 1
-                if (appSettings.radioStations.size <= appSettings.lastRadioStationIndex)
-                    appSettings.lastRadioStationIndex = 0
-                appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
-                statusRadio.text = appSettings.currentStation.name
-                saveAppSettings(appSettings)
+//                appSettings.lastRadioStationIndex += 1
+//                if (appSettings.radioStations.size <= appSettings.lastRadioStationIndex)
+//                    appSettings.lastRadioStationIndex = 0
+//                appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
+//                statusRadio.text = appSettings.currentStation.name
+//                saveAppSettings(appSettings)
                 nextPlayback(appSettings.currentStation)
             }
 

@@ -24,6 +24,9 @@ import android.widget.RemoteViews
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.google.gson.reflect.TypeToken
+import com.google.gson.Gson
+
 
 class RadioNotificationService : Service() {
     private var mediaPlayer: MediaPlayer? = null
@@ -127,6 +130,8 @@ class RadioNotificationService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d("iAtRadio", "RadioService -> Service started with startId: $startId and action: ${intent?.action}")
 
+        val appSettings = loadAppSettings()
+
         // Если уже выполняется задача, остановите текущую перед выполнением новой
         // Сохраняем текущий startId
         currentStartId = startId
@@ -198,13 +203,16 @@ class RadioNotificationService : Service() {
             ACTION_NEXT -> {
                 Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_NEXT -> станция: ")
                 stopPlayback(false)
-                val station = intent.getParcelableExtra<RadioStation>(EXTRA_STATION)
-                station?.let {
-                    currentStation = it
-                    Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_NEXT -> станция: $it")
-                    isTaskRunning = true  // Указываем, что задача запущена
-                    playStation(it)
-                }
+                appSettings.lastRadioStationIndex += 1
+                if (appSettings.radioStations.size <= appSettings.lastRadioStationIndex)
+                    appSettings.lastRadioStationIndex = 0
+                appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
+                sendInfoBroadcast(true)
+                saveAppSettings(appSettings)
+                currentStation=appSettings.currentStation
+                Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_NEXT -> станция: $currentStation")
+                isTaskRunning = true  // Указываем, что задача запущена
+                playStation(currentStation!!)
             }
             else -> {
                 Log.w("iAtRadio", "RadioService -> Unknown action")
@@ -393,6 +401,7 @@ class RadioNotificationService : Service() {
     private fun sendInfoBroadcast(isPlayed: Boolean) {
         val intent = Intent(ACTION_INFO).apply {
             putExtra("PLAY", isPlayed)
+            putExtra("STATION", currentStation)
         }
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
@@ -474,6 +483,27 @@ class RadioNotificationService : Service() {
     // END для управлением громкостью при потери звукового фокуса, например, если усть звук от навигатора
 
 
+    private fun saveAppSettings(settings: AppSettings) {
+        val gson = Gson()
+        val sharedPreferences = getSharedPreferences("AppSettings", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        val json = gson.toJson(settings)
+        editor.putString("AppSettingsData", json)
+        editor.apply()
+    }
+
+    private fun loadAppSettings(): AppSettings {
+        val gson = Gson()
+        val sharedPreferences = getSharedPreferences("AppSettings", MODE_PRIVATE)
+        val json = sharedPreferences.getString("AppSettingsData", null)
+        return if (json != null) {
+            val type = object : TypeToken<AppSettings>() {}.type
+            gson.fromJson(json, type)
+        } else {
+            // Возвращаем настройки по умолчанию, если они отсутствуют
+            initAppSettings(this)
+        }
+    }
 
     companion object {
         const val ACTION_PLAY = "com.example.atradio.ACTION_PLAY"
