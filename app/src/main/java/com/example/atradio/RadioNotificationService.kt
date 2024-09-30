@@ -192,13 +192,17 @@ class RadioNotificationService : Service() {
             ACTION_PREVIOUS -> {
                 Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_PREVIOUS -> станция: ")
                 stopPlayback(false)
-                val station = intent.getParcelableExtra<RadioStation>(EXTRA_STATION)
-                station?.let {
-                    currentStation = it
-                    Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_PREVIOUS -> станция: $it")
-                    isTaskRunning = true  // Указываем, что задача запущена
-                    playStation(it)
-                }
+                appSettings.lastRadioStationIndex -= 1
+                if (appSettings.lastRadioStationIndex < 0)
+                    appSettings.lastRadioStationIndex = appSettings.radioStations.size - 1
+                appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
+                sendInfoBroadcast(true)
+                saveAppSettings(appSettings)
+                currentStation=appSettings.currentStation
+                currentStation = appSettings.currentStation
+                Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_PREVIOUS -> станция: $currentStation")
+                isTaskRunning = true  // Указываем, что задача запущена
+                playStation(currentStation!!)
             }
             ACTION_NEXT -> {
                 Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_NEXT -> станция: ")

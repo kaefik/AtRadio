@@ -427,12 +427,12 @@ class MainActivity : AppCompatActivity() {
             } else {
                 statusPlay = true
                 updateUIForPlaying()
-                appSettings.lastRadioStationIndex -= 1
-                if (appSettings.lastRadioStationIndex < 0)
-                    appSettings.lastRadioStationIndex = appSettings.radioStations.size - 1
-                appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
-                statusRadio.text = appSettings.currentStation.name
-                saveAppSettings(appSettings)
+//                appSettings.lastRadioStationIndex -= 1
+//                if (appSettings.lastRadioStationIndex < 0)
+//                    appSettings.lastRadioStationIndex = appSettings.radioStations.size - 1
+//                appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
+//                statusRadio.text = appSettings.currentStation.name
+//                saveAppSettings(appSettings)
                 prevPlayback(appSettings.currentStation)
             }
         }
