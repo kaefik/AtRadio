@@ -45,6 +45,7 @@ import android.provider.Settings
 import android.Manifest
 import android.view.KeyEvent
 import androidx.core.app.ActivityCompat
+import java.io.IOException
 
 
 class MainActivity : AppCompatActivity() {
@@ -189,7 +190,7 @@ class MainActivity : AppCompatActivity() {
         }
         // END локализация приложения
 
-
+        chooseRadioStation(appSettings.language)
 
 
         // проверка есть права на уведомления
@@ -923,7 +924,69 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // мастер выбора радистанций при первом запуске программы
+    fun chooseRadioStation(language:String){
+    //        val language = "ru" // Это может быть динамическая переменная
+        val baseFolder = if (language == "en") "en" else "ru"
 
+    // Список категорий и соответствующих файлов
+        val categories = mapOf(
+            getString(R.string.category_tatar) to "$baseFolder/radio_stations_tatar.csv",
+            getString(R.string.category_classic) to "$baseFolder/radio_stations_classic.csv",
+            getString(R.string.category_retro) to "$baseFolder/radio_stations_retro.csv",
+            getString(R.string.category_russian) to "$baseFolder/radio_stations_rus.csv",
+            getString(R.string.category_other) to "$baseFolder/radio_stations_other.csv"
+        )
+
+        val selectedCategories = mutableListOf<String>()
+        val categoryNames = categories.keys.toTypedArray()
+
+        AlertDialog.Builder(this)
+            .setTitle("Выберите категории")
+            .setMultiChoiceItems(categoryNames, null) { _, which, isChecked ->
+                if (isChecked) {
+                    selectedCategories.add(categoryNames[which])
+                } else {
+                    selectedCategories.remove(categoryNames[which])
+                }
+            }
+            .setPositiveButton("Выбрать") { _, _ ->
+                // Вызов функции для объединения файлов
+                combineSelectedFiles(selectedCategories, categories)
+            }
+//            .setNegativeButton("Отмена", null)
+            .show()
+    }
+
+    @SuppressLint("DiscouragedApi")
+    fun combineSelectedFiles(selectedCategories: List<String>, categories: Map<String, String>) {
+        val combinedData = StringBuilder()
+
+        for (category in selectedCategories) {
+            val fileName = categories[category]
+            if (fileName != null) {
+                try {
+                    // Используем AssetManager для чтения файла
+                    val inputStream = assets.open(fileName)
+                    val fileData = inputStream.bufferedReader().use { it.readText() }
+                    combinedData.append(fileData).append("\n")
+                } catch (e: IOException) {
+                    Log.e("iAtRadio", "combineSelectedFiles -> Не удалось открыть файл: $fileName", e)
+                }
+            }
+        }
+
+        Log.d("iAtRadio", "MainActivity -> combineSelectedFiles -> $combinedData")
+
+        // После объединения файлов можно загружать их в программу
+        loadDataToApp(combinedData.toString())
+        }
+
+
+    fun loadDataToApp(data: String) {
+        // Обработка загруженных данных для использования в приложении
+        Log.d("iAtRadio", "MainActivity -> loadDataToApp -> $data")
+    }
 
 }
 
