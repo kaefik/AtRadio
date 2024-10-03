@@ -63,4 +63,9 @@
     <string name="close">Ябу</string>
     <string name="error_play_code">Уйнату хатасы: код</string>
     <string name="error_init_mediaplayer">MediaPlayer ны башлау хатасы</string>
+    <string name="category_tatar">Татарская музыка</string>
+    <string name="category_classic">Классика</string>
+    <string name="category_retro">Ретро</string>
+    <string name="category_russian">Русская музыка</string>
+    <string name="category_other">Другое</string>
 </resources>

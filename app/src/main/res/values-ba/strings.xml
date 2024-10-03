@@ -64,4 +64,9 @@
     <string name="close">Ябыу</string>
     <string name="error_play_code">Уйнау хатаһы: код</string>
     <string name="error_init_mediaplayer">MediaPlayerҙы башлауҙа хата</string>
+    <string name="category_tatar">Татарская музыка</string>
+    <string name="category_classic">Классика</string>
+    <string name="category_retro">Ретро</string>
+    <string name="category_russian">Русская музыка</string>
+    <string name="category_other">Другое</string>
 </resources>

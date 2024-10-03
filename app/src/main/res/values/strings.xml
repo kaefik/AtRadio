@@ -63,4 +63,9 @@
     <string name="close">Close</string>
     <string name="error_play_code">Playback error: code</string>
     <string name="error_init_mediaplayer">Error initializing MediaPlayer</string>
+    <string name="category_tatar">Tatar music</string>
+    <string name="category_classic">Classical music</string>
+    <string name="category_retro">Retro music</string>
+    <string name="category_russian">Russian music</string>
+    <string name="category_other">Other</string>
 </resources>
