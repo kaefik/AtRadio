@@ -44,8 +44,13 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import android.provider.Settings
 import android.Manifest
 import android.view.KeyEvent
-import androidx.core.app.ActivityCompat
+import kotlinx.coroutines.DelicateCoroutinesApi
 import java.io.IOException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 
 
 class MainActivity : AppCompatActivity() {
@@ -96,12 +101,72 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
+    private val listRadioStationLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val updatedRadioStations = result.data?.getParcelableArrayListExtra<RadioStation>("radioStations")?.toMutableList()
+            if (updatedRadioStations != null) {
+                val mutableRadioStations = updatedRadioStations.toMutableList()
+                appSettings.radioStations.clear()
+                appSettings.radioStations.addAll(mutableRadioStations)
+                saveAppSettings(appSettings)
+            }
+
+            if (appSettings.radioStations.isEmpty()) {
+                stopPlayback()
+                statusPlay = false
+                updateUIForStopped()
+                statusRadio.text = getString(R.string.empty_list_stations)
+                appSettings.currentStation = RadioStation("", "")
+
+            } else {
+                if (appSettings.lastRadioStationIndex >= appSettings.radioStations.size) {
+                    appSettings.lastRadioStationIndex = 0
+                }
+                appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
+                statusRadio.text = appSettings.currentStation.name
+            }
+
+            val selectedStation = result.data?.getParcelableExtra<RadioStation>("selectedStation")
+            if (selectedStation != null) {
+                appSettings.lastRadioStationIndex = appSettings.radioStations.indexOf(selectedStation)
+                statusPlay = true
+                appSettings.currentStation = selectedStation
+                statusRadio.text = appSettings.currentStation.name
+                saveAppSettings(appSettings)
+                updateUIForPlaying()
+                // запуск сервера
+                stopPlayback()
+                playStation(appSettings.currentStation)
+                // END запуск сервера
+            }
+        }
+    }
+
+    private val settingAppLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            appSettings = loadAppSettings() // Перезагружаем все настройки
+            setLocale(appSettings.language)
+        }
+        resetTimers()
+    }
+
     // код запроса разрешения
     private val REQUEST_BLUETOOTH_PERMISSIONS = 1
 
     private lateinit var volumeControl: VolumeControl
     private lateinit var appSettings: AppSettings
     private val gson = Gson()
+
+    private lateinit var buttonVolUp: ImageButton
+    private lateinit var buttonVolDown: ImageButton
+    private lateinit var buttonForward: ImageButton
+    private lateinit var buttonPrev: ImageButton
+    private lateinit var buttonListRadioStations: ImageButton
+    private lateinit var buttonFav1: ImageButton
+    private lateinit var buttonFav2: ImageButton
+    private lateinit var buttonFav3: ImageButton
+    private lateinit var buttonSettings: ImageButton
 
     private lateinit var buttonPlay: ImageButton
     private lateinit var statusRadio: TextView
@@ -153,6 +218,7 @@ class MainActivity : AppCompatActivity() {
     }
     // END заставка - сринсейвер
 
+    @OptIn(DelicateCoroutinesApi::class)
     @RequiresApi(Build.VERSION_CODES.R)
     @SuppressLint("SetTextI18n", "SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -167,31 +233,90 @@ class MainActivity : AppCompatActivity() {
 
         Log.d("iAtRadio", "MainActivity onCreate -> begin -> statusPlay")
 
+        // Загружаем настройки при старте
+        appSettings = loadAppSettings()
+        Log.d("iAtRadio", "MainActivity onCreate -> appSettings = $appSettings")
+
+        // заставка - сринсейвер
+        dimView = findViewById(R.id.dim_view)
+        blackView = findViewById(R.id.black_view)
+        radioText = findViewById(R.id.radio_text)
+
+        resetTimers()
+
+        // END заставка - сринсейвер
+
+        // Скрытие строки статуса
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            window.insetsController?.hide(WindowInsets.Type.statusBars())
+            window.insetsController?.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        } else {
+            @Suppress("DEPRECATION")
+            window.setFlags(
+                WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN
+            )
+        }
+
+        volumeControl = VolumeControl(this)
+
+        statusRadio = findViewById(R.id.statusRadio)
+        buttonPlay = findViewById(R.id.buttonPlay)
+        buttonVolUp  = findViewById(R.id.buttonVolumeUp)
+        buttonVolDown  = findViewById(R.id.buttonVolumeDown)
+        buttonForward  = findViewById(R.id.buttonForward)
+        buttonPrev  = findViewById(R.id.buttonPrev)
+        buttonListRadioStations  = findViewById(R.id.buttonListRadioStations)
+        buttonFav1  = findViewById(R.id.buttonFav1)
+        buttonFav2 = findViewById(R.id.buttonFav2)
+        buttonFav3 = findViewById(R.id.buttonFav3)
+        buttonSettings  = findViewById(R.id.buttonSettings)
+
+        progressBar = findViewById(R.id.progressBar)
+
+
+        // Запускаем корутину для инициализации приложения
+        GlobalScope.launch(Dispatchers.Main) {
+            Log.d("iAtRadio", "MainActivity onCreate -> into GlobalScope")
+            initializeApp()
+        }
+
+        Log.d("iAtRadio", "MainActivity onCreate -> end")
+
+    }
+
+
+    private suspend fun initializeApp(){
+
+        Log.d("iAtRadio", "MainActivity initializeApp -> begin")
+
         // Получаем данные из Intent
         val currentStation = intent.getParcelableExtra<RadioStation>("currentStation")
         val isPlaying = intent.getBooleanExtra("isPlaying", false)
 
-
-        // Загружаем настройки при старте
-        appSettings = loadAppSettings()
-
         // Привязка к сервису плееера
-
         // Начальная инициализация мастера приложений
         // локализация приложения
         // Проверяем, был ли уже выбран язык ранее
         if (appSettings.language.isNullOrEmpty()) {
+            Log.d("iAtRadio", "MainActivity начало выбора языка")
             // Если язык не был выбран, показываем диалог для выбора языка
-            showLanguageDialog()
+            val selectedLanguage = showLanguageDialogSuspend()
+            Log.d("iAtRadio", "MainActivity язык выбран $selectedLanguage")
+            setLocale(selectedLanguage)
+            appSettings.language=selectedLanguage
+            Log.d("iAtRadio", "MainActivity выбран язык ${appSettings.language}")
+            appSettings.radioStations = chooseRadioStation(appSettings.language)
+            appSettings.currentStation=appSettings.radioStations[appSettings.lastRadioStationIndex]
+            statusRadio.text = appSettings.currentStation.name
+            setStationNotification(appSettings.currentStation)
         } else {
             // Если язык был выбран ранее, устанавливаем его
             setLocale(appSettings.language)
-            setContentView(R.layout.activity_main)
         }
         // END локализация приложения
 
-        chooseRadioStation(appSettings.language)
-
+        Log.d("iAtRadio", "MainActivity initializeApp -> appSettings.radioStations  = $appSettings.radioStations ")
 
         // проверка есть права на уведомления
         checkNotificationPermission()
@@ -222,42 +347,7 @@ class MainActivity : AppCompatActivity() {
         }
         // END Начальная инициализация мастера приложений
 
-        // заставка - сринсейвер
-        dimView = findViewById(R.id.dim_view)
-        blackView = findViewById(R.id.black_view)
-        radioText = findViewById(R.id.radio_text)
 
-        resetTimers()
-
-        // END заставка - сринсейвер
-
-        // Скрытие строки статуса
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.insetsController?.hide(WindowInsets.Type.statusBars())
-            window.insetsController?.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        } else {
-            @Suppress("DEPRECATION")
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN
-            )
-        }
-
-        volumeControl = VolumeControl(this)
-
-        statusRadio = findViewById(R.id.statusRadio)
-        buttonPlay = findViewById(R.id.buttonPlay)
-        val buttonVolUp: ImageButton = findViewById(R.id.buttonVolumeUp)
-        val buttonVolDown: ImageButton = findViewById(R.id.buttonVolumeDown)
-        val buttonForward: ImageButton = findViewById(R.id.buttonForward)
-        val buttonPrev: ImageButton = findViewById(R.id.buttonPrev)
-        val buttonListRadioStations: ImageButton = findViewById(R.id.buttonListRadioStations)
-        val buttonFav1: ImageButton = findViewById(R.id.buttonFav1)
-        val buttonFav2: ImageButton = findViewById(R.id.buttonFav2)
-        val buttonFav3: ImageButton = findViewById(R.id.buttonFav3)
-        val buttonSettings: ImageButton = findViewById(R.id.buttonSettings)
-
-        progressBar = findViewById(R.id.progressBar)
 
         if (appSettings.radioStations.size <= appSettings.lastRadioStationIndex) {
             appSettings.lastRadioStationIndex = 0
@@ -314,56 +404,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-
-        val listRadioStationLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val updatedRadioStations = result.data?.getParcelableArrayListExtra<RadioStation>("radioStations")?.toMutableList()
-                if (updatedRadioStations != null) {
-                    val mutableRadioStations = updatedRadioStations.toMutableList()
-                    appSettings.radioStations.clear()
-                    appSettings.radioStations.addAll(mutableRadioStations)
-                    saveAppSettings(appSettings)
-                }
-
-                if (appSettings.radioStations.isEmpty()) {
-                    stopPlayback()
-                    statusPlay = false
-                    updateUIForStopped()
-                    statusRadio.text = getString(R.string.empty_list_stations)
-                    appSettings.currentStation = RadioStation("", "")
-
-                } else {
-                    if (appSettings.lastRadioStationIndex >= appSettings.radioStations.size) {
-                        appSettings.lastRadioStationIndex = 0
-                    }
-                    appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
-                    statusRadio.text = appSettings.currentStation.name
-                }
-
-                val selectedStation = result.data?.getParcelableExtra<RadioStation>("selectedStation")
-                if (selectedStation != null) {
-                    appSettings.lastRadioStationIndex = appSettings.radioStations.indexOf(selectedStation)
-                    statusPlay = true
-                    appSettings.currentStation = selectedStation
-                    statusRadio.text = appSettings.currentStation.name
-                    saveAppSettings(appSettings)
-                    updateUIForPlaying()
-                    // запуск сервера
-                    stopPlayback()
-                    playStation(appSettings.currentStation)
-                    // END запуск сервера
-                }
-            }
-        }
-
-        val settingAppLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                appSettings = loadAppSettings() // Перезагружаем все настройки
-                setLocale(appSettings.language)
-            }
-            resetTimers()
-        }
-
         buttonSettings.setOnClickListenerWithScreenSaverReset {
             val intent = Intent(this, SettingsActivity::class.java)
             settingAppLauncher.launch(intent)
@@ -411,12 +451,6 @@ class MainActivity : AppCompatActivity() {
             } else {
                 statusPlay = true
                 updateUIForPlaying()
-//                appSettings.lastRadioStationIndex += 1
-//                if (appSettings.radioStations.size <= appSettings.lastRadioStationIndex)
-//                    appSettings.lastRadioStationIndex = 0
-//                appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
-//                statusRadio.text = appSettings.currentStation.name
-//                saveAppSettings(appSettings)
                 nextPlayback(appSettings.currentStation)
             }
 
@@ -429,12 +463,6 @@ class MainActivity : AppCompatActivity() {
             } else {
                 statusPlay = true
                 updateUIForPlaying()
-//                appSettings.lastRadioStationIndex -= 1
-//                if (appSettings.lastRadioStationIndex < 0)
-//                    appSettings.lastRadioStationIndex = appSettings.radioStations.size - 1
-//                appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
-//                statusRadio.text = appSettings.currentStation.name
-//                saveAppSettings(appSettings)
                 prevPlayback(appSettings.currentStation)
             }
         }
@@ -448,7 +476,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         buttonPlay.setOnClickListenerWithScreenSaverReset {
-//            stopPlayback()
             if (appSettings.radioStations.isEmpty()) {
                 appSettings.lastRadioStationIndex = 0
                 statusRadio.text = "Empty list stations"
@@ -477,9 +504,15 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        Log.d("iAtRadio", "MainActivity onCreate -> end")
+        if(isPlaying){
+            updateUIForPlaying()
+        } else {
+            updateUIForStopped()
+        }
 
+        Log.d("iAtRadio", "MainActivity initializeApp -> end")
     }
+
 
     private fun updateUIForPlaying() {
         Log.d("iAtRadio", "MainActivity -> updateUIForPlaying")
@@ -686,6 +719,26 @@ class MainActivity : AppCompatActivity() {
     }
 
     // локализация приложения под различные языки
+
+
+    private suspend fun showLanguageDialogSuspend(): String = suspendCancellableCoroutine { continuation ->
+        val languages = arrayOf("English", "Татарча", "Башҡортса", "Русский")
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Select the language app")
+        builder.setSingleChoiceItems(languages, -1) { dialog, which ->
+            val selectedLanguage = when (which) {
+                0 -> "en"
+                1 -> "tt"
+                2 -> "ba"
+                3 -> "ru"
+                else -> "en" // По умолчанию английский
+            }
+            dialog.dismiss()
+            continuation.resume(selectedLanguage)
+        }
+        builder.setCancelable(false) // Запрещаем закрытие диалога без выбора
+        builder.show()
+    }
 
     private fun showLanguageDialog() {
         val languages = arrayOf("English", "Татарча", "Башҡортса", "Русский")
@@ -925,11 +978,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     // мастер выбора радистанций при первом запуске программы
-    fun chooseRadioStation(language:String){
-    //        val language = "ru" // Это может быть динамическая переменная
+    private suspend fun chooseRadioStation(language: String): MutableList<RadioStation> = suspendCancellableCoroutine { continuation ->
         val baseFolder = if (language == "en") "en" else "ru"
 
-    // Список категорий и соответствующих файлов
         val categories = mapOf(
             getString(R.string.category_tatar) to "$baseFolder/radio_stations_tatar.csv",
             getString(R.string.category_classic) to "$baseFolder/radio_stations_classic.csv",
@@ -951,15 +1002,21 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             .setPositiveButton("Выбрать") { _, _ ->
-                // Вызов функции для объединения файлов
-                combineSelectedFiles(selectedCategories, categories)
+                val combinedStations = combineSelectedFiles(selectedCategories, categories)
+                appSettings.radioStations = combinedStations
+                continuation.resume(combinedStations)
             }
-//            .setNegativeButton("Отмена", null)
+            .setNegativeButton("Отмена") { _, _ ->
+                continuation.resume(mutableListOf())
+            }
+            .setOnCancelListener {
+                continuation.resume(mutableListOf())
+            }
             .show()
     }
 
     @SuppressLint("DiscouragedApi")
-    fun combineSelectedFiles(selectedCategories: List<String>, categories: Map<String, String>) {
+    private fun combineSelectedFiles(selectedCategories: List<String>, categories: Map<String, String>): MutableList<RadioStation> {
         val combinedData = StringBuilder()
 
         for (category in selectedCategories) {
@@ -979,15 +1036,31 @@ class MainActivity : AppCompatActivity() {
         Log.d("iAtRadio", "MainActivity -> combineSelectedFiles -> $combinedData")
 
         // После объединения файлов можно загружать их в программу
-        loadDataToApp(combinedData.toString())
-        }
-
-
-    fun loadDataToApp(data: String) {
-        // Обработка загруженных данных для использования в приложении
-        Log.d("iAtRadio", "MainActivity -> loadDataToApp -> $data")
+        return loadDataToApp(combinedData.toString())
     }
 
+
+    private fun loadDataToApp(data: String): MutableList<RadioStation> {
+        val radioStations = mutableListOf<RadioStation>()
+
+        // Разбиваем данные на строки (каждая строка — это радиостанция)
+        val lines = data.split("\n").filter { it.isNotBlank() }
+
+        // Обрабатываем каждую строку, предполагая, что данные разделены точкой с запятой
+        for (line in lines.drop(1)) {
+            val tokens = line.split(";")  // Используем ';' как разделитель
+            if (tokens.size >= 2) {
+                val name = tokens[0].trim()   // Первое поле - имя станции
+                val url = tokens[1].trim()    // Второе поле - URL станции
+
+                // Создаем объект RadioStation и добавляем его в список
+                val station = RadioStation(name, url)
+                radioStations.add(station)
+            }
+        }
+
+        return radioStations
+    }
 }
 
 // Описание функции-расширения должно быть вне класса MainActivity

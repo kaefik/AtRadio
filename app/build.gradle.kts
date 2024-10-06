@@ -47,4 +47,6 @@ dependencies {
     implementation("com.google.code.gson:gson:2.8.8")
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1")
+
 }

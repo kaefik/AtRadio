@@ -131,9 +131,9 @@ fun initAppSettings(context: Context): AppSettings {
     appSettings.radioStations.addAll(loadRadioStationsFromRaw(context, R.raw.radio_stations_default))
 
     // Если список радиостанций не пуст, устанавливаем первую станцию как текущую
-    if (appSettings.radioStations.isNotEmpty()) {
-        appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
-    }
+//    if (appSettings.radioStations.isNotEmpty()) {
+    appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
+//    }
 
     return appSettings
 }
