@@ -72,18 +72,29 @@ class MainActivity : AppCompatActivity() {
 
     private val infoReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            val isPlayed = intent?.getBooleanExtra("PLAY", false)
+            val isPlayed = intent?.getSerializableExtra("PLAY") as? MusicStatus // Принимаем MusicStatus
             val stationFromService = intent?.getStringExtra("STATION")
-            if(isPlayed == true){
-                statusPlay = MusicStatus.PLAYING
-                appSettings = loadAppSettings()
-                statusRadio.text = appSettings.currentStation.name
-                updateUIForPlaying()
-            } else {
-                statusPlay = MusicStatus.STOPPED
-                appSettings = loadAppSettings()
-                statusRadio.text = appSettings.currentStation.name
-                updateUIForStopped()
+
+            if (isPlayed != null) {
+                when (isPlayed) {
+                    MusicStatus.PLAYING -> {
+                        statusPlay = MusicStatus.PLAYING
+                        appSettings = loadAppSettings()
+                        statusRadio.text = appSettings.currentStation.name
+                        updateUIForPlaying()
+                    }
+                    MusicStatus.STOPPED -> {
+                        statusPlay = MusicStatus.STOPPED
+                        appSettings = loadAppSettings()
+                        statusRadio.text = appSettings.currentStation.name
+                        updateUIForStopped()
+                    }
+                    MusicStatus.LOADING -> {
+                        statusPlay = MusicStatus.LOADING
+                        // Можно добавить обработку статуса LOADING
+                        // например, показать индикатор загрузки
+                    }
+                }
             }
         }
     }
