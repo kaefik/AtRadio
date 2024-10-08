@@ -308,6 +308,7 @@ class MainActivity : AppCompatActivity() {
             Log.d("iAtRadio", "MainActivity выбран язык ${appSettings.language}")
             appSettings.radioStations = chooseRadioStation(appSettings.language)
             appSettings.currentStation=appSettings.radioStations[appSettings.lastRadioStationIndex]
+            saveAppSettings(appSettings)
             statusRadio.text = appSettings.currentStation.name
             setStationNotification(appSettings.currentStation)
         } else {
@@ -320,7 +321,6 @@ class MainActivity : AppCompatActivity() {
 
         // проверка есть права на уведомления
         checkNotificationPermission()
-
 
         // проверка есть права на bluetooth устройства
         // в частности для того чтобы при отключении блютус устройства останавливается воспроизведение
