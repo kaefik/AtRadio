@@ -93,6 +93,10 @@ class MainActivity : AppCompatActivity() {
                         statusPlay = MusicStatus.LOADING
                         // Можно добавить обработку статуса LOADING
                         // например, показать индикатор загрузки
+                        statusPlay = MusicStatus.LOADING
+                        appSettings = loadAppSettings()
+                        statusRadio.text = appSettings.currentStation.name
+                        updateUIForConnected()
                     }
                 }
             }
@@ -145,10 +149,12 @@ class MainActivity : AppCompatActivity() {
                 appSettings.currentStation = selectedStation
                 statusRadio.text = appSettings.currentStation.name
                 saveAppSettings(appSettings)
-                updateUIForPlaying()
+//                updateUIForPlaying()
                 // запуск сервера
                 stopPlayback()
+                updateUIForConnected()
                 playStation(appSettings.currentStation)
+
                 // END запуск сервера
             }
         }
@@ -398,7 +404,7 @@ class MainActivity : AppCompatActivity() {
             if (appSettings.isAutoPlayEnabled) {
                 statusPlay = MusicStatus.PLAYING
                 statusRadio.text = appSettings.currentStation.name
-                updateUIForPlaying()
+                updateUIForConnected()
                 // запуск сервиса
                 playStation(appSettings.currentStation)
                 // END запуск сервиса
@@ -460,8 +466,8 @@ class MainActivity : AppCompatActivity() {
                 appSettings.lastRadioStationIndex = 0
                 statusRadio.text = "Empty list stations"
             } else {
-                statusPlay = MusicStatus.PLAYING
-                updateUIForPlaying()
+                statusPlay = MusicStatus.LOADING
+                updateUIForConnected()
                 nextPlayback(appSettings.currentStation)
             }
 
@@ -472,8 +478,8 @@ class MainActivity : AppCompatActivity() {
                 appSettings.lastRadioStationIndex = 0
                 statusRadio.text = "Empty list stations"
             } else {
-                statusPlay = MusicStatus.PLAYING
-                updateUIForPlaying()
+                statusPlay = MusicStatus.LOADING
+                updateUIForConnected()
                 prevPlayback(appSettings.currentStation)
             }
         }
@@ -502,9 +508,9 @@ class MainActivity : AppCompatActivity() {
                     MusicStatus.STOPPED -> {
                         // Логика для состояния "остановлена"
                         statusPlay = MusicStatus.PLAYING
-                        updateUIForPlaying()
                         statusRadio.text = appSettings.currentStation.name
                         Log.d("iAtRadio", "MainActivity buttonPlay -> press Play")
+                        updateUIForConnected()
                         playStation(appSettings.currentStation)
                     }
                     MusicStatus.LOADING -> {
@@ -573,8 +579,8 @@ class MainActivity : AppCompatActivity() {
             statusRadio.text = it.name
             appSettings.currentStation= it
             saveAppSettings(appSettings)
-            updateUIForPlaying()
             stopPlayback()
+            updateUIForConnected()
             playStation(appSettings.currentStation)
 
         } ?: Toast.makeText(this, getString(R.string.no_station_saved_to_favorite) + " ${favIndex + 1}", Toast.LENGTH_SHORT).show()

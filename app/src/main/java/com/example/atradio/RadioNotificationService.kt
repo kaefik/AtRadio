@@ -199,7 +199,8 @@ class RadioNotificationService : Service() {
                 currentStation = appSettings.currentStation
                 updateNotification()
                 saveAppSettings(appSettings)
-                sendInfoBroadcast(MusicStatus.PLAYING)
+                isPlaying = MusicStatus.LOADING
+                sendInfoBroadcast(isPlaying)
                 Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_PREVIOUS -> станция: $currentStation")
                 isTaskRunning = true  // Указываем, что задача запущена
                 playStation(currentStation!!)
@@ -214,7 +215,8 @@ class RadioNotificationService : Service() {
                 currentStation=appSettings.currentStation
                 updateNotification()
                 saveAppSettings(appSettings)
-                sendInfoBroadcast(MusicStatus.PLAYING)
+                isPlaying=MusicStatus.LOADING
+                sendInfoBroadcast(isPlaying)
                 Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_NEXT -> станция: $currentStation")
                 isTaskRunning = true  // Указываем, что задача запущена
                 playStation(currentStation!!)
