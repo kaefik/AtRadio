@@ -526,6 +526,13 @@ class MainActivity : AppCompatActivity() {
         buttonPlay.setImageResource(R.drawable.play_64)
     }
 
+    // статус загрузки музыки
+    private fun updateUIForConnected() {
+        Log.d("iAtRadio", "MainActivity -> updateUIForConnected")
+        statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
+        buttonPlay.setImageResource(R.drawable.connect64)
+    }
+
 
     private fun showSaveDialog(favIndex: Int) {
         AlertDialog.Builder(this)
