@@ -36,7 +36,7 @@ class RadioNotificationService : Service() {
     private var isTaskRunning: Boolean = false // для того чтобы была запущена одна задача
     private var isNotificationRunning: Boolean = false // запущено ли было  createNotification
 
-    private var isPlaying: Boolean = false
+    private var isPlaying: MusicStatus = MusicStatus.STOPPED
 
     // для управлением громкостью при потери звукового фокуса, например, если усть звук от навигатора
     private var audioManager: AudioManager? = null
@@ -93,7 +93,7 @@ class RadioNotificationService : Service() {
 //                    statusPlay = false
 //                    updateUIForStopped()
                     stopPlayback(false)
-                    sendInfoBroadcast(false)
+                    sendInfoBroadcast(MusicStatus.STOPPED)
                 }
             }
             Log.d("iAtRadio", "MainActivity -> BluetoothReceiver -> end")
@@ -187,7 +187,7 @@ class RadioNotificationService : Service() {
                 stopPlayback(false)
                 stopSelf(startId)  // Останавливаем сервис
                 resetRetries() // Сбросить счетчик при остановке музыки вручную
-                sendInfoBroadcast(false)
+                sendInfoBroadcast(MusicStatus.STOPPED)
             }
             ACTION_PREVIOUS -> {
                 Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_PREVIOUS -> станция: ")
@@ -199,7 +199,7 @@ class RadioNotificationService : Service() {
                 currentStation = appSettings.currentStation
                 updateNotification()
                 saveAppSettings(appSettings)
-                sendInfoBroadcast(true)
+                sendInfoBroadcast(MusicStatus.PLAYING)
                 Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_PREVIOUS -> станция: $currentStation")
                 isTaskRunning = true  // Указываем, что задача запущена
                 playStation(currentStation!!)
@@ -214,7 +214,7 @@ class RadioNotificationService : Service() {
                 currentStation=appSettings.currentStation
                 updateNotification()
                 saveAppSettings(appSettings)
-                sendInfoBroadcast(true)
+                sendInfoBroadcast(MusicStatus.PLAYING)
                 Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_NEXT -> станция: $currentStation")
                 isTaskRunning = true  // Указываем, что задача запущена
                 playStation(currentStation!!)
@@ -252,15 +252,15 @@ class RadioNotificationService : Service() {
                 prepareAsync()
                 setOnPreparedListener {
                     start()
-                    this@RadioNotificationService.isPlaying = true
+                    this@RadioNotificationService.isPlaying = MusicStatus.PLAYING
                     updateNotification()
 //                    if (flagSendInfoBroadcast)
-                    sendInfoBroadcast(true)
+                    sendInfoBroadcast(MusicStatus.PLAYING)
                     resetRetries() // Сбросить счетчик попыток в случае успеха
                 }
                 setOnErrorListener { _, what, extra ->
                     Log.e("iAtRadio", "RadioService -> Playback error: $what, extra: $extra")
-                    this@RadioNotificationService.isPlaying = false
+                    this@RadioNotificationService.isPlaying = MusicStatus.STOPPED
                     sendErrorBroadcast(getString(R.string.error_play_code) + what)
                     scheduleRetry() // Запланировать повторную попытку в случае ошибки
                     true // Возвращаем true, чтобы указать, что ошибка обработана
@@ -269,7 +269,7 @@ class RadioNotificationService : Service() {
             }
         } catch (e: Exception) {
             Log.e("iAtRadio", "RadioService -> Error initializing MediaPlayer: ${e.message}")
-            this@RadioNotificationService.isPlaying = false
+            this@RadioNotificationService.isPlaying = MusicStatus.STOPPED
             sendErrorBroadcast(getString(R.string.error_init_mediaplayer) + e.message)
         }
     }
@@ -282,9 +282,9 @@ class RadioNotificationService : Service() {
         mediaPlayer?.apply {
             stop()
             release()
-            this@RadioNotificationService.isPlaying = false
+            this@RadioNotificationService.isPlaying = MusicStatus.STOPPED
             if (flagSendInfoBroadcast)
-                sendInfoBroadcast(false)
+                sendInfoBroadcast(MusicStatus.STOPPED)
         }
         mediaPlayer = null
         updateNotification()
@@ -403,7 +403,7 @@ class RadioNotificationService : Service() {
     }
 
     // для отправки информации из сервиса
-    private fun sendInfoBroadcast(isPlayed: Boolean) {
+    private fun sendInfoBroadcast(isPlayed: MusicStatus) {
         val intent = Intent(ACTION_INFO).apply {
             putExtra("PLAY", isPlayed)
             putExtra("STATION", currentStation)
