@@ -1025,8 +1025,12 @@ class MainActivity : AppCompatActivity() {
                 try {
                     // Используем AssetManager для чтения файла
                     val inputStream = assets.open(fileName)
-                    val fileData = inputStream.bufferedReader().use { it.readText() }
-                    combinedData.append(fileData).append("\n")
+                    val lines = inputStream.bufferedReader().readLines()
+
+                    // Исключаем первую строку
+                    if (lines.size > 1) {
+                        combinedData.append(lines.drop(1).joinToString("\n")).append("\n")
+                    }
                 } catch (e: IOException) {
                     Log.e("iAtRadio", "combineSelectedFiles -> Не удалось открыть файл: $fileName", e)
                 }
@@ -1040,6 +1044,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+
     private fun loadDataToApp(data: String): MutableList<RadioStation> {
         val radioStations = mutableListOf<RadioStation>()
 
@@ -1047,7 +1052,7 @@ class MainActivity : AppCompatActivity() {
         val lines = data.split("\n").filter { it.isNotBlank() }
 
         // Обрабатываем каждую строку, предполагая, что данные разделены точкой с запятой
-        for (line in lines.drop(1)) {
+        for (line in lines) {
             val tokens = line.split(";")  // Используем ';' как разделитель
             if (tokens.size >= 2) {
                 val name = tokens[0].trim()   // Первое поле - имя станции
