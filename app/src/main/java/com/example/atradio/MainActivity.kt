@@ -76,26 +76,17 @@ class MainActivity : AppCompatActivity() {
             val stationFromService = intent?.getStringExtra("STATION")
 
             if (isPlayed != null) {
+                statusPlay = isPlayed
+                appSettings = loadAppSettings()
+                statusRadio.text = appSettings.currentStation.name
                 when (isPlayed) {
                     MusicStatus.PLAYING -> {
-                        statusPlay = MusicStatus.PLAYING
-                        appSettings = loadAppSettings()
-                        statusRadio.text = appSettings.currentStation.name
                         updateUIForPlaying()
                     }
                     MusicStatus.STOPPED -> {
-                        statusPlay = MusicStatus.STOPPED
-                        appSettings = loadAppSettings()
-                        statusRadio.text = appSettings.currentStation.name
                         updateUIForStopped()
                     }
                     MusicStatus.LOADING -> {
-                        statusPlay = MusicStatus.LOADING
-                        // Можно добавить обработку статуса LOADING
-                        // например, показать индикатор загрузки
-                        statusPlay = MusicStatus.LOADING
-                        appSettings = loadAppSettings()
-                        statusRadio.text = appSettings.currentStation.name
                         updateUIForConnected()
                     }
                 }
@@ -150,7 +141,7 @@ class MainActivity : AppCompatActivity() {
                 saveAppSettings(appSettings)
 //                updateUIForPlaying()
                 // запуск сервера
-                stopPlayback()
+                pausePlayback()
                 statusPlay = MusicStatus.LOADING
                 updateUIForConnected()
                 playStation(appSettings.currentStation)
@@ -555,7 +546,7 @@ class MainActivity : AppCompatActivity() {
     // статус загрузки музыки
     private fun updateUIForConnected() {
         Log.d("iAtRadio", "MainActivity -> updateUIForConnected")
-        statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
+        statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
         buttonPlay.setImageResource(R.drawable.connect64)
     }
 
@@ -579,7 +570,7 @@ class MainActivity : AppCompatActivity() {
             statusRadio.text = it.name
             appSettings.currentStation= it
             saveAppSettings(appSettings)
-            stopPlayback()
+            pausePlayback()
             updateUIForConnected()
             playStation(appSettings.currentStation)
 
@@ -867,6 +858,15 @@ class MainActivity : AppCompatActivity() {
             action = RadioNotificationService.ACTION_STOP
         }
         Log.d("iAtRadio", "MainActivity stopPlayback -> $intent")
+        startService(intent)
+    }
+
+    // вызывается когда надо остановить проигрывание текущей станции перед запуском следующей станции
+    private fun pausePlayback() {
+        val intent = Intent(this, RadioNotificationService::class.java).apply {
+            action = RadioNotificationService.ACTION_PAUSE
+        }
+        Log.d("iAtRadio", "MainActivity pausePlayback -> $intent")
         startService(intent)
     }
 

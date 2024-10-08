@@ -173,25 +173,37 @@ class RadioNotificationService : Service() {
                 }
             }
 
+            ACTION_PAUSE -> {  // данное действие получается от вызвающего активити
+                pausePlayback(false)
+                resetRetries() // Сбросить счетчик при остановке музыки вручную
+            }
+
+            ACTION_PAUSE_PANEL -> {  // данное действие получается от панели управления плеером
+                pausePlayback(true)
+                resetRetries() // Сбросить счетчик при остановке музыки вручную
+            }
+
             ACTION_STOP -> {
                 stopPlayback(false)
                 resetRetries() // Сбросить счетчик при остановке музыки вручную
-
             }
+
             ACTION_STOP_PANEL -> {
                 stopPlayback(true)
                 resetRetries() // Сбросить счетчик при остановке музыки вручную
 
             }
+
             ACTION_CLOSE -> {
                 stopPlayback(false)
                 stopSelf(startId)  // Останавливаем сервис
                 resetRetries() // Сбросить счетчик при остановке музыки вручную
                 sendInfoBroadcast(MusicStatus.STOPPED)
             }
+
             ACTION_PREVIOUS -> {
                 Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_PREVIOUS -> станция: ")
-                stopPlayback(false)
+                pausePlayback(false)
                 appSettings.lastRadioStationIndex -= 1
                 if (appSettings.lastRadioStationIndex < 0)
                     appSettings.lastRadioStationIndex = appSettings.radioStations.size - 1
@@ -205,9 +217,10 @@ class RadioNotificationService : Service() {
                 isTaskRunning = true  // Указываем, что задача запущена
                 playStation(currentStation!!)
             }
+
             ACTION_NEXT -> {
                 Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_NEXT -> станция: ")
-                stopPlayback(false)
+                pausePlayback(false)
                 appSettings.lastRadioStationIndex += 1
                 if (appSettings.radioStations.size <= appSettings.lastRadioStationIndex)
                     appSettings.lastRadioStationIndex = 0
@@ -287,6 +300,23 @@ class RadioNotificationService : Service() {
             this@RadioNotificationService.isPlaying = MusicStatus.STOPPED
             if (flagSendInfoBroadcast)
                 sendInfoBroadcast(MusicStatus.STOPPED)
+        }
+        mediaPlayer = null
+        updateNotification()
+        Log.d("iAtRadio", "RadioService -> Service stopped")
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun pausePlayback(flagSendInfoBroadcast: Boolean) {
+        Log.d("iAtRadio", "RadioService -> pausePlayback called")
+        Log.d("iAtRadio", "RadioService -> pausePlayback текущая станция $currentStation")
+
+        mediaPlayer?.apply {
+            stop()
+            release()
+            this@RadioNotificationService.isPlaying = MusicStatus.LOADING
+            if (flagSendInfoBroadcast)
+                sendInfoBroadcast(MusicStatus.LOADING)
         }
         mediaPlayer = null
         updateNotification()
@@ -517,6 +547,8 @@ class RadioNotificationService : Service() {
         const val ACTION_PLAY_PANEL = "com.example.atradio.ACTION_PLAY_PANEL" // команда с панели управления плеером
         const val ACTION_CURRENT_STATION = "com.example.atradio.ACTION_CURRENT_STATION"
         const val ACTION_STOP = "com.example.atradio.ACTION_STOP"
+        const val ACTION_PAUSE = "com.example.atradio.ACTION_PAUSE"
+        const val ACTION_PAUSE_PANEL = "com.example.atradio.ACTION_PAUSE_PANEL"
         const val ACTION_STOP_PANEL  = "com.example.atradio.ACTION_STOP_PANEL"
         const val ACTION_CLOSE = "com.example.atradio.ACTION_CLOSE"
         const val ACTION_PREVIOUS = "com.example.atradio.ACTION_PREVIOUS"
