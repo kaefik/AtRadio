@@ -145,13 +145,13 @@ class MainActivity : AppCompatActivity() {
             val selectedStation = result.data?.getParcelableExtra<RadioStation>("selectedStation")
             if (selectedStation != null) {
                 appSettings.lastRadioStationIndex = appSettings.radioStations.indexOf(selectedStation)
-                statusPlay = MusicStatus.PLAYING
                 appSettings.currentStation = selectedStation
                 statusRadio.text = appSettings.currentStation.name
                 saveAppSettings(appSettings)
 //                updateUIForPlaying()
                 // запуск сервера
                 stopPlayback()
+                statusPlay = MusicStatus.LOADING
                 updateUIForConnected()
                 playStation(appSettings.currentStation)
 
