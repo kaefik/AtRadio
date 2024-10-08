@@ -75,12 +75,12 @@ class MainActivity : AppCompatActivity() {
             val isPlayed = intent?.getBooleanExtra("PLAY", false)
             val stationFromService = intent?.getStringExtra("STATION")
             if(isPlayed == true){
-                statusPlay = true
+                statusPlay = MusicStatus.PLAYING
                 appSettings = loadAppSettings()
                 statusRadio.text = appSettings.currentStation.name
                 updateUIForPlaying()
             } else {
-                statusPlay = false
+                statusPlay = MusicStatus.STOPPED
                 appSettings = loadAppSettings()
                 statusRadio.text = appSettings.currentStation.name
                 updateUIForStopped()
@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity() {
                 Log.e("iAtRadio", "MainActivity -> Error received: $it")
                 Toast.makeText(this@MainActivity, "Ошибка: $it", Toast.LENGTH_SHORT).show()
                 // Здесь можно выполнить любые действия на основе ошибки
-                statusPlay = false
+                statusPlay = MusicStatus.STOPPED
                 updateUIForStopped()
             }
         }
@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity() {
 
             if (appSettings.radioStations.isEmpty()) {
                 stopPlayback()
-                statusPlay = false
+                statusPlay = MusicStatus.STOPPED
                 updateUIForStopped()
                 statusRadio.text = getString(R.string.empty_list_stations)
                 appSettings.currentStation = RadioStation("", "")
@@ -130,7 +130,7 @@ class MainActivity : AppCompatActivity() {
             val selectedStation = result.data?.getParcelableExtra<RadioStation>("selectedStation")
             if (selectedStation != null) {
                 appSettings.lastRadioStationIndex = appSettings.radioStations.indexOf(selectedStation)
-                statusPlay = true
+                statusPlay = MusicStatus.PLAYING
                 appSettings.currentStation = selectedStation
                 statusRadio.text = appSettings.currentStation.name
                 saveAppSettings(appSettings)
@@ -171,7 +171,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var buttonPlay: ImageButton
     private lateinit var statusRadio: TextView
     private lateinit var progressBar: ProgressBar
-    private var statusPlay: Boolean? = null // статус проигрывания текущей станции
+    private var statusPlay: MusicStatus = MusicStatus.STOPPED // статус проигрывания текущей станции
 
     //заставка - сринсейвер
     private lateinit var dimView: View
@@ -385,7 +385,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             if (appSettings.isAutoPlayEnabled) {
-                statusPlay = true
+                statusPlay = MusicStatus.PLAYING
                 statusRadio.text = appSettings.currentStation.name
                 updateUIForPlaying()
                 // запуск сервиса
@@ -449,7 +449,7 @@ class MainActivity : AppCompatActivity() {
                 appSettings.lastRadioStationIndex = 0
                 statusRadio.text = "Empty list stations"
             } else {
-                statusPlay = true
+                statusPlay = MusicStatus.PLAYING
                 updateUIForPlaying()
                 nextPlayback(appSettings.currentStation)
             }
@@ -461,7 +461,7 @@ class MainActivity : AppCompatActivity() {
                 appSettings.lastRadioStationIndex = 0
                 statusRadio.text = "Empty list stations"
             } else {
-                statusPlay = true
+                statusPlay = MusicStatus.PLAYING
                 updateUIForPlaying()
                 prevPlayback(appSettings.currentStation)
             }
@@ -480,26 +480,35 @@ class MainActivity : AppCompatActivity() {
                 appSettings.lastRadioStationIndex = 0
                 statusRadio.text = "Empty list stations"
                 appSettings.currentStation = RadioStation("empty", "empty")
-                statusPlay = false
+                statusPlay = MusicStatus.STOPPED
                 updateUIForStopped()
                 stopPlayback()
                 Log.d("iAtRadio", "MainActivity buttonPlay -> empty $appSettings.currentStation")
 
             } else {
-                if (statusPlay == true) {
-                    appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
-                    statusRadio.text = appSettings.currentStation.name
-                    updateUIForStopped()
-                    stopPlayback()
-                    statusPlay = false
-                    Log.d("iAtRadio", "MainActivity buttonPlay -> press Stop")
-                } else {
-                    // возможно здесь appSettings.currentStation удалить
-                    statusPlay = true
-                    updateUIForPlaying()
-                    statusRadio.text = appSettings.currentStation.name
-                    Log.d("iAtRadio", "MainActivity buttonPlay -> press Play")
-                    playStation(appSettings.currentStation)
+
+                when (statusPlay) {
+                    MusicStatus.STOPPED -> {
+                        // Логика для состояния "остановлена"
+                        statusPlay = MusicStatus.PLAYING
+                        updateUIForPlaying()
+                        statusRadio.text = appSettings.currentStation.name
+                        Log.d("iAtRadio", "MainActivity buttonPlay -> press Play")
+                        playStation(appSettings.currentStation)
+                    }
+                    MusicStatus.LOADING -> {
+                        // Логика для состояния "загружается"
+                        println("Музыка загружается")
+                    }
+                    MusicStatus.PLAYING -> {
+                        // Логика для состояния "воспроизводится"
+                        appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
+                        statusRadio.text = appSettings.currentStation.name
+                        updateUIForStopped()
+                        stopPlayback()
+                        statusPlay = MusicStatus.STOPPED
+                        Log.d("iAtRadio", "MainActivity buttonPlay -> press Stop")
+                    }
                 }
             }
         }
@@ -548,7 +557,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleFavoriteButtonClick(favIndex: Int) {
         appSettings.favoriteStations[favIndex]?.let {
-            statusPlay = true
+            statusPlay = MusicStatus.PLAYING
             appSettings.lastRadioStationIndex = appSettings.radioStations.indexOf(it)
             statusRadio.text = it.name
             appSettings.currentStation= it
@@ -943,10 +952,10 @@ class MainActivity : AppCompatActivity() {
         // Обновите UI и логику на основе переданных данных
         if(station != null) {
             if(isPlaying){
-                statusPlay = true
+                statusPlay = MusicStatus.PLAYING
                 updateUIForPlaying()
             } else {
-                statusPlay = false
+                statusPlay = MusicStatus.STOPPED
                 updateUIForStopped()
             }
         }
