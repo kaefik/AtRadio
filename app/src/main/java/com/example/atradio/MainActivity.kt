@@ -506,7 +506,12 @@ class MainActivity : AppCompatActivity() {
                     }
                     MusicStatus.LOADING -> {
                         // Логика для состояния "загружается"
-                        println("Музыка загружается")
+                        appSettings.currentStation = appSettings.radioStations[appSettings.lastRadioStationIndex]
+                        statusRadio.text = appSettings.currentStation.name
+                        updateUIForStopped()
+                        stopPlayback()
+                        statusPlay = MusicStatus.STOPPED
+                        Log.d("iAtRadio", "MainActivity buttonPlay -> press Stop")
                     }
                     MusicStatus.PLAYING -> {
                         // Логика для состояния "воспроизводится"
