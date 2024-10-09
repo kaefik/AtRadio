@@ -1022,31 +1022,30 @@ class MainActivity : AppCompatActivity() {
             getString(R.string.category_other) to "$baseFolder/radio_stations_other.csv"
         )
 
-        val selectedCategories = mutableListOf<String>()
         val categoryNames = categories.keys.toTypedArray()
+        val checkedItems = BooleanArray(categoryNames.size) { true } // Все категории выбраны по умолчанию
+        val selectedCategories = categoryNames.toMutableList() // Все категории в списке по умолчанию
 
         AlertDialog.Builder(this)
-            .setTitle("Выберите категории")
-            .setMultiChoiceItems(categoryNames, null) { _, which, isChecked ->
+            .setTitle(getString(R.string.choose_category))
+            .setMultiChoiceItems(categoryNames, checkedItems) { _, which, isChecked ->
                 if (isChecked) {
                     selectedCategories.add(categoryNames[which])
                 } else {
                     selectedCategories.remove(categoryNames[which])
                 }
             }
-            .setPositiveButton("Выбрать") { _, _ ->
+            .setPositiveButton(getString(R.string.dialog_button_ok)) { _, _ ->
                 val combinedStations = combineSelectedFiles(selectedCategories, categories)
                 appSettings.radioStations = combinedStations
                 continuation.resume(combinedStations)
-            }
-            .setNegativeButton("Отмена") { _, _ ->
-                continuation.resume(mutableListOf())
             }
             .setOnCancelListener {
                 continuation.resume(mutableListOf())
             }
             .show()
     }
+
 
     @SuppressLint("DiscouragedApi")
     private fun combineSelectedFiles(selectedCategories: List<String>, categories: Map<String, String>): MutableList<RadioStation> {

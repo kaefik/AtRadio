@@ -67,4 +67,5 @@
     <string name="category_retro">Ретро</string>
     <string name="category_russian">Русская музыка</string>
     <string name="category_other">Другое</string>
+    <string name="choose_category">Выберите жанры станций</string>
 </resources>
