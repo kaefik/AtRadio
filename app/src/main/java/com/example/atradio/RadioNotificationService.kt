@@ -58,6 +58,8 @@ class RadioNotificationService : Service() {
             // Попробовать подключиться и воспроизвести музыку
             stopPlayback(false)
             isPlaying = MusicStatus.LOADING
+            updateNotification()
+            sendInfoBroadcast(isPlaying )
             currentStation?.let { playStation(it) }
         } else {
             Log.d("iAtRadio", "RadioPlayer -> Не удалось подключиться после $maxRetries попыток")
@@ -405,9 +407,9 @@ class RadioNotificationService : Service() {
                 if (isNightMode) R.drawable.play3_24_dark else R.drawable.play3_24
             } else {
                 if (isPlaying == MusicStatus.LOADING) {
-                    if (isNightMode) R.drawable.connect24_dark else R.drawable.connect64
+                    if (isNightMode) R.drawable.connect24_dark else R.drawable.connect24
                 } else {
-                    if (isNightMode) R.drawable.connect24_dark else R.drawable.connect64
+                    if (isNightMode) R.drawable.connect24_dark else R.drawable.connect24
                 }
             }
         }
