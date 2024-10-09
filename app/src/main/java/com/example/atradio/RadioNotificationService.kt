@@ -57,6 +57,7 @@ class RadioNotificationService : Service() {
             Log.d("iAtRadio", "RadioPlayer -> Попытка подключения №$retryCount")
             // Попробовать подключиться и воспроизвести музыку
             stopPlayback(false)
+            isPlaying = MusicStatus.LOADING
             currentStation?.let { playStation(it) }
         } else {
             Log.d("iAtRadio", "RadioPlayer -> Не удалось подключиться после $maxRetries попыток")
@@ -156,7 +157,10 @@ class RadioNotificationService : Service() {
                 val station = intent.getParcelableExtra<RadioStation>(EXTRA_STATION)
                 station?.let {
                     currentStation = it
-                    Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_PLAY -> станция: $it")
+                    isPlaying = MusicStatus.LOADING
+                    sendInfoBroadcast(isPlaying)
+                    updateNotification()
+                    Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_PLAY -> станция: $it  -> $isPlaying")
                     isTaskRunning = true  // Указываем, что задача запущена
                     playStation(it)
                 }
@@ -167,7 +171,10 @@ class RadioNotificationService : Service() {
                 val station = intent.getParcelableExtra<RadioStation>(EXTRA_STATION)
                 station?.let {
                     currentStation = it
-                    Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_PLAY -> станция: $it")
+                    isPlaying = MusicStatus.LOADING
+                    sendInfoBroadcast(isPlaying)
+                    updateNotification()
+                    Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_PLAY -> станция: $it  -> $isPlaying")
                     isTaskRunning = true  // Указываем, что задача запущена
                     playStation(it)
                 }
@@ -213,6 +220,7 @@ class RadioNotificationService : Service() {
                 saveAppSettings(appSettings)
                 isPlaying = MusicStatus.LOADING
                 sendInfoBroadcast(isPlaying)
+                updateNotification()
                 Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_PREVIOUS -> станция: $currentStation")
                 isTaskRunning = true  // Указываем, что задача запущена
                 playStation(currentStation!!)
@@ -230,6 +238,7 @@ class RadioNotificationService : Service() {
                 saveAppSettings(appSettings)
                 isPlaying=MusicStatus.LOADING
                 sendInfoBroadcast(isPlaying)
+                updateNotification()
                 Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_NEXT -> станция: $currentStation")
                 isTaskRunning = true  // Указываем, что задача запущена
                 playStation(currentStation!!)
@@ -351,7 +360,7 @@ class RadioNotificationService : Service() {
 
 
         val toggleIntent = Intent(this, RadioNotificationService::class.java).apply {
-            action = if (mediaPlayer?.isPlaying == true) ACTION_STOP_PANEL else ACTION_PLAY_PANEL
+            action = if (isPlaying == MusicStatus.PLAYING) ACTION_STOP_PANEL else ACTION_PLAY_PANEL
             putExtra(EXTRA_STATION, currentStation)
         }
         val togglePendingIntent = PendingIntent.getService(this, 0, toggleIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
@@ -389,10 +398,18 @@ class RadioNotificationService : Service() {
 
 
 
-        val buttonIcon = if (mediaPlayer?.isPlaying == true) {
+        val buttonIcon = if (isPlaying == MusicStatus.PLAYING) {
             if (isNightMode) R.drawable.stop3_24_dark else R.drawable.stop3_24
         } else {
-            if (isNightMode) R.drawable.play3_24_dark else R.drawable.play3_24
+            if (isPlaying == MusicStatus.STOPPED) {
+                if (isNightMode) R.drawable.play3_24_dark else R.drawable.play3_24
+            } else {
+                if (isPlaying == MusicStatus.LOADING) {
+                    if (isNightMode) R.drawable.connect24_dark else R.drawable.connect64
+                } else {
+                    if (isNightMode) R.drawable.connect24_dark else R.drawable.connect64
+                }
+            }
         }
 
         // добавить замену остальных кнопок управления

@@ -75,6 +75,9 @@ class MainActivity : AppCompatActivity() {
             val isPlayed = intent?.getSerializableExtra("PLAY") as? MusicStatus // Принимаем MusicStatus
             val stationFromService = intent?.getStringExtra("STATION")
 
+            Log.e("iAtRadio", "MainActivity -> infoReceiver -> isPlayed = $isPlayed")
+
+
             if (isPlayed != null) {
                 statusPlay = isPlayed
                 appSettings = loadAppSettings()
