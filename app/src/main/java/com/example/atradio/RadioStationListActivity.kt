@@ -17,6 +17,8 @@ import java.io.File
 import java.io.OutputStreamWriter
 import android.net.Uri
 import android.widget.ImageButton
+import com.getkeepsafe.taptargetview.TapTarget
+import com.getkeepsafe.taptargetview.TapTargetView
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
@@ -104,6 +106,10 @@ class RadioStationListActivity : AppCompatActivity() {
             val intent = Intent(this, AddRadioStationActivity::class.java)
             addRadioStationLauncher.launch(intent)
         }
+
+
+        showHelpOverlay()
+
     }
 
     private fun showDeleteConfirmationDialog(position: Int, radioStations: MutableList<RadioStation>) {
@@ -198,4 +204,88 @@ class RadioStationListActivity : AppCompatActivity() {
 
         return if (isValidFile) radioStations else emptyList()
     }
+
+
+    // помощь по работе с программой
+    private fun showHelpOverlay() {
+        TapTargetView.showFor(this,
+            TapTarget.forView(findViewById(R.id.buttonAddStation), "Добавление станций", "Здесь можно добавить радиостанции, если у вас есть ссылка на аудио-поток ")
+                .outerCircleColor(R.color.darkForHelp)
+                .targetCircleColor(R.color.white)
+                .textColor(R.color.white)
+                .cancelable(true)
+                .tintTarget(true),
+            object : TapTargetView.Listener() {
+                override fun onTargetClick(view: TapTargetView) {
+                    super.onTargetClick(view)
+                    shownShareButtonHelpOverlay()
+                }
+            })
+    }
+
+    private fun shownShareButtonHelpOverlay() {
+        TapTargetView.showFor(this,
+            TapTarget.forView(findViewById(R.id.buttonSaveShareStations), "Сохранить список станций", "Здесь можно сделать резерную копию ваших станций и поделиться списком станций с друзьями")
+                .outerCircleColor(R.color.darkForHelp)
+                .targetCircleColor(R.color.white)
+                .textColor(R.color.white)
+                .cancelable(true)
+                .tintTarget(true),
+            object : TapTargetView.Listener() {
+                override fun onTargetClick(view: TapTargetView) {
+                    super.onTargetClick(view)
+                    shownImportButtonHelpOverlay()
+                }
+            })
+    }
+
+    private fun shownImportButtonHelpOverlay() {
+        TapTargetView.showFor(this,
+            TapTarget.forView(findViewById(R.id.buttonImportStationsFromFile), "Загрузка списка станций", "Здесь можно загрузить станции из резервной копии")
+                .outerCircleColor(R.color.darkForHelp)
+                .targetCircleColor(R.color.white)
+                .textColor(R.color.white)
+                .cancelable(true)
+                .tintTarget(true),
+            object : TapTargetView.Listener() {
+                override fun onTargetClick(view: TapTargetView) {
+                    super.onTargetClick(view)
+                    shownBackButtonHelpOverlay()
+                }
+            })
+    }
+
+    private fun shownBackButtonHelpOverlay() {
+        TapTargetView.showFor(this,
+            TapTarget.forView(findViewById(R.id.buttonBack), "Назад в главное окно", "Здесь можно вернуться в главное окно приложения")
+                .outerCircleColor(R.color.darkForHelp)
+                .targetCircleColor(R.color.white)
+                .textColor(R.color.white)
+                .cancelable(true)
+                .tintTarget(true),
+            object : TapTargetView.Listener() {
+                override fun onTargetClick(view: TapTargetView) {
+                    super.onTargetClick(view)
+                    shownListStationsHelpOverlay()
+                }
+            })
+    }
+
+    private fun shownListStationsHelpOverlay() {
+        TapTargetView.showFor(this,
+            TapTarget.forView(findViewById(R.id.recyclerViewRadioStations), "Список станций", "Это  список ваших станций. Если вы кликните по станции, то начнётся воспроизведение выбранной станции. Также можно удалить выбранную станцию с помощью крестика напротив станции.")
+                .outerCircleColor(R.color.darkForHelp)
+                .targetCircleColor(R.color.white)
+                .textColor(R.color.white)
+                .cancelable(true)
+                .tintTarget(true),
+            object : TapTargetView.Listener() {
+                override fun onTargetClick(view: TapTargetView) {
+                    super.onTargetClick(view)
+
+                }
+            })
+    }
+
+
 }
