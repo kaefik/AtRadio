@@ -68,4 +68,28 @@
     <string name="category_russian">Русская музыка</string>
     <string name="category_other">Другое</string>
     <string name="choose_category">Выберите жанры станций</string>
+
+    <string name="help_player_control_title">Управление плеером</string>
+    <string name="help_player_control_description">Эта кнопка запускает воспроизведение текущей станции</string>
+
+    <string name="help_prev_station_title">Управление плеером</string>
+    <string name="help_prev_station_description">Эта кнопка запускает предыдущую станцию</string>
+
+    <string name="help_next_station_title">Управление плеером</string>
+    <string name="help_next_station_description">Эта кнопка запускает следующую станцию</string>
+
+    <string name="help_volume_control_title">Управление громкостью</string>
+    <string name="help_volume_control_description">Эта кнопка управляет громкостью воспроизведения</string>
+
+    <string name="help_station_name_title">Название станции</string>
+    <string name="help_station_name_description">Здесь выводится имя текущей станции</string>
+
+    <string name="help_favorite_station_title">Избранные станции</string>
+    <string name="help_favorite_station_description">При долгом нажатии можно сохранить текущую станцию. При кратковременном нажатии запускается сохраненная станция</string>
+
+    <string name="help_list_station_title">Список станций</string>
+    <string name="help_list_station_description">Здесь находится список станций. Можно запустить из списка станций, также добавить, удалить, сохранить и загрузить станции.</string>
+
+    <string name="help_settings_title">Настройки</string>
+    <string name="help_settings_description">Здесь можно изменить настройки приложения</string>
 </resources>
