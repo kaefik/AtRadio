@@ -19,12 +19,15 @@ import android.net.Uri
 import android.widget.ImageButton
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetView
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
 class RadioStationListActivity : AppCompatActivity() {
 
     private lateinit var radioStationAdapter: RadioStationAdapter
+    private val gson = Gson()
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -107,12 +110,13 @@ class RadioStationListActivity : AppCompatActivity() {
             addRadioStationLauncher.launch(intent)
         }
 
-        showHelpOverlay()
-//        if (!appSettings.){
-//            // при первом запуске показываем как пользоваться программой
-//            showHelpOverlay()
-//            appSettings.isHelpMain=true
-//        }
+        var appSettings = loadAppSettings()
+        if (!appSettings.isHelpList){
+            // при первом запуске показываем как пользоваться программой
+            showHelpOverlay()
+            appSettings.isHelpList=true
+            saveAppSettings(appSettings)
+        }
 
     }
 
@@ -291,7 +295,26 @@ class RadioStationListActivity : AppCompatActivity() {
             })
     }
 
-    //
+    // настройки программы
+    private fun saveAppSettings(settings: AppSettings) {
+        val sharedPreferences = getSharedPreferences("AppSettings", MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        val json = gson.toJson(settings)
+        editor.putString("AppSettingsData", json)
+        editor.apply()
+    }
+
+    private fun loadAppSettings(): AppSettings {
+        val sharedPreferences = getSharedPreferences("AppSettings", MODE_PRIVATE)
+        val json = sharedPreferences.getString("AppSettingsData", null)
+        return if (json != null) {
+            val type = object : TypeToken<AppSettings>() {}.type
+            gson.fromJson(json, type)
+        } else {
+            // Возвращаем настройки по умолчанию, если они отсутствуют
+            initAppSettings(this)
+        }
+    }
 
     companion object {
         const val ACTION_HELP = "com.example.atradio.ACTION_HELP"

@@ -115,6 +115,9 @@ class MainActivity : AppCompatActivity() {
     private val listRadioStationLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val updatedRadioStations = result.data?.getParcelableArrayListExtra<RadioStation>("radioStations")?.toMutableList()
+
+            appSettings = loadAppSettings()
+
             if (updatedRadioStations != null) {
                 val mutableRadioStations = updatedRadioStations.toMutableList()
                 appSettings.radioStations.clear()
@@ -365,6 +368,7 @@ class MainActivity : AppCompatActivity() {
             // при первом запуске показываем как пользоваться программой
             showHelpOverlay()
             appSettings.isHelpMain=true
+            saveAppSettings(appSettings)
         }
         // END Начальная инициализация мастера приложений
 

@@ -3,9 +3,10 @@ import android.os.Parcel
 import android.os.Parcelable
 
 import android.content.Context
-import org.intellij.lang.annotations.Language
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
 // Определение радиостанций
 data class RadioStation(val name: String, val url: String) : Parcelable {
