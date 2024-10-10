@@ -1,7 +1,6 @@
 package com.example.atradio
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -51,7 +50,7 @@ class RadioStationListActivity : AppCompatActivity() {
                 val resultIntent = Intent()
                 resultIntent.putExtra("selectedStation", selectedStation)
                 resultIntent.putParcelableArrayListExtra("radioStations", ArrayList(radioStations))
-                setResult(Activity.RESULT_OK, resultIntent)
+                setResult(RESULT_OK, resultIntent)
                 finish()
             }
         )
@@ -62,7 +61,7 @@ class RadioStationListActivity : AppCompatActivity() {
 
         // Регистрация callback для обработки результата из AddRadioStationActivity
         val addRadioStationLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
+            if (result.resultCode == RESULT_OK) {
                 val name = result.data?.getStringExtra("radioName")
                 val url = result.data?.getStringExtra("radioUrl")
 
@@ -93,7 +92,7 @@ class RadioStationListActivity : AppCompatActivity() {
         buttonBack.setOnClickListener {
             val resultIntent = Intent()
             resultIntent.putParcelableArrayListExtra("radioStations", ArrayList(radioStations))
-            setResult(Activity.RESULT_OK, resultIntent)
+            setResult(RESULT_OK, resultIntent)
             finish()
         }
 
@@ -110,7 +109,7 @@ class RadioStationListActivity : AppCompatActivity() {
             addRadioStationLauncher.launch(intent)
         }
 
-        var appSettings = loadAppSettings()
+        val appSettings = loadAppSettings()
         if (!appSettings.isHelpList){
             // при первом запуске показываем как пользоваться программой
             showHelpOverlay()

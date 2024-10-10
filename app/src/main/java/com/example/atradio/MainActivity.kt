@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
     private val infoReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val isPlayed = intent?.getSerializableExtra("PLAY") as? MusicStatus // Принимаем MusicStatus
-            val stationFromService = intent?.getStringExtra("STATION")
+//            val stationFromService = intent?.getStringExtra("STATION")
 
             Log.e("iAtRadio", "MainActivity -> infoReceiver -> isPlayed = $isPlayed")
 
@@ -313,8 +313,7 @@ class MainActivity : AppCompatActivity() {
         // Начальная инициализация мастера приложений
         // локализация приложения
         // Проверяем, был ли уже выбран язык ранее
-        var firsStart = false
-        if (appSettings.language.isNullOrEmpty()) {
+        if (appSettings.language.isEmpty()) {
             Log.d("iAtRadio", "MainActivity начало выбора языка")
             // Если язык не был выбран, показываем диалог для выбора языка
             val selectedLanguage = showLanguageDialogSuspend()
@@ -476,7 +475,7 @@ class MainActivity : AppCompatActivity() {
         buttonForward.setOnClickListenerWithScreenSaverReset {
             if (appSettings.radioStations.isEmpty()) {
                 appSettings.lastRadioStationIndex = 0
-                statusRadio.text = "Empty list stations"
+                statusRadio.text = getString(R.string.empty_list_stations)
             } else {
                 statusPlay = MusicStatus.LOADING
                 updateUIForConnected()
@@ -488,7 +487,7 @@ class MainActivity : AppCompatActivity() {
         buttonPrev.setOnClickListenerWithScreenSaverReset {
             if (appSettings.radioStations.isEmpty()) {
                 appSettings.lastRadioStationIndex = 0
-                statusRadio.text = "Empty list stations"
+                statusRadio.text = getString(R.string.empty_list_stations)
             } else {
                 statusPlay = MusicStatus.LOADING
                 updateUIForConnected()
@@ -507,7 +506,7 @@ class MainActivity : AppCompatActivity() {
         buttonPlay.setOnClickListenerWithScreenSaverReset {
             if (appSettings.radioStations.isEmpty()) {
                 appSettings.lastRadioStationIndex = 0
-                statusRadio.text = "Empty list stations"
+                statusRadio.text = getString(R.string.empty_list_stations)
                 appSettings.currentStation = RadioStation("empty", "empty")
                 statusPlay = MusicStatus.STOPPED
                 updateUIForStopped()
@@ -790,34 +789,6 @@ class MainActivity : AppCompatActivity() {
         builder.show()
     }
 
-    private fun showLanguageDialog() {
-        val languages = arrayOf("English", "Татарча", "Башҡортса", "Русский")
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle("Select the language app")
-        builder.setSingleChoiceItems(languages, -1) { dialog, which ->
-            when (which) {
-                0 -> {
-                    setLocale("en")
-                }
-                1 -> {
-                    setLocale("tt")
-                }
-                2 -> {
-                    setLocale("ba")
-                }
-                3 -> {
-                    setLocale("ru")
-                }
-            }
-            dialog.dismiss()
-        }
-        builder.setOnDismissListener {
-            // Перезапуск MainActivity после выбора языка
-            recreate()
-        }
-        builder.show()
-    }
-
     private fun setLocale(languageCode: String) {
         val locale = Locale(languageCode)
         Locale.setDefault(locale)
@@ -1019,7 +990,7 @@ class MainActivity : AppCompatActivity() {
                 // Разрешения предоставлены, можно выполнять необходимые действия
             } else {
                 // Разрешения не предоставлены, уведомить пользователя
-//                Toast.makeText(this, "Bluetooth permissions are required for this feature", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Bluetooth permissions are required for this feature", Toast.LENGTH_LONG).show()
             }
         }
     }
