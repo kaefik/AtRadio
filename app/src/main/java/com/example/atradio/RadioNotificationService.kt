@@ -64,6 +64,7 @@ class RadioNotificationService : Service() {
         } else {
             Log.d("iAtRadio", "RadioPlayer -> Не удалось подключиться после $maxRetries попыток")
             // Прекратить попытки после достижения максимума
+            isPlaying = MusicStatus.STOPPED
             stopPlayback(true)
             resetRetries() // Сбросить счетчик при остановке музыки вручную
         }
