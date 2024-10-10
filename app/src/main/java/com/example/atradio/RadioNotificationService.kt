@@ -2,7 +2,10 @@ package com.example.atradio
 
 import android.Manifest
 import android.app.*
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothClass
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothProfile
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -70,11 +73,12 @@ class RadioNotificationService : Service() {
         }
     }
 
-    private val bluetoothReceiver =  object : BroadcastReceiver() {
+    private val bluetoothReceiver = object : BroadcastReceiver() {
         @RequiresApi(Build.VERSION_CODES.O)
         override fun onReceive(context: Context, intent: Intent) {
             val action = intent.action
             Log.d("iAtRadio", "MainActivity -> BluetoothReceiver -> begin")
+
             if (action == BluetoothDevice.ACTION_ACL_DISCONNECTED) {
                 val device: BluetoothDevice? = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE)
                 if (device != null) {
@@ -83,26 +87,31 @@ class RadioNotificationService : Service() {
                             Manifest.permission.BLUETOOTH_CONNECT
                         ) != PackageManager.PERMISSION_GRANTED
                     ) {
-                        // TODO: Consider calling
-                        //    ActivityCompat#requestPermissions
-                        // here to request the missing permissions, and then overriding
-                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                        //                                          int[] grantResults)
-                        // to handle the case where the user grants the permission. See the documentation
-                        // for ActivityCompat#requestPermissions for more details.
+                        // Запрос разрешений, если необходимо
                         return
                     }
-                    Log.d("iAtRadio", "MainActivity -> BluetoothReceiver -> Bluetooth device disconnected: ${device.name}")
-                    // Остановите музыку здесь
-//                    statusPlay = false
-//                    updateUIForStopped()
-                    stopPlayback(false)
-                    sendInfoBroadcast(MusicStatus.STOPPED)
+
+                    Log.d("iAtRadio", "MainActivity -> BluetoothReceiver -> Отключено Bluetooth-устройство: ${device.name}")
+
+                    // Проверяем статус подключения профиля A2DP (стерео-аудио)
+                    val bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
+                    if (bluetoothAdapter?.getProfileConnectionState(BluetoothProfile.A2DP) == BluetoothAdapter.STATE_DISCONNECTED) {
+                        Log.d("iAtRadio", "MainActivity -> BluetoothReceiver -> Если нет подключённых аудиоустройств, останавливаем воспроизведение")
+                        // Если нет подключённых аудиоустройств, останавливаем воспроизведение
+                        stopPlayback(false)
+                        sendInfoBroadcast(MusicStatus.STOPPED)
+                    } else {
+                        // Есть подключённые аудиоустройства, продолжаем воспроизведение
+                        Log.d("iAtRadio", "MainActivity -> BluetoothReceiver -> Есть другие подключённые Bluetooth-аудиоустройства -> ${bluetoothAdapter?.getProfileConnectionState(BluetoothProfile.A2DP)}")
+                    }
                 }
             }
+
             Log.d("iAtRadio", "MainActivity -> BluetoothReceiver -> end")
         }
     }
+
+
 
     override fun onDestroy() {
         super.onDestroy()
