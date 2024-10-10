@@ -108,7 +108,11 @@ class RadioStationListActivity : AppCompatActivity() {
         }
 
 
-        showHelpOverlay()
+        if (!appSettings.){
+            // при первом запуске показываем как пользоваться программой
+            showHelpOverlay()
+            appSettings.isHelpMain=true
+        }
 
     }
 
@@ -285,6 +289,12 @@ class RadioStationListActivity : AppCompatActivity() {
 
                 }
             })
+    }
+
+    //
+
+    companion object {
+        const val ACTION_HELP = "com.example.atradio.ACTION_HELP"
     }
 
 

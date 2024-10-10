@@ -324,8 +324,6 @@ class MainActivity : AppCompatActivity() {
             saveAppSettings(appSettings)
             statusRadio.text = appSettings.currentStation.name
             setStationNotification(appSettings.currentStation)
-            firsStart = true
-
         } else {
             // Если язык был выбран ранее, устанавливаем его
             setLocale(appSettings.language)
@@ -363,9 +361,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        if (firsStart){
+        if (!appSettings.isHelpMain){
             // при первом запуске показываем как пользоваться программой
             showHelpOverlay()
+            appSettings.isHelpMain=true
         }
         // END Начальная инициализация мастера приложений
 
@@ -461,7 +460,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         buttonListRadioStations.setOnClickListenerWithScreenSaverReset {
-            val intent = Intent(this, RadioStationListActivity::class.java)
+            val intent = Intent(this, RadioStationListActivity::class.java).apply {
+                val isHelp = appSettings.isHelpList
+                putExtra(RadioStationListActivity.ACTION_HELP, isHelp)
+            }
+            Log.d("iAtRadio", "MainActivity setOnClickListenerWithScreenSaverReset -> $intent")
             intent.putParcelableArrayListExtra("radioStations", ArrayList(appSettings.radioStations))
             listRadioStationLauncher.launch(intent)
         }

@@ -42,7 +42,9 @@ data class AppSettings(
     var lastRadioStationIndex: Int,     // номер последней проигранной станции
     var radioStations: MutableList<RadioStation>, // список станций
     var language: String, // язык интерфейса
-    var currentStation: RadioStation // текущая радиостанция
+    var currentStation: RadioStation, // текущая радиостанция
+    var isHelpMain: Boolean, // флаг был ли инструктаж главного окна
+    var isHelpList: Boolean, // флаг был ли инструктаж  окна списка станций
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         mutableListOf<RadioStation?>().apply {
@@ -67,6 +69,8 @@ data class AppSettings(
         parcel.writeTypedList(radioStations) // Используем writeTypedList для записи списка
         parcel.writeString(language) // Сохраняем язык интерфейса
         parcel.writeParcelable(currentStation, flags) // Запись текущей станции
+        parcel.writeByte(if (isHelpMain) 1 else 0)
+        parcel.writeByte(if (isHelpList) 1 else 0)
     }
 
     override fun describeContents(): Int {
@@ -123,7 +127,9 @@ fun initAppSettings(context: Context): AppSettings {
         lastRadioStationIndex = 0, // Первая радиостанция в списке
         radioStations = mutableListOf(), // Пустой список радиостанций
         language = "",
-        currentStation = RadioStation("", "") // По умолчанию пустая станция
+        currentStation = RadioStation("", ""), // По умолчанию пустая станция
+        isHelpMain = false,
+        isHelpList = false
     )
 
     // Загрузка радиостанций из CSV
