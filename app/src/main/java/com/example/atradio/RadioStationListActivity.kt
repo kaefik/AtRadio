@@ -107,12 +107,12 @@ class RadioStationListActivity : AppCompatActivity() {
             addRadioStationLauncher.launch(intent)
         }
 
-
-        if (!appSettings.){
-            // при первом запуске показываем как пользоваться программой
-            showHelpOverlay()
-            appSettings.isHelpMain=true
-        }
+        showHelpOverlay()
+//        if (!appSettings.){
+//            // при первом запуске показываем как пользоваться программой
+//            showHelpOverlay()
+//            appSettings.isHelpMain=true
+//        }
 
     }
 

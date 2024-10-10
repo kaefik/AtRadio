@@ -57,9 +57,11 @@ data class AppSettings(
             parcel.readTypedList(this, RadioStation.CREATOR) // Исправлено для чтения списка радиостанций
         },
         parcel.readString() ?: "en", // чтение языка интерфейса с дефолтным значением
-        parcel.readParcelable(RadioStation::class.java.classLoader) ?: RadioStation("", "") // Чтение текущей станции с дефолтным значением
+        parcel.readParcelable(RadioStation::class.java.classLoader) ?: RadioStation("", "",), // Чтение текущей станции с дефолтным значением
+        parcel.readByte() != 0.toByte(),
+        parcel.readByte() != 0.toByte())
 
-    )
+
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeTypedList(favoriteStations) // Используем writeTypedList для записи списка
