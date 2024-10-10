@@ -43,6 +43,8 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import android.provider.Settings
 import android.Manifest
 import android.view.KeyEvent
+import com.getkeepsafe.taptargetview.TapTarget
+import com.getkeepsafe.taptargetview.TapTargetView
 import kotlinx.coroutines.DelicateCoroutinesApi
 import java.io.IOException
 import kotlinx.coroutines.Dispatchers
@@ -321,11 +323,14 @@ class MainActivity : AppCompatActivity() {
             saveAppSettings(appSettings)
             statusRadio.text = appSettings.currentStation.name
             setStationNotification(appSettings.currentStation)
+
         } else {
             // Если язык был выбран ранее, устанавливаем его
             setLocale(appSettings.language)
         }
         // END локализация приложения
+
+        showHelpOverlay()
 
         Log.d("iAtRadio", "MainActivity initializeApp -> appSettings.radioStations  = $appSettings.radioStations ")
 
@@ -1105,6 +1110,156 @@ class MainActivity : AppCompatActivity() {
 
         return radioStations
     }
+
+    // помощь по работе с программой
+    private fun showHelpOverlay() {
+        // Подсвечиваем кнопки управления плеером
+        TapTargetView.showFor(this,
+            TapTarget.forView(findViewById(R.id.buttonPlay), "Управление плеером", "Эта кнопка запускает воспроизведение текущей станции")
+                .outerCircleColor(R.color.darkForHelp)
+                .targetCircleColor(R.color.white)
+                .textColor(R.color.white)
+                .cancelable(true)
+                .tintTarget(true),
+            object : TapTargetView.Listener() {
+                override fun onTargetClick(view: TapTargetView) {
+                    super.onTargetClick(view)
+                    // Далее можно подсветить другие элементы, если нужно
+                    showPrevControlsHelp()
+                }
+            })
+    }
+
+    private fun showPrevControlsHelp() {
+        // Подсвечиваем кнопку предварительной станции
+        TapTargetView.showFor(this,
+            TapTarget.forView(findViewById(R.id.buttonPrev), "Управление плеером", "Эта кнопка запускает предыдущую станцию")
+                .outerCircleColor(R.color.darkForHelp) // Цвет затемнения
+                .targetCircleColor(R.color.white)       // Цвет вокруг цели
+                .textColor(R.color.white)               // Цвет текста
+                .cancelable(false)                       // Можно ли пропустить
+                .tintTarget(true),
+            object : TapTargetView.Listener() {
+                override fun onTargetClick(view: TapTargetView) {
+                    super.onTargetClick(view)
+                    // После показа настройки, показываем гид для кнопок плеера
+                    showNextControlsHelp()
+                }
+            })
+    }
+
+    private fun showNextControlsHelp() {
+        // Подсвечиваем кнопку следующей станции
+        TapTargetView.showFor(this,
+            TapTarget.forView(findViewById(R.id.buttonForward), "Управление плеером", "Эта кнопка запускает следующую станцию")
+                .outerCircleColor(R.color.darkForHelp) // Цвет затемнения
+                .targetCircleColor(R.color.white)       // Цвет вокруг цели
+                .textColor(R.color.white)               // Цвет текста
+                .cancelable(false)                       // Можно ли пропустить
+                .tintTarget(true),
+            object : TapTargetView.Listener() {
+                override fun onTargetClick(view: TapTargetView) {
+                    super.onTargetClick(view)
+                    // После показа настройки, показываем гид для кнопок плеера
+                    showVolumeControlsHelp()
+                }
+            })
+    }
+
+    private fun showVolumeControlsHelp() {
+        // Подсвечиваем кнопку управление громкостью
+        TapTargetView.showFor(this,
+            TapTarget.forView(findViewById(R.id.buttonVolumeUp), "Управление громкостью", "Эта кнопка управляет громкостью воспроизведения")
+                .outerCircleColor(R.color.darkForHelp) // Цвет затемнения
+                .targetCircleColor(R.color.white)       // Цвет вокруг цели
+                .textColor(R.color.white)               // Цвет текста
+                .cancelable(false)                       // Можно ли пропустить
+                .tintTarget(true),
+            object : TapTargetView.Listener() {
+                override fun onTargetClick(view: TapTargetView) {
+                    super.onTargetClick(view)
+                    // После показа настройки, показываем гид для кнопок плеера
+                    showNameStationControlsHelp()
+                }
+            })
+    }
+
+    private fun showNameStationControlsHelp() {
+        // Подсвечиваем названии станции
+        TapTargetView.showFor(this,
+            TapTarget.forView(findViewById(R.id.statusRadio), "Название станции", "Здесь выводится имя текущей станции")
+                .outerCircleColor(R.color.darkForHelp) // Цвет затемнения
+                .targetCircleColor(R.color.white)       // Цвет вокруг цели
+                .textColor(R.color.white)               // Цвет текста
+                .cancelable(false)                       // Можно ли пропустить
+                .tintTarget(true),
+            object : TapTargetView.Listener() {
+                override fun onTargetClick(view: TapTargetView) {
+                    super.onTargetClick(view)
+                    // После показа настройки, показываем гид для кнопок плеера
+                    showFavoriteControlsHelp()
+                }
+            })
+    }
+
+    private fun showFavoriteControlsHelp() {
+        // Подсвечиваем кнопку избранной станции
+        TapTargetView.showFor(this,
+            TapTarget.forView(findViewById(R.id.buttonFav1), "Избранные станции", "При долгом нажатии можно сохранить текущую станцию. При кратковременном нажатии запускается сохраненная станция")
+                .outerCircleColor(R.color.darkForHelp) // Цвет затемнения
+                .targetCircleColor(R.color.white)       // Цвет вокруг цели
+                .textColor(R.color.white)               // Цвет текста
+                .cancelable(false)                       // Можно ли пропустить
+                .tintTarget(true),
+            object : TapTargetView.Listener() {
+                override fun onTargetClick(view: TapTargetView) {
+                    super.onTargetClick(view)
+                    // После показа настройки, показываем гид для кнопок плеера
+                    showListStationControlsHelp()
+                }
+            })
+    }
+
+    private fun showListStationControlsHelp() {
+        // Подсвечиваем кнопку списка станций
+        TapTargetView.showFor(this,
+            TapTarget.forView(findViewById(R.id.buttonListRadioStations), "Список станции", "Здесь находится список станций. Можно запустить из списка станций, также добавить, удалить, сохранить и загрузить станции.")
+                .outerCircleColor(R.color.darkForHelp) // Цвет затемнения
+                .targetCircleColor(R.color.white)       // Цвет вокруг цели
+                .textColor(R.color.white)               // Цвет текста
+                .cancelable(false)                       // Можно ли пропустить
+                .tintTarget(true),
+            object : TapTargetView.Listener() {
+                override fun onTargetClick(view: TapTargetView) {
+                    super.onTargetClick(view)
+                    // После показа настройки, показываем гид для кнопок плеера
+                    showSettingsControlsHelp()
+                }
+            })
+    }
+
+    private fun showSettingsControlsHelp() {
+        // Подсвечиваем кнопку настроек
+        TapTargetView.showFor(this,
+            TapTarget.forView(findViewById(R.id.buttonSettings), "Настройки", "Здесь можно изменить настройки приложения")
+                .outerCircleColor(R.color.darkForHelp) // Цвет затемнения
+                .targetCircleColor(R.color.white)       // Цвет вокруг цели
+                .textColor(R.color.white)               // Цвет текста
+                .cancelable(false)                       // Можно ли пропустить
+                .tintTarget(true),
+            object : TapTargetView.Listener() {
+                override fun onTargetClick(view: TapTargetView) {
+                    super.onTargetClick(view)
+                    // После показа настройки, показываем гид для кнопок плеера
+
+                }
+            })
+    }
+
+
+// END помощь по работе с программой
+
+
 }
 
 // Описание функции-расширения должно быть вне класса MainActivity
