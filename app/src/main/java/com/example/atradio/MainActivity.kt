@@ -43,6 +43,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import android.provider.Settings
 import android.Manifest
 import android.view.KeyEvent
+import android.widget.RemoteViews
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetView
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -559,13 +560,26 @@ class MainActivity : AppCompatActivity() {
     private fun updateUIForPlaying() {
         Log.d("iAtRadio", "MainActivity -> updateUIForPlaying")
         statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
-        buttonPlay.setImageResource(R.drawable.stop_64)
+//        buttonPlay.setImageResource(R.drawable.stop_64)
+
+        // Определяем активен ли ночной режим
+        val isNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+//        val expandedView = RemoteViews(packageName, R.layout.notification_expanded)
+        if (isNightMode) buttonPlay.setImageResource(R.drawable.stop_64_dark) else buttonPlay.setImageResource(R.drawable.stop_64)
+//        expandedView.setImageViewResource(R.id.buttonPlay, buttonIcon)
     }
 
     private fun updateUIForStopped() {
         Log.d("iAtRadio", "MainActivity -> updateUIForStopped")
         statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
-        buttonPlay.setImageResource(R.drawable.play_64)
+//        buttonPlay.setImageResource(R.drawable.play_64)
+
+        // Определяем активен ли ночной режим
+        val isNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+//        val expandedView = RemoteViews(packageName, R.layout.notification_expanded)
+        if (isNightMode) buttonPlay.setImageResource(R.drawable.play_64_dark) else buttonPlay.setImageResource(R.drawable.play_64)
+//        expandedView.setImageViewResource(R.id.buttonPlay, buttonIcon)
+
     }
 
     // статус загрузки музыки
