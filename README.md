@@ -57,7 +57,7 @@ GNU GENERAL PUBLIC LICENSE Version 3
 
 Для того чтобы воспроизвести избранную радиостанцию необходимо просто нажать на одну из трёх кнопок избранных радиостанций.
 
-![Главное окно приложения](https://github.com/kaefik/AtRadio/blob/main/images/screen%20AtRadio.png)
+![Главное окно приложения](https://github.com/kaefik/AtRadio/blob/main/images/screenAtRadio.jpg)
 
 ## Работа со списками радиостанций
 
