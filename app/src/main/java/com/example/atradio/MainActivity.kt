@@ -1004,7 +1004,7 @@ class MainActivity : AppCompatActivity() {
                 // Разрешения предоставлены, можно выполнять необходимые действия
             } else {
                 // Разрешения не предоставлены, уведомить пользователя
-                Toast.makeText(this, "Bluetooth permissions are required for this feature", Toast.LENGTH_LONG).show()
+//                Toast.makeText(this, "Bluetooth permissions are required for this feature", Toast.LENGTH_LONG).show()
             }
         }
     }
