@@ -1015,9 +1015,11 @@ class MainActivity : AppCompatActivity() {
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             // Обработка смены ориентации на ландшафтную
             Log.d("iAtRadio", "MainActivity -> Ландшафтный режим")
+            setContentView(R.layout.activity_main) // Подставляем макет для ландшафтного режима
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            // Обработка смены ориентации на портретную
+            // Обработка смены ориентации на портретнуюам
             Log.d("iAtRadio", "MainActivity -> Портретный режим")
+            setContentView(R.layout.activity_main) // Подставляем макет для портретного режима
         }
     }
 
