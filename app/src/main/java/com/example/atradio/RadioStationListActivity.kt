@@ -216,7 +216,7 @@ class RadioStationListActivity : AppCompatActivity() {
     // помощь по работе с программой
     private fun showHelpOverlay() {
         TapTargetView.showFor(this,
-            TapTarget.forView(findViewById(R.id.buttonAddStation), "Добавление станций", "Здесь можно добавить радиостанции, если у вас есть ссылка на аудио-поток ")
+            TapTarget.forView(findViewById(R.id.buttonAddStation), getString(R.string.help_add_station_title), getString(R.string.help_add_station_description))
                 .outerCircleColor(R.color.darkForHelp)
                 .targetCircleColor(R.color.white)
                 .textColor(R.color.white)
@@ -232,7 +232,7 @@ class RadioStationListActivity : AppCompatActivity() {
 
     private fun shownShareButtonHelpOverlay() {
         TapTargetView.showFor(this,
-            TapTarget.forView(findViewById(R.id.buttonSaveShareStations), "Сохранить список станций", "Здесь можно сделать резерную копию ваших станций и поделиться списком станций с друзьями")
+            TapTarget.forView(findViewById(R.id.buttonSaveShareStations), getString(R.string.help_save_share_title), getString(R.string.help_save_share_description))
                 .outerCircleColor(R.color.darkForHelp)
                 .targetCircleColor(R.color.white)
                 .textColor(R.color.white)
@@ -248,7 +248,7 @@ class RadioStationListActivity : AppCompatActivity() {
 
     private fun shownImportButtonHelpOverlay() {
         TapTargetView.showFor(this,
-            TapTarget.forView(findViewById(R.id.buttonImportStationsFromFile), "Загрузка списка станций", "Здесь можно загрузить станции из резервной копии")
+            TapTarget.forView(findViewById(R.id.buttonImportStationsFromFile), getString(R.string.help_import_title), getString(R.string.help_import_description))
                 .outerCircleColor(R.color.darkForHelp)
                 .targetCircleColor(R.color.white)
                 .textColor(R.color.white)
@@ -264,7 +264,7 @@ class RadioStationListActivity : AppCompatActivity() {
 
     private fun shownBackButtonHelpOverlay() {
         TapTargetView.showFor(this,
-            TapTarget.forView(findViewById(R.id.buttonBack), "Назад в главное окно", "Здесь можно вернуться в главное окно приложения")
+            TapTarget.forView(findViewById(R.id.buttonBack), getString(R.string.help_back_title), getString(R.string.help_back_description))
                 .outerCircleColor(R.color.darkForHelp)
                 .targetCircleColor(R.color.white)
                 .textColor(R.color.white)
@@ -280,7 +280,7 @@ class RadioStationListActivity : AppCompatActivity() {
 
     private fun shownListStationsHelpOverlay() {
         TapTargetView.showFor(this,
-            TapTarget.forView(findViewById(R.id.recyclerViewRadioStations), "Список станций", "Это  список ваших станций. Если вы кликните по станции, то начнётся воспроизведение выбранной станции. Также можно удалить выбранную станцию с помощью крестика напротив станции.")
+            TapTarget.forView(findViewById(R.id.recyclerViewRadioStations), getString(R.string.help_list_stations_title), getString(R.string.help_list_stations_description))
                 .outerCircleColor(R.color.darkForHelp)
                 .targetCircleColor(R.color.white)
                 .textColor(R.color.white)
@@ -289,10 +289,10 @@ class RadioStationListActivity : AppCompatActivity() {
             object : TapTargetView.Listener() {
                 override fun onTargetClick(view: TapTargetView) {
                     super.onTargetClick(view)
-
                 }
             })
     }
+
 
     // настройки программы
     private fun saveAppSettings(settings: AppSettings) {

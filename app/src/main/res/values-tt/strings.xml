@@ -94,5 +94,21 @@
     <string name="help_settings_title">Көйләр</string>
     <string name="help_settings_description">Монда программаның көйләвен үзгәртергә мөмкин</string>
 
+    <string name="help_add_station_title">Станцияләрне өстәү</string>
+    <string name="help_add_station_description">Әгәр сез аудиопотокның сылтамасын белсәгез, радио станцияләрен өстәргә мөмкин</string>
+
+    <string name="help_save_share_title">Станцияләр исемлеген саклау</string>
+    <string name="help_save_share_description">Сез үзегезнең станцияләрнең резерв күчермәсен ясап, дусларыгыз белән станцияләр исемлеген уртаклаша аласыз</string>
+
+    <string name="help_import_title">Станцияләр исемлеген йөкләү</string>
+    <string name="help_import_description">Биредә станцияләрне резерв күчермәдән программага йөкләп алырга мөмкин</string>
+
+    <string name="help_back_title">Төп тәрәзәгә кайту</string>
+    <string name="help_back_description">Биредә төп кушымта тәрәзәсенә кире кайтып, үзгәрешләрне саклап калырга мөмкин</string>
+
+    <string name="help_list_stations_title">Станцияләр исемлеге</string>
+    <string name="help_list_stations_description">Бу сезнең станцияләр исемлеге. Сайланган станциягә бассагыз, ул уйный башлый. Шулай ук, сайланган станцияне янындагы крестик ярдәмендә бетерергә мөмкин.</string>
+
+
 
 </resources>

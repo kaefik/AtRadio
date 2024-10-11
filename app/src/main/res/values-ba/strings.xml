@@ -95,5 +95,20 @@
     <string name="help_settings_title">Көйҙәр</string>
     <string name="help_settings_description">Бында ҡушымта көйләүҙәрен үҙгәртергә мөмкин</string>
 
+    <string name="help_add_station_title">Станцияләр өҫтәү</string>
+    <string name="help_add_station_description">Әгәр аудио ағымының һылтанмаһын белһәгеҙ, радио станцияләр өҫтәй алаһығыҙ</string>
+
+    <string name="help_save_share_title">Станцияләр исемлеген һаҡлау</string>
+    <string name="help_save_share_description">Һеҙ үҙ станцияләрегеҙҙең резерв күсермәһен эшләп, дуҫтарығыҙ менән станцияләр исемлеген уртаҡлаша алаһығыҙ</string>
+
+    <string name="help_import_title">Станцияләр исемлеген тейәү</string>
+    <string name="help_import_description">Бында станцияләрҙе резерв күсермәнән программаға тейәп алырға мөмкин</string>
+
+    <string name="help_back_title">Төп тәҙрәгә ҡайтыу</string>
+    <string name="help_back_description">Бында төп программа тәҙрәһенә ҡайтып, үҙгәрештәрҙе һаҡлап ҡалырға мөмкин</string>
+
+    <string name="help_list_stations_title">Станцияләр исемлеге</string>
+    <string name="help_list_stations_description">Был һеҙҙең станцияләр исемлеге. Һайланған станциягә баҫһағыҙ, ул уйнарға башлай. Шулай уҡ һайланған станцияне уның эргәһендәге крестик менән бөтөрә алаһығыҙ.</string>
+
 
 </resources>

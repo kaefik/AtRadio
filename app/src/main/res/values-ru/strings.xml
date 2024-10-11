@@ -92,4 +92,19 @@
 
     <string name="help_settings_title">Настройки</string>
     <string name="help_settings_description">Здесь можно изменить настройки приложения</string>
+
+    <string name="help_add_station_title">Добавление станций</string>
+    <string name="help_add_station_description">Можно добавить радиостанции, если вы знаете ссылку на аудиопоток</string>
+
+    <string name="help_save_share_title">Сохранить список станций</string>
+    <string name="help_save_share_description">Можно сделать резервную копию ваших станций и поделиться списком станций с друзьями</string>
+
+    <string name="help_import_title">Загрузка списка станций</string>
+    <string name="help_import_description">Здесь можно загрузить станции в программу из резервной копии</string>
+
+    <string name="help_back_title">Назад в главное окно</string>
+    <string name="help_back_description">Здесь можно вернуться в главное окно приложения и сохранить изменения</string>
+
+    <string name="help_list_stations_title">Список станций</string>
+    <string name="help_list_stations_description">Это список ваших станций. Если вы нажмёте на выбранную станцию, то начнётся воспроизведение станции. Также можно удалить выбранную станцию с помощью крестика напротив станции.</string>
 </resources>
