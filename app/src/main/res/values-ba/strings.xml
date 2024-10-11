@@ -72,27 +72,28 @@
     <string name="choose_category">Станция жанрҙарын һайлағыҙ</string>
 
     <string name="help_player_control_title">Плеер менән идара итеү</string>
-    <string name="help_player_control_description">Был төймә ағымдағы станцияне уйнай башлай</string>
+    <string name="help_player_control_description">Ағымдағы станцияны уйнай башлай</string>
 
     <string name="help_prev_station_title">Плеер менән идара итеү</string>
-    <string name="help_prev_station_description">Был төймә алдағы станцияне уйнай</string>
+    <string name="help_prev_station_description">Алдағы станцияны уйнай башлай</string>
 
     <string name="help_next_station_title">Плеер менән идара итеү</string>
-    <string name="help_next_station_description">Был төймә киләһе станцияне уйнай</string>
+    <string name="help_next_station_description">Киләһе станцияны уйнай башлай</string>
 
     <string name="help_volume_control_title">Тауыш менән идара итеү</string>
-    <string name="help_volume_control_description">Был төймә уйнау тауышын көйләй</string>
+    <string name="help_volume_control_description">Тауышты көйләй</string>
 
     <string name="help_station_name_title">Станция исеме</string>
-    <string name="help_station_name_description">Бында ағымдағы станциянең исеме күрһәтелә</string>
+    <string name="help_station_name_description">Ағымдағы станцияның исемен күрһәтә</string>
 
     <string name="help_favorite_station_title">Яратҡан станциялар</string>
-    <string name="help_favorite_station_description">Оҙаҡ баҫып ағымдағы станцияне һаҡлағыҙ. Ҡыҫҡа баҫҡанда һаҡланған станцияне уйнай</string>
+    <string name="help_favorite_station_description">Оҙаҡ баҫып ағымдағы станцияны һаҡларға мөмкин. Ҡыҫҡа баҫып яратҡан станцияны уйнатырға мөмкин</string>
 
     <string name="help_list_station_title">Станциялар исемлеге</string>
-    <string name="help_list_station_description">Бында станциялар исемлеге. Станцияне уйнау, өҫтәү, юйыу, һаҡлау һәм йөкләү мөмкин.</string>
+    <string name="help_list_station_description">Бында станциялар исемлеге. Исемлектән башларға, өҫтәргә, юйырға, һаҡларға һәм станцияларҙы тейәргә мөмкин.</string>
 
-    <string name="help_settings_title">Көйләүҙәр</string>
+    <string name="help_settings_title">Көйҙәр</string>
     <string name="help_settings_description">Бында ҡушымта көйләүҙәрен үҙгәртергә мөмкин</string>
+
 
 </resources>

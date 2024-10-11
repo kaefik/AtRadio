@@ -70,28 +70,29 @@
     <string name="category_other">Other</string>
     <string name="choose_category">Select station genres</string>
 
-    <string name="help_player_control_title">Player Controls</string>
-    <string name="help_player_control_description">This button starts the current station playback</string>
+    <string name="help_player_control_title">Player Control</string>
+    <string name="help_player_control_description">Starts playing the current station</string>
 
-    <string name="help_prev_station_title">Player Controls</string>
-    <string name="help_prev_station_description">This button plays the previous station</string>
+    <string name="help_prev_station_title">Player Control</string>
+    <string name="help_prev_station_description">Starts the previous station</string>
 
-    <string name="help_next_station_title">Player Controls</string>
-    <string name="help_next_station_description">This button plays the next station</string>
+    <string name="help_next_station_title">Player Control</string>
+    <string name="help_next_station_description">Starts the next station</string>
 
     <string name="help_volume_control_title">Volume Control</string>
-    <string name="help_volume_control_description">This button adjusts the playback volume</string>
+    <string name="help_volume_control_description">Controls the playback volume</string>
 
     <string name="help_station_name_title">Station Name</string>
-    <string name="help_station_name_description">Here the current station name is displayed</string>
+    <string name="help_station_name_description">Displays the name of the current station</string>
 
     <string name="help_favorite_station_title">Favorite Stations</string>
-    <string name="help_favorite_station_description">Hold to save the current station. Tap to play the saved station</string>
+    <string name="help_favorite_station_description">Long press to save the current station. Short press to play the saved favorite station</string>
 
     <string name="help_list_station_title">Station List</string>
-    <string name="help_list_station_description">Here is the station list. You can play, add, remove, save, and load stations from the list.</string>
+    <string name="help_list_station_description">Here is the list of stations. You can start from the list, add, delete, save, and load stations.</string>
 
     <string name="help_settings_title">Settings</string>
-    <string name="help_settings_description">Here you can change the app settings</string>
+    <string name="help_settings_description">You can change the app settings here</string>
+
 
 </resources>

@@ -70,28 +70,29 @@
     <string name="category_other">Башкасы</string>
     <string name="choose_category">Радио жанрларын сайлагы</string>
 
-    <string name="help_player_control_title">Уенчы идарәсе</string>
-    <string name="help_player_control_description">Бу төймә агымдагы станцияне уйный башлый</string>
+    <string name="help_player_control_title">Плеер белән идарә</string>
+    <string name="help_player_control_description">Агымдагы станцияне уйната башлый</string>
 
-    <string name="help_prev_station_title">Уенчы идарәсе</string>
-    <string name="help_prev_station_description">Бу төймә алдагы станцияне уйный</string>
+    <string name="help_prev_station_title">Плеер белән идарә</string>
+    <string name="help_prev_station_description">Алдагы станцияне уйната башлый</string>
 
-    <string name="help_next_station_title">Уенчы идарәсе</string>
-    <string name="help_next_station_description">Бу төймә киләсе станцияне уйный</string>
+    <string name="help_next_station_title">Плеер белән идарә</string>
+    <string name="help_next_station_description">Киләсе станцияне уйната башлый</string>
 
-    <string name="help_volume_control_title">Тавыш идарәсе</string>
-    <string name="help_volume_control_description">Бу төймә уен тавышын көйләп тора</string>
+    <string name="help_volume_control_title">Тавыш белән идарә</string>
+    <string name="help_volume_control_description">Тавышны көйләп тора</string>
 
-    <string name="help_station_name_title">Станция исеме</string>
-    <string name="help_station_name_description">Монда агымдагы станция исеме күрсәтелә</string>
+    <string name="help_station_name_title">Станциянең исеме</string>
+    <string name="help_station_name_description">Агымдагы станциянең исемен күрсәтә</string>
 
     <string name="help_favorite_station_title">Яраткан станцияләр</string>
-    <string name="help_favorite_station_description">Озак басып агымдагы станцияне саклагыз. Кыска басканда сакланган станцияне уйный</string>
+    <string name="help_favorite_station_description">Озын басу белән агымдагы станцияне сакларга мөмкин. Кыска басу белән яраткан сакланган станцияне уйнатырга мөмкин</string>
 
     <string name="help_list_station_title">Станцияләр исемлеге</string>
-    <string name="help_list_station_description">Монда станцияләр исемлеге урнашкан. Станцияне уйнау, өстәү, бетерү, саклау һәм йөкләү мөмкин.</string>
+    <string name="help_list_station_description">Менә станцияләр исемлеге. Сез исемлектән башлый аласыз, өсти, бетерә, саклый һәм станцияләрне йөкли аласыз.</string>
 
-    <string name="help_settings_title">Көйләүләр</string>
-    <string name="help_settings_description">Монда кушымта көйләүләрен үзгәртергә мөмкин</string>
+    <string name="help_settings_title">Көйләр</string>
+    <string name="help_settings_description">Монда программаның көйләвен үзгәртергә мөмкин</string>
+
 
 </resources>
