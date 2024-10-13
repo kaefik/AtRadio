@@ -433,16 +433,29 @@ class RadioNotificationService : Service() {
         expandedView.setOnClickPendingIntent(R.id.button_next, nextPendingIntent)
         expandedView.setOnClickPendingIntent(R.id.button_close, closePendingIntent)
 
-        builder.setSmallIcon(R.drawable.logo)
-            .setContentIntent(pendingIntent)
-            .setCustomContentView(expandedView)
-            .setCustomBigContentView(expandedView)
-            .setStyle(NotificationCompat.DecoratedCustomViewStyle())
-            .setOngoing(true)
-            .setPriority(NotificationCompat.PRIORITY_LOW)
-            .setSound(null)
-            .setVibrate(null)
-            .setDefaults(0)
+        if(isPlaying == MusicStatus.STOPPED) {
+            builder.setSmallIcon(R.drawable.logo)
+                .setContentIntent(pendingIntent)
+                .setCustomContentView(expandedView)
+                .setCustomBigContentView(expandedView)
+                .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+                .setOngoing(false) // Разрешает смахивание
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setSound(null)
+                .setVibrate(null)
+                .setDefaults(0)
+        } else {
+            builder.setSmallIcon(R.drawable.logo)
+                .setContentIntent(pendingIntent)
+                .setCustomContentView(expandedView)
+                .setCustomBigContentView(expandedView)
+                .setStyle(NotificationCompat.DecoratedCustomViewStyle())
+                .setOngoing(true) // запрещает смахивание
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setSound(null)
+                .setVibrate(null)
+                .setDefaults(0)
+        }
 
         return builder.build()
     }
