@@ -110,6 +110,6 @@
     <string name="help_list_stations_description">Бу сезнең станцияләр исемлеге. Сайланган станциягә бассагыз, ул уйный башлый. Шулай ук, сайланган станцияне янындагы крестик ярдәмендә бетерергә мөмкин.</string>
     <string name="choose_email_clients">Почта клиентын сайлагыз</string>
     <string name="aboutTitle">О программе</string>
-    <string name="aboutDialogAlert" >AtRadio создано для прослушивания онлайн радиостанций.\n“Всё радио мира — у тебя в кармане”\nВерсия:  </string>
+    <string name="aboutDialogAlert">AtRadio онлайн радиостанцияләрне тыңлау өчен булдырылды.\n\n\"Бар дөнья радиосы — синең кесәңдә\"\n\nВерсия:</string>
 
 </resources>

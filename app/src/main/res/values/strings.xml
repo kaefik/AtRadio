@@ -113,8 +113,8 @@
     <string name="about" translatable="false">About</string>
     <string name="choose_email_clients">Select a mail client</string>
     <string name="aboutTitle">About</string>
-    <string name="aboutDialogAlert" >AtRadio создано для прослушивания онлайн радиостанций.\n“Всё радио мира — у тебя в кармане”\nВерсия:  </string>
-    <string name="aboutAuthor" translatable="false">Ilnur Saifutdinov\n"(c) 2024</string>
+    <string name="aboutDialogAlert" >AtRadio was created for listening to online radio stations.\n\n\"All the radio in the world — in your pocket\"\n\nVersion:</string>
+    <string name="aboutAuthor" translatable="false">Ilnur Saifutdinov\n(c) 2024</string>
     <string name="linkGitHub" translatable="false">https://github.com/kaefik/AtRadio</string>
     <string name="emailAuthor" translatable="false">ilnursoft@gmail.com</string>
     <string name="linkDonate" translatable="false">https://www.donationalerts.com/r/iamatai</string>
