@@ -188,6 +188,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var statusRadio: TextView
     private lateinit var progressBar: ProgressBar
     private var statusPlay: MusicStatus = MusicStatus.STOPPED // статус проигрывания текущей станции
+    private lateinit var blackLine: View // просто линия
 
     //заставка - сринсейвер
     private lateinit var dimView: View
@@ -212,6 +213,7 @@ class MainActivity : AppCompatActivity() {
         dimView.visibility = View.GONE
         blackView.visibility = View.VISIBLE
         radioText.visibility = View.VISIBLE
+        blackLine.visibility = View.VISIBLE
         var newText = getString(R.string.at_radio)
         if (appSettings.radioStations.isNotEmpty()){
             newText = appSettings.currentStation.name
@@ -270,7 +272,7 @@ class MainActivity : AppCompatActivity() {
 
         // заставка - сринсейвер
         dimView = findViewById(R.id.dim_view)
-        blackView = findViewById(R.id.black_view)
+        blackView = findViewById(R.id.black_line)
         radioText = findViewById(R.id.radio_text)
 
         resetTimers()
@@ -302,8 +304,7 @@ class MainActivity : AppCompatActivity() {
         buttonFav2 = findViewById(R.id.buttonFav2)
         buttonFav3 = findViewById(R.id.buttonFav3)
         buttonSettings  = findViewById(R.id.buttonSettings)
-
-        //progressBar = findViewById(R.id.progressBar)
+        blackLine  = findViewById(R.id.black_line)
     }
 
     private suspend fun initializeApp() {
@@ -718,6 +719,7 @@ class MainActivity : AppCompatActivity() {
         dimView.visibility = View.GONE
         blackView.visibility = View.GONE
         radioText.visibility = View.GONE
+        blackLine.visibility = View.GONE
         handler.removeCallbacks(moveTextRunnable)
         enableUIElements() // Включить элементы интерфейса
     }

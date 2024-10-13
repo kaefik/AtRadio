@@ -133,11 +133,10 @@
         android:layout_marginRight="30dp"
         />
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
+    <View
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="1dp"
+        android:background="#FF696969"
         app:layout_constraintBottom_toTopOf="@+id/buttonFav2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -145,6 +144,7 @@
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         />
+
 
     <ImageButton
         android:id="@+id/buttonListRadioStations"
@@ -185,7 +185,7 @@
         android:visibility="gone" />
 
     <View
-        android:id="@+id/black_view"
+        android:id="@+id/black_line"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/black_color"
