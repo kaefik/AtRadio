@@ -247,6 +247,21 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
+        preInitializeApp()
+
+
+        // Запускаем корутину для инициализации приложения
+        GlobalScope.launch(Dispatchers.Main) {
+            Log.d("iAtRadio", "MainActivity onCreate -> into GlobalScope")
+            initializeApp()
+        }
+
+        Log.d("iAtRadio", "MainActivity onCreate -> end")
+
+    }
+
+
+    private fun preInitializeApp() {
         Log.d("iAtRadio", "MainActivity onCreate -> begin -> statusPlay")
 
         // Загружаем настройки при старте
@@ -288,21 +303,10 @@ class MainActivity : AppCompatActivity() {
         buttonFav3 = findViewById(R.id.buttonFav3)
         buttonSettings  = findViewById(R.id.buttonSettings)
 
-        progressBar = findViewById(R.id.progressBar)
-
-
-        // Запускаем корутину для инициализации приложения
-        GlobalScope.launch(Dispatchers.Main) {
-            Log.d("iAtRadio", "MainActivity onCreate -> into GlobalScope")
-            initializeApp()
-        }
-
-        Log.d("iAtRadio", "MainActivity onCreate -> end")
-
+        //progressBar = findViewById(R.id.progressBar)
     }
 
-
-    private suspend fun initializeApp(){
+    private suspend fun initializeApp() {
 
         Log.d("iAtRadio", "MainActivity initializeApp -> begin")
 
@@ -1021,6 +1025,15 @@ class MainActivity : AppCompatActivity() {
             Log.d("iAtRadio", "MainActivity -> Портретный режим")
             setContentView(R.layout.activity_main) // Подставляем макет для портретного режима
         }
+
+
+        preInitializeApp()
+        // Запускаем корутину для инициализации приложения
+        GlobalScope.launch(Dispatchers.Main) {
+            Log.d("iAtRadio", "MainActivity onCreate -> into GlobalScope")
+            initializeApp()
+        }
+
     }
 
     // мастер выбора радистанций при первом запуске программы
