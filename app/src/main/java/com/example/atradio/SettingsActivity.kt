@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.res.Configuration
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -42,6 +43,53 @@ class SettingsActivity : AppCompatActivity() {
         appSettings = loadAppSettings()
 
 //        setLocale(appSettings.language)
+
+        // блок кнопок о проекте
+
+        val githubButton: ImageButton = findViewById(R.id.buttonGitHub)
+        githubButton.setOnClickListener {
+            val githubUrl = getString(R.string.linkGitHub)
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(githubUrl))
+            startActivity(intent)
+        }
+
+        val donateButton: ImageButton = findViewById(R.id.buttonDonate)
+        donateButton.setOnClickListener {
+            val donateUrl = getString(R.string.linkDonate)
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(donateUrl))
+            startActivity(intent)
+        }
+
+        val emailButton: ImageButton = findViewById(R.id.buttonEmail)
+        emailButton.setOnClickListener {
+            val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+                data = Uri.parse("mailto:${getString(R.string.emailAuthor)}")  // Ваш email
+                putExtra(Intent.EXTRA_SUBJECT, "AtRadio")  // Тема письма
+                putExtra(Intent.EXTRA_TEXT, "Hello! ")  // Текст письма
+            }
+            startActivity(Intent.createChooser(emailIntent, getString(R.string.choose_email_clients)))
+        }
+
+        val aboutButton: ImageButton = findViewById(R.id.buttonAbout)
+        aboutButton.setOnClickListener {
+            val versionName = packageManager.getPackageInfo(packageName, 0).versionName
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle(getString(R.string.aboutTitle))
+            builder.setMessage("${getString(R.string.aboutDialogAlert)} $versionName \n\n ${getString(R.string.aboutAuthor)} \n\n")
+
+            // Кнопка OK для закрытия диалогового окна
+            builder.setPositiveButton(getString(R.string.dialog_button_ok)) { dialog, _ ->
+                dialog.dismiss()
+            }
+
+            // Показать диалог
+            val dialog: AlertDialog = builder.create()
+            dialog.show()
+        }
+
+
+        // END блок кнопок о проекте
+
 
         // Установка состояния переключателя автозапуска на основе загруженных настроек
         refreshSettings()
