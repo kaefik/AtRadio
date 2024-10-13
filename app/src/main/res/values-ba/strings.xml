@@ -109,6 +109,9 @@
 
     <string name="help_list_stations_title">Станцияләр исемлеге</string>
     <string name="help_list_stations_description">Был һеҙҙең станцияләр исемлеге. Һайланған станциягә баҫһағыҙ, ул уйнарға башлай. Шулай уҡ һайланған станцияне уның эргәһендәге крестик менән бөтөрә алаһығыҙ.</string>
+    <string name="choose_email_clients">Почта клиентын һайлағыҙ</string>
+    <string name="aboutTitle">Программа тураһында</string>
+    <string name="aboutDialogAlert" >AtRadio создано для прослушивания онлайн радиостанций.\n“Всё радио мира — у тебя в кармане”\nВерсия:  </string>
 
 
 </resources>

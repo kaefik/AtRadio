@@ -107,5 +107,16 @@
 
     <string name="help_list_stations_title">Station List</string>
     <string name="help_list_stations_description">This is your list of stations. If you tap a selected station, the station will start playing. You can also remove a selected station using the cross next to it.</string>
+    <string name="github_atradio" translatable="false">GitHub AtRadio</string>
+    <string name="email" translatable="false">Email</string>
+    <string name="donate" translatable="false">Donate</string>
+    <string name="about" translatable="false">About</string>
+    <string name="choose_email_clients">Select a mail client</string>
+    <string name="aboutTitle">About</string>
+    <string name="aboutDialogAlert" >AtRadio создано для прослушивания онлайн радиостанций.\n“Всё радио мира — у тебя в кармане”\nВерсия:  </string>
+    <string name="aboutAuthor" translatable="false">Ilnur Saifutdinov\n"(c) 2024</string>
+    <string name="linkGitHub" translatable="false">https://github.com/kaefik/AtRadio</string>
+    <string name="emailAuthor" translatable="false">ilnursoft@gmail.com</string>
+    <string name="linkDonate" translatable="false">https://www.donationalerts.com/r/iamatai</string>
 
 </resources>
