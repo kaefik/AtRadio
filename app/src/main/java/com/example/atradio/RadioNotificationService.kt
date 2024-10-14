@@ -434,6 +434,7 @@ class RadioNotificationService : Service() {
         expandedView.setOnClickPendingIntent(R.id.button_close, closePendingIntent)
 
         if(isPlaying == MusicStatus.STOPPED) {
+            Log.d("iAtRadio", "RadioService -> разрешаем смахивать панель -> $isPlaying")
             builder.setSmallIcon(R.drawable.logo)
                 .setContentIntent(pendingIntent)
                 .setCustomContentView(expandedView)
@@ -445,6 +446,7 @@ class RadioNotificationService : Service() {
                 .setVibrate(null)
                 .setDefaults(0)
         } else {
+            Log.d("iAtRadio", "RadioService -> запрещаем смахивать панель -> $isPlaying")
             builder.setSmallIcon(R.drawable.logo)
                 .setContentIntent(pendingIntent)
                 .setCustomContentView(expandedView)
