@@ -99,19 +99,27 @@ class RadioNotificationService : Service() {
                     // Используем getProfileProxy для получения списка подключённых устройств вручную
                     bluetoothAdapter?.getProfileProxy(context, object : BluetoothProfile.ServiceListener {
                         override fun onServiceConnected(profile: Int, proxy: BluetoothProfile?) {
-                            if (profile == BluetoothProfile.A2DP && proxy != null) {
-                                val connectedDevices = proxy.connectedDevices
-                                if (connectedDevices.isEmpty()) {
-                                    Log.d("iAtRadio", "RadioNotificationService -> BluetoothReceiver -> Нет подключённых аудиоустройств, останавливаем воспроизведение")
-                                    // Если нет подключённых аудиоустройств, останавливаем воспроизведение
-                                    stopPlayback(false)
-                                    sendInfoBroadcast(MusicStatus.STOPPED)
-                                } else {
-                                    Log.d("iAtRadio", "RadioNotificationService -> BluetoothReceiver -> Есть другие подключённые Bluetooth-аудиоустройства: ${connectedDevices.size}")
+                            Handler(Looper.getMainLooper()).postDelayed({
+                                if (profile == BluetoothProfile.A2DP && proxy != null) {
+                                    val connectedDevices = proxy.connectedDevices
+                                    if (connectedDevices.isEmpty()) {
+                                        Log.d(
+                                            "iAtRadio",
+                                            "RadioNotificationService -> BluetoothReceiver -> Нет подключённых аудиоустройств, останавливаем воспроизведение"
+                                        )
+                                        // Если нет подключённых аудиоустройств, останавливаем воспроизведение
+                                        stopPlayback(false)
+                                        sendInfoBroadcast(MusicStatus.STOPPED)
+                                    } else {
+                                        Log.d(
+                                            "iAtRadio",
+                                            "RadioNotificationService -> BluetoothReceiver -> Есть другие подключённые Bluetooth-аудиоустройства: ${connectedDevices.size}"
+                                        )
+                                    }
+                                    // Закрываем прокси для профиля A2DP
+                                    bluetoothAdapter.closeProfileProxy(BluetoothProfile.A2DP, proxy)
                                 }
-                                // Закрываем прокси для профиля A2DP
-                                bluetoothAdapter.closeProfileProxy(BluetoothProfile.A2DP, proxy)
-                            }
+                            }, 1000) // задержка в 1 секунду
                         }
 
                         override fun onServiceDisconnected(profile: Int) {
