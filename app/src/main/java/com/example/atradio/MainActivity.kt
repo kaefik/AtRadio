@@ -84,8 +84,6 @@ class MainActivity : AppCompatActivity() {
             Log.e("iAtRadio", "MainActivity -> infoReceiver -> isPlayed = $isPlayed")
             Log.e("iAtRadio", "MainActivity -> infoReceiver -> appSettings.currentStation = ${appSettings.currentStation}")
 
-
-//            if (isPlayed != null) {
             if (isPlayed != null) {
                 viewModel.statusPlay = isPlayed
             }
@@ -102,7 +100,6 @@ class MainActivity : AppCompatActivity() {
                     MusicStatus.LOADING -> {
                         updateUIForConnected()
                     }
-//                }
                     null -> TODO()
                 }
         }
@@ -156,7 +153,6 @@ class MainActivity : AppCompatActivity() {
                 appSettings.currentStation = selectedStation
                 statusRadio.text = appSettings.currentStation.name
                 saveAppSettings(appSettings)
-//                updateUIForPlaying()
                 // запуск сервера
                 pausePlayback()
                 viewModel.statusPlay = MusicStatus.LOADING
@@ -196,7 +192,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var buttonPlay: ImageButton
     private lateinit var statusRadio: TextView
     private lateinit var progressBar: ProgressBar
-//    private var viewModel.statusPlay: MusicStatus = MusicStatus.STOPPED // статус проигрывания текущей станции
     private lateinit var blackLine: View // просто линия
 
     //заставка - сринсейвер
@@ -325,8 +320,6 @@ class MainActivity : AppCompatActivity() {
 
         // Получаем данные из Intent
         val currentStation = intent.getParcelableExtra<RadioStation>("currentStation")
-//        val isPlaying = intent.getBooleanExtra("isPlaying", false)
-//        Log.d("iAtRadio", "MainActivity $nameFromFunc -> initializeApp -> isPlaystatusPlaying= $isPlaying")
         Log.d("iAtRadio", "MainActivity $nameFromFunc -> initializeApp -> statusPlay = ${viewModel.statusPlay}")
         Log.d("iAtRadio", "MainActivity $nameFromFunc -> initializeApp -> currentStation = ${currentStation}")
         Log.d("iAtRadio", "MainActivity $nameFromFunc -> initializeApp -> appsettings.currentStation = ${appSettings.currentStation}")
@@ -353,8 +346,6 @@ class MainActivity : AppCompatActivity() {
             setLocale(appSettings.language)
         }
         // END локализация приложения
-
-
 
         Log.d("iAtRadio", "MainActivity $nameFromFunc -> initializeApp -> appSettings.radioStations  = $appSettings.radioStations ")
 
@@ -399,8 +390,6 @@ class MainActivity : AppCompatActivity() {
             appSettings.lastRadioStationIndex = 0
         }
 
-
-
         if (appSettings.radioStations.isEmpty()) {
             // Загрузка радиостанций из CSV
             appSettings.radioStations.addAll(
@@ -434,8 +423,7 @@ class MainActivity : AppCompatActivity() {
 
             Log.d("iAtRadio", "MainActivity $nameFromFunc -> initializeApp -> preCheck = ${viewModel.statusPlay}")
 
-            if(viewModel.statusPlay==MusicStatus.PLAYING) {
-//                updateUIForPlaying()
+            if((viewModel.statusPlay==MusicStatus.PLAYING) || (viewModel.statusPlay==MusicStatus.LOADING)) {
                 updateUI(appSettings.currentStation, viewModel.statusPlay)
             }
             else {
@@ -449,17 +437,6 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     statusRadio.text = appSettings.currentStation.name
                     setStationNotification(appSettings.currentStation)
-
-
-//                    updateUI(currentStation, viewModel.statusPlay)
-
-
-//                    if (currentStation != null) {
-//                        // Восстанавливаем состояние UI и логику если нажали на уведовление сервиса
-//                        updateUI(currentStation, viewModel.statusPlay)
-//                    } else {
-//                        updateUIForStopped()
-//                    }
                 }
             }
         }
@@ -584,13 +561,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-
-//        if(isPlaying){
-//            updateUIForPlaying()
-//        } else {
-//            updateUIForStopped()
-//        }
-
         Log.d("iAtRadio", "MainActivity $nameFromFunc -> initializeApp -> end")
     }
 
@@ -599,8 +569,6 @@ class MainActivity : AppCompatActivity() {
         Log.d("iAtRadio", "MainActivity -> updateUIForPlaying")
         statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
         statusRadio.text = appSettings.currentStation.name
-
-//        buttonPlay.setImageResource(R.drawable.stop_64)
 
         // Определяем активен ли ночной режим
         val isNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
@@ -613,13 +581,11 @@ class MainActivity : AppCompatActivity() {
         Log.d("iAtRadio", "MainActivity -> updateUIForStopped")
         statusRadio.text = appSettings.currentStation.name
         statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
-//        buttonPlay.setImageResource(R.drawable.play_64)
 
         // Определяем активен ли ночной режим
         val isNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
-//        val expandedView = RemoteViews(packageName, R.layout.notification_expanded)
         if (isNightMode) buttonPlay.setImageResource(R.drawable.play_64_dark) else buttonPlay.setImageResource(R.drawable.play_64)
-//        expandedView.setImageViewResource(R.id.buttonPlay, buttonIcon)
+
 
     }
 
@@ -1023,13 +989,15 @@ class MainActivity : AppCompatActivity() {
         Log.d("iAtRadio", "MainActivity ->  updateUI -> station = $station  ->  isPlaying = $isPlaying")
         // Обновите UI и логику на основе переданных данных
         if(station != null) {
-            if(isPlaying==MusicStatus.PLAYING){
-//                viewModel.statusPlay = MusicStatus.PLAYING
-                updateUIForPlaying()
-            } else {
-                if (isPlaying == MusicStatus.STOPPED) {
-//                    viewModel.statusPlay = MusicStatus.STOPPED
+            when (isPlaying) {
+                MusicStatus.PLAYING -> {
+                    updateUIForPlaying()
+                }
+                MusicStatus.STOPPED -> {
                     updateUIForStopped()
+                }
+                MusicStatus.LOADING -> {
+                    updateUIForConnected()
                 }
             }
         }
