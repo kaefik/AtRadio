@@ -267,6 +267,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    @SuppressLint("CutPasteId")
     private fun preInitializeApp(nameFromFunc:String) {
         Log.d("iAtRadio", "MainActivity $nameFromFunc -> preInitializeApp -> begin -> viewModel.statusPlay")
         // Инициализация текущей ориентации при создании активности
@@ -311,7 +312,7 @@ class MainActivity : AppCompatActivity() {
         buttonFav2 = findViewById(R.id.buttonFav2)
         buttonFav3 = findViewById(R.id.buttonFav3)
         buttonSettings  = findViewById(R.id.buttonSettings)
-        blackLine  = findViewById(R.id.black_line)
+        blackLine  = this.findViewById(R.id.black_line)
     }
 
     private suspend fun initializeApp(nameFromFunc:String) {
