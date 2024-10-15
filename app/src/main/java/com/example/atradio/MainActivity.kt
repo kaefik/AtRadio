@@ -44,6 +44,7 @@ import android.provider.Settings
 import android.Manifest
 import android.view.KeyEvent
 import android.widget.RemoteViews
+import androidx.activity.viewModels
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetView
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -56,6 +57,8 @@ import kotlin.coroutines.resume
 
 
 class MainActivity : AppCompatActivity() {
+    private val viewModel: MainViewModel by viewModels()
+
 
     private var currentOrientation: Int = Configuration.ORIENTATION_UNDEFINED // Глобальная переменная для хранения ориентации
 
@@ -82,7 +85,7 @@ class MainActivity : AppCompatActivity() {
 
 
             if (isPlayed != null) {
-                statusPlay = isPlayed
+                viewModel.statusPlay = isPlayed
                 appSettings = loadAppSettings()
                 statusRadio.text = appSettings.currentStation.name
                 when (isPlayed) {
@@ -107,7 +110,7 @@ class MainActivity : AppCompatActivity() {
                 Log.e("iAtRadio", "MainActivity -> Error received: $it")
                 Toast.makeText(this@MainActivity, "Ошибка: $it", Toast.LENGTH_SHORT).show()
                 // Здесь можно выполнить любые действия на основе ошибки
-                statusPlay = MusicStatus.STOPPED
+                viewModel.statusPlay = MusicStatus.STOPPED
                 updateUIForStopped()
             }
         }
@@ -129,7 +132,7 @@ class MainActivity : AppCompatActivity() {
 
             if (appSettings.radioStations.isEmpty()) {
                 stopPlayback()
-                statusPlay = MusicStatus.STOPPED
+                viewModel.statusPlay = MusicStatus.STOPPED
                 updateUIForStopped()
                 statusRadio.text = getString(R.string.empty_list_stations)
                 appSettings.currentStation = RadioStation("", "")
@@ -151,7 +154,7 @@ class MainActivity : AppCompatActivity() {
 //                updateUIForPlaying()
                 // запуск сервера
                 pausePlayback()
-                statusPlay = MusicStatus.LOADING
+                viewModel.statusPlay = MusicStatus.LOADING
                 updateUIForConnected()
                 playStation(appSettings.currentStation)
 
@@ -188,7 +191,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var buttonPlay: ImageButton
     private lateinit var statusRadio: TextView
     private lateinit var progressBar: ProgressBar
-    private var statusPlay: MusicStatus = MusicStatus.STOPPED // статус проигрывания текущей станции
+//    private var viewModel.statusPlay: MusicStatus = MusicStatus.STOPPED // статус проигрывания текущей станции
     private lateinit var blackLine: View // просто линия
 
     //заставка - сринсейвер
@@ -250,13 +253,13 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        preInitializeApp()
+        preInitializeApp("onCreate")
 
 
         // Запускаем корутину для инициализации приложения
         GlobalScope.launch(Dispatchers.Main) {
             Log.d("iAtRadio", "MainActivity onCreate -> into GlobalScope")
-            initializeApp()
+            initializeApp("onCreate")
         }
 
         Log.d("iAtRadio", "MainActivity onCreate -> end")
@@ -264,15 +267,15 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun preInitializeApp() {
-        Log.d("iAtRadio", "MainActivity onCreate -> begin -> statusPlay")
+    private fun preInitializeApp(nameFromFunc:String) {
+        Log.d("iAtRadio", "MainActivity $nameFromFunc -> preInitializeApp -> begin -> viewModel.statusPlay")
         // Инициализация текущей ориентации при создании активности
         currentOrientation = resources.configuration.orientation
         Log.d("iAtRadio", "MainActivity onCreate -> текущая ориентация экрана -> $currentOrientation")
 
         // Загружаем настройки при старте
         appSettings = loadAppSettings()
-        Log.d("iAtRadio", "MainActivity onCreate -> appSettings = $appSettings")
+        Log.d("iAtRadio", "MainActivity  $nameFromFunc -> preInitializeApp -> appSettings = $appSettings")
 
         // заставка - сринсейвер
         dimView = findViewById(R.id.dim_view)
@@ -311,13 +314,15 @@ class MainActivity : AppCompatActivity() {
         blackLine  = findViewById(R.id.black_line)
     }
 
-    private suspend fun initializeApp() {
+    private suspend fun initializeApp(nameFromFunc:String) {
 
-        Log.d("iAtRadio", "MainActivity initializeApp -> begin")
+        Log.d("iAtRadio", "MainActivity $nameFromFunc -> initializeApp -> begin")
 
         // Получаем данные из Intent
         val currentStation = intent.getParcelableExtra<RadioStation>("currentStation")
         val isPlaying = intent.getBooleanExtra("isPlaying", false)
+        Log.d("iAtRadio", "MainActivity $nameFromFunc -> initializeApp -> isPlaystatusPlaying= $isPlaying")
+        Log.d("iAtRadio", "MainActivity $nameFromFunc -> initializeApp -> statusPlay = ${viewModel.statusPlay}")
 
         // Привязка к сервису плееера
         // Начальная инициализация мастера приложений
@@ -327,7 +332,7 @@ class MainActivity : AppCompatActivity() {
             Log.d("iAtRadio", "MainActivity начало выбора языка")
             // Если язык не был выбран, показываем диалог для выбора языка
             val selectedLanguage = showLanguageDialogSuspend()
-            Log.d("iAtRadio", "MainActivity язык выбран $selectedLanguage")
+            Log.d("iAtRadio", "MainActivity $nameFromFunc -> initializeApp -> язык выбран $selectedLanguage")
             setLocale(selectedLanguage)
             appSettings.language=selectedLanguage
             Log.d("iAtRadio", "MainActivity выбран язык ${appSettings.language}")
@@ -344,7 +349,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
-        Log.d("iAtRadio", "MainActivity initializeApp -> appSettings.radioStations  = $appSettings.radioStations ")
+        Log.d("iAtRadio", "MainActivity $nameFromFunc -> initializeApp -> appSettings.radioStations  = $appSettings.radioStations ")
 
         // проверка есть права на уведомления
         checkNotificationPermission()
@@ -419,7 +424,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             if (appSettings.isAutoPlayEnabled) {
-                statusPlay = MusicStatus.PLAYING
+                viewModel.statusPlay = MusicStatus.PLAYING
                 statusRadio.text = appSettings.currentStation.name
                 updateUIForConnected()
                 // запуск сервиса
@@ -487,7 +492,7 @@ class MainActivity : AppCompatActivity() {
                 appSettings.lastRadioStationIndex = 0
                 statusRadio.text = getString(R.string.empty_list_stations)
             } else {
-                statusPlay = MusicStatus.LOADING
+                viewModel.statusPlay = MusicStatus.LOADING
                 updateUIForConnected()
                 nextPlayback(appSettings.currentStation)
             }
@@ -499,7 +504,7 @@ class MainActivity : AppCompatActivity() {
                 appSettings.lastRadioStationIndex = 0
                 statusRadio.text = getString(R.string.empty_list_stations)
             } else {
-                statusPlay = MusicStatus.LOADING
+                viewModel.statusPlay = MusicStatus.LOADING
                 updateUIForConnected()
                 prevPlayback(appSettings.currentStation)
             }
@@ -518,17 +523,17 @@ class MainActivity : AppCompatActivity() {
                 appSettings.lastRadioStationIndex = 0
                 statusRadio.text = getString(R.string.empty_list_stations)
                 appSettings.currentStation = RadioStation("empty", "empty")
-                statusPlay = MusicStatus.STOPPED
+                viewModel.statusPlay = MusicStatus.STOPPED
                 updateUIForStopped()
                 stopPlayback()
                 Log.d("iAtRadio", "MainActivity buttonPlay -> empty $appSettings.currentStation")
 
             } else {
 
-                when (statusPlay) {
+                when (viewModel.statusPlay) {
                     MusicStatus.STOPPED -> {
                         // Логика для состояния "остановлена"
-                        statusPlay = MusicStatus.PLAYING
+                        viewModel.statusPlay = MusicStatus.PLAYING
                         statusRadio.text = appSettings.currentStation.name
                         Log.d("iAtRadio", "MainActivity buttonPlay -> press Play")
                         updateUIForConnected()
@@ -540,7 +545,7 @@ class MainActivity : AppCompatActivity() {
                         statusRadio.text = appSettings.currentStation.name
                         updateUIForStopped()
                         stopPlayback()
-                        statusPlay = MusicStatus.STOPPED
+                        viewModel.statusPlay = MusicStatus.STOPPED
                         Log.d("iAtRadio", "MainActivity buttonPlay -> press Stop")
                     }
                     MusicStatus.PLAYING -> {
@@ -549,7 +554,7 @@ class MainActivity : AppCompatActivity() {
                         statusRadio.text = appSettings.currentStation.name
                         updateUIForStopped()
                         stopPlayback()
-                        statusPlay = MusicStatus.STOPPED
+                        viewModel.statusPlay = MusicStatus.STOPPED
                         Log.d("iAtRadio", "MainActivity buttonPlay -> press Stop")
                     }
                 }
@@ -562,7 +567,7 @@ class MainActivity : AppCompatActivity() {
             updateUIForStopped()
         }
 
-        Log.d("iAtRadio", "MainActivity initializeApp -> end")
+        Log.d("iAtRadio", "MainActivity $nameFromFunc -> initializeApp -> end")
     }
 
 
@@ -613,7 +618,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun handleFavoriteButtonClick(favIndex: Int) {
         appSettings.favoriteStations[favIndex]?.let {
-            statusPlay = MusicStatus.PLAYING
+            viewModel.statusPlay = MusicStatus.PLAYING
             appSettings.lastRadioStationIndex = appSettings.radioStations.indexOf(it)
             statusRadio.text = it.name
             appSettings.currentStation= it
@@ -661,13 +666,14 @@ class MainActivity : AppCompatActivity() {
     // Добавляем обработку событий onPause и onResume
     override fun onPause() {
         super.onPause()
-        Log.d("iAtRadio", "MainActivity -> onPause -> statusPlay = $statusPlay")
+        Log.d("iAtRadio", "MainActivity -> onPause -> viewModel.statusPlay = $viewModel.statusPlay")
         stopScreenSaver() // Остановить скринсейвер
     }
 
     override fun onResume() {
         super.onResume()
         Log.d("iAtRadio", "MainActivity -> onResume")
+        Log.d("iAtRadio", "MainActivity -> onResume -> viewModel.statusPlay = $viewModel.statusPlay")
         if (appSettings.isScreenSaverEnabled) {
             resetTimers() // Сбрасываем таймеры только если скринсейвер разрешен
         }
@@ -896,7 +902,7 @@ class MainActivity : AppCompatActivity() {
             action = RadioNotificationService.ACTION_INFO
             putExtra(RadioNotificationService.EXTRA_STATION, station)
         }
-        Log.d("iAtRadio", "MainActivity statusPlayFromService -> $intent")
+        Log.d("iAtRadio", "MainActivity viewModel.statusPlayFromService -> $intent")
         startService(intent)
     }
 
@@ -990,10 +996,10 @@ class MainActivity : AppCompatActivity() {
         // Обновите UI и логику на основе переданных данных
         if(station != null) {
             if(isPlaying){
-                statusPlay = MusicStatus.PLAYING
+                viewModel.statusPlay = MusicStatus.PLAYING
                 updateUIForPlaying()
             } else {
-                statusPlay = MusicStatus.STOPPED
+                viewModel.statusPlay = MusicStatus.STOPPED
                 updateUIForStopped()
             }
         }
@@ -1031,20 +1037,20 @@ class MainActivity : AppCompatActivity() {
             if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
                 Log.d("iAtRadio", "MainActivity -> Ландшафтный режим")
                 setContentView(R.layout.activity_main) // Подставляем макет для ландшафтного режима
-                preInitializeApp()
+                preInitializeApp("onConfigurationChanged")
                 // Запускаем корутину для инициализации приложения
                 GlobalScope.launch(Dispatchers.Main) {
                     Log.d("iAtRadio", "MainActivity onCreate -> into GlobalScope")
-                    initializeApp()
+                    initializeApp("onConfigurationChanged")
                 }
             } else if (currentOrientation == Configuration.ORIENTATION_PORTRAIT) {
                 Log.d("iAtRadio", "MainActivity -> Портретный режим")
                 setContentView(R.layout.activity_main) // Подставляем макет для портретного режима
-                preInitializeApp()
+                preInitializeApp("onConfigurationChanged")
                 // Запускаем корутину для инициализации приложения
                 GlobalScope.launch(Dispatchers.Main) {
                     Log.d("iAtRadio", "MainActivity onCreate -> into GlobalScope")
-                    initializeApp()
+                    initializeApp("onConfigurationChanged")
                 }
             }
         }
