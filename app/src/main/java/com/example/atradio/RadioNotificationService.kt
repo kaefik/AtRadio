@@ -139,13 +139,14 @@ class RadioNotificationService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.d("iAtRadio", "RadioService -> onDestroy")
         unregisterReceiver(bluetoothReceiver)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate() {
         super.onCreate()
-
+        Log.d("iAtRadio", "RadioService -> onCreate")
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         requestAudioFocus()
 
@@ -183,7 +184,7 @@ class RadioNotificationService : Service() {
             ACTION_INFO -> {
                 val station = intent.getParcelableExtra<RadioStation>(EXTRA_STATION)
                 station?.let {
-                    Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_CURRENT_STATION -> станция: $it")
+                    Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_INFO -> станция: $it")
                     currentStation = it
                     sendInfoBroadcast(isPlaying)
                 }
