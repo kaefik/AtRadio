@@ -57,6 +57,7 @@ import kotlin.coroutines.resume
 
 class MainActivity : AppCompatActivity() {
 
+    private var currentOrientation: Int = Configuration.ORIENTATION_UNDEFINED // Глобальная переменная для хранения ориентации
 
     // для запроса
     private val requestPermissionLauncher = registerForActivityResult(
@@ -265,6 +266,9 @@ class MainActivity : AppCompatActivity() {
 
     private fun preInitializeApp() {
         Log.d("iAtRadio", "MainActivity onCreate -> begin -> statusPlay")
+        // Инициализация текущей ориентации при создании активности
+        currentOrientation = resources.configuration.orientation
+        Log.d("iAtRadio", "MainActivity onCreate -> текущая ориентация экрана -> $currentOrientation")
 
         // Загружаем настройки при старте
         appSettings = loadAppSettings()
@@ -1016,25 +1020,37 @@ class MainActivity : AppCompatActivity() {
     }
 
     // обработка смены ориентации активити
+    @OptIn(DelicateCoroutinesApi::class)
+    @Override
      override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
-        if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            // Обработка смены ориентации на ландшафтную
-            Log.d("iAtRadio", "MainActivity -> Ландшафтный режим")
-            setContentView(R.layout.activity_main) // Подставляем макет для ландшафтного режима
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            // Обработка смены ориентации на портретнуюам
-            Log.d("iAtRadio", "MainActivity -> Портретный режим")
-            setContentView(R.layout.activity_main) // Подставляем макет для портретного режима
+        // Проверяем, изменилась ли ориентация
+        if (newConfig.orientation != currentOrientation) {
+            currentOrientation = newConfig.orientation // Обновляем текущую ориентацию
+
+            if (currentOrientation == Configuration.ORIENTATION_LANDSCAPE) {
+                Log.d("iAtRadio", "MainActivity -> Ландшафтный режим")
+                setContentView(R.layout.activity_main) // Подставляем макет для ландшафтного режима
+                preInitializeApp()
+                // Запускаем корутину для инициализации приложения
+                GlobalScope.launch(Dispatchers.Main) {
+                    Log.d("iAtRadio", "MainActivity onCreate -> into GlobalScope")
+                    initializeApp()
+                }
+            } else if (currentOrientation == Configuration.ORIENTATION_PORTRAIT) {
+                Log.d("iAtRadio", "MainActivity -> Портретный режим")
+                setContentView(R.layout.activity_main) // Подставляем макет для портретного режима
+                preInitializeApp()
+                // Запускаем корутину для инициализации приложения
+                GlobalScope.launch(Dispatchers.Main) {
+                    Log.d("iAtRadio", "MainActivity onCreate -> into GlobalScope")
+                    initializeApp()
+                }
+            }
         }
 
 
-        preInitializeApp()
-        // Запускаем корутину для инициализации приложения
-        GlobalScope.launch(Dispatchers.Main) {
-            Log.d("iAtRadio", "MainActivity onCreate -> into GlobalScope")
-            initializeApp()
-        }
+
 
     }
 
