@@ -79,14 +79,17 @@ class MainActivity : AppCompatActivity() {
     private val infoReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val isPlayed = intent?.getSerializableExtra("PLAY") as? MusicStatus // Принимаем MusicStatus
-//            val stationFromService = intent?.getStringExtra("STATION")
+            val stationFromService = intent?.getStringExtra("STATION")
 
             Log.e("iAtRadio", "MainActivity -> infoReceiver -> isPlayed = $isPlayed")
+            Log.e("iAtRadio", "MainActivity -> infoReceiver -> appSettings.currentStation = ${appSettings.currentStation}")
 
 
+//            if (isPlayed != null) {
             if (isPlayed != null) {
                 viewModel.statusPlay = isPlayed
-                appSettings = loadAppSettings()
+            }
+//                appSettings = loadAppSettings()
                 statusRadio.text = appSettings.currentStation.name
                 when (isPlayed) {
                     MusicStatus.PLAYING -> {
@@ -98,8 +101,9 @@ class MainActivity : AppCompatActivity() {
                     MusicStatus.LOADING -> {
                         updateUIForConnected()
                     }
+//                }
+                    null -> TODO()
                 }
-            }
         }
     }
 
@@ -323,6 +327,8 @@ class MainActivity : AppCompatActivity() {
 //        val isPlaying = intent.getBooleanExtra("isPlaying", false)
 //        Log.d("iAtRadio", "MainActivity $nameFromFunc -> initializeApp -> isPlaystatusPlaying= $isPlaying")
         Log.d("iAtRadio", "MainActivity $nameFromFunc -> initializeApp -> statusPlay = ${viewModel.statusPlay}")
+        Log.d("iAtRadio", "MainActivity $nameFromFunc -> initializeApp -> currentStation = ${currentStation}")
+        Log.d("iAtRadio", "MainActivity $nameFromFunc -> initializeApp -> appsettings.currentStation = ${appSettings.currentStation}")
 
         // Привязка к сервису плееера
         // Начальная инициализация мастера приложений
@@ -428,7 +434,8 @@ class MainActivity : AppCompatActivity() {
             Log.d("iAtRadio", "MainActivity $nameFromFunc -> initializeApp -> preCheck = ${viewModel.statusPlay}")
 
             if(viewModel.statusPlay==MusicStatus.PLAYING) {
-                updateUIForPlaying()
+//                updateUIForPlaying()
+                updateUI(appSettings.currentStation, viewModel.statusPlay)
             }
             else {
                 if (appSettings.isAutoPlayEnabled) {
@@ -442,12 +449,16 @@ class MainActivity : AppCompatActivity() {
                     statusRadio.text = appSettings.currentStation.name
                     setStationNotification(appSettings.currentStation)
 
-                    if (currentStation != null) {
-                        // Восстанавливаем состояние UI и логику если нажали на уведовление сервиса
-                        updateUI(currentStation, viewModel.statusPlay)
-                    } else {
-                        updateUIForStopped()
-                    }
+
+//                    updateUI(currentStation, viewModel.statusPlay)
+
+
+//                    if (currentStation != null) {
+//                        // Восстанавливаем состояние UI и логику если нажали на уведовление сервиса
+//                        updateUI(currentStation, viewModel.statusPlay)
+//                    } else {
+//                        updateUIForStopped()
+//                    }
                 }
             }
         }
