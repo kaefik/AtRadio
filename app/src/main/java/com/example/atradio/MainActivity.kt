@@ -89,8 +89,9 @@ class MainActivity : AppCompatActivity() {
             if (isPlayed != null) {
                 viewModel.statusPlay = isPlayed
             }
-//                appSettings = loadAppSettings()
+                appSettings = loadAppSettings()
                 statusRadio.text = appSettings.currentStation.name
+
                 when (isPlayed) {
                     MusicStatus.PLAYING -> {
                         updateUIForPlaying()
@@ -597,6 +598,8 @@ class MainActivity : AppCompatActivity() {
     private fun updateUIForPlaying() {
         Log.d("iAtRadio", "MainActivity -> updateUIForPlaying")
         statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
+        statusRadio.text = appSettings.currentStation.name
+
 //        buttonPlay.setImageResource(R.drawable.stop_64)
 
         // Определяем активен ли ночной режим
@@ -608,6 +611,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateUIForStopped() {
         Log.d("iAtRadio", "MainActivity -> updateUIForStopped")
+        statusRadio.text = appSettings.currentStation.name
         statusRadio.setTextColor(ContextCompat.getColor(this, R.color.stop))
 //        buttonPlay.setImageResource(R.drawable.play_64)
 
@@ -622,6 +626,7 @@ class MainActivity : AppCompatActivity() {
     // статус загрузки музыки
     private fun updateUIForConnected() {
         Log.d("iAtRadio", "MainActivity -> updateUIForConnected")
+        statusRadio.text = appSettings.currentStation.name
         statusRadio.setTextColor(ContextCompat.getColor(this, R.color.play))
         buttonPlay.setImageResource(R.drawable.connect64)
     }
