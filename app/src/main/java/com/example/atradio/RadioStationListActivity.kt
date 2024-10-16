@@ -22,6 +22,10 @@ import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetView
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
@@ -57,13 +61,26 @@ class RadioStationListActivity : AppCompatActivity() {
             if (newStations.isEmpty()) {
                 Toast.makeText(this, getString(R.string.file_no_new_stations), Toast.LENGTH_SHORT).show()
             } else {
-//                radioStations.clear()
+                // Добавляем новые станции
                 radioStations.addAll(newStations)
-                radioStationAdapter.notifyDataSetChanged()
-                Toast.makeText(this, getString(R.string.radio_stations_imported), Toast.LENGTH_SHORT).show()
+
+                // Запускаем корутину для удаления дубликатов и обновления адаптера
+                CoroutineScope(Dispatchers.IO).launch {
+                    // Удаляем дубликаты по URL
+                    val uniqueStations = radioStations.distinctBy { it.url }.toMutableList()
+
+                    // Возвращаемся к главному потоку для обновления UI
+                    withContext(Dispatchers.Main) {
+                        radioStations.clear()  // Очищаем старые данные
+                        radioStations.addAll(uniqueStations)  // Добавляем уникальные станции
+                        radioStationAdapter.notifyDataSetChanged()  // Обновляем адаптер
+                        Toast.makeText(this@RadioStationListActivity, getString(R.string.radio_stations_imported), Toast.LENGTH_SHORT).show()  // Показываем тост
+                    }
+                }
             }
         }
     }
+
 
 
     @SuppressLint("NotifyDataSetChanged")
