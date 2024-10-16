@@ -15,6 +15,8 @@ import androidx.core.content.FileProvider
 import java.io.File
 import java.io.OutputStreamWriter
 import android.net.Uri
+import android.view.LayoutInflater
+import android.widget.Button
 import android.widget.ImageButton
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetView
@@ -27,6 +29,42 @@ class RadioStationListActivity : AppCompatActivity() {
 
     private lateinit var radioStationAdapter: RadioStationAdapter
     private val gson = Gson()
+    private lateinit var radioStations: MutableList<RadioStation>
+
+
+    @SuppressLint("NotifyDataSetChanged")
+    val openDocumentLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
+        uri?.let {
+            val newStations = importRadioStationsFromFileUri(this, it)
+
+            if (newStations.isEmpty()) {
+                Toast.makeText(this, getString(R.string.file_no_new_stations), Toast.LENGTH_SHORT).show()
+            } else {
+                radioStations.clear()
+                radioStations.addAll(newStations)
+                radioStationAdapter.notifyDataSetChanged()
+                Toast.makeText(this, getString(R.string.radio_stations_imported), Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    // для добавления станции из файла
+    @SuppressLint("NotifyDataSetChanged")
+    val openDocumentLauncherAdd = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
+        uri?.let {
+            val newStations = importRadioStationsFromFileUri(this, it)
+
+            if (newStations.isEmpty()) {
+                Toast.makeText(this, getString(R.string.file_no_new_stations), Toast.LENGTH_SHORT).show()
+            } else {
+//                radioStations.clear()
+                radioStations.addAll(newStations)
+                radioStationAdapter.notifyDataSetChanged()
+                Toast.makeText(this, getString(R.string.radio_stations_imported), Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
 
     @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +77,7 @@ class RadioStationListActivity : AppCompatActivity() {
         val buttonImportStationsFromFile: ImageButton = findViewById(R.id.buttonImportStationsFromFile)
 
         // Получение списка радиостанций из Intent
-        val radioStations: MutableList<RadioStation> = intent.getParcelableArrayListExtra<RadioStation>("radioStations")?.toMutableList()
+        radioStations = intent.getParcelableArrayListExtra<RadioStation>("radioStations")?.toMutableList()
             ?: mutableListOf()
 
         radioStationAdapter = RadioStationAdapter(
@@ -74,20 +112,7 @@ class RadioStationListActivity : AppCompatActivity() {
             }
         }
 
-        val openDocumentLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
-            uri?.let {
-                val newStations = importRadioStationsFromFileUri(this, it)
 
-                if (newStations.isEmpty()) {
-                    Toast.makeText(this, getString(R.string.file_no_new_stations), Toast.LENGTH_SHORT).show()
-                } else {
-                    radioStations.clear()
-                    radioStations.addAll(newStations)
-                    radioStationAdapter.notifyDataSetChanged()
-                    Toast.makeText(this, getString(R.string.radio_stations_imported), Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
 
         buttonBack.setOnClickListener {
             val resultIntent = Intent()
@@ -101,7 +126,7 @@ class RadioStationListActivity : AppCompatActivity() {
         }
 
         buttonImportStationsFromFile.setOnClickListener {
-            openDocumentLauncher.launch(arrayOf("*/*"))
+            showCustomDialogImportFile()
         }
 
         buttonAddStation.setOnClickListener {
@@ -118,6 +143,38 @@ class RadioStationListActivity : AppCompatActivity() {
         }
 
     }
+
+    private fun showCustomDialogImportFile() {
+        // Создание диалога с кастомной разметкой
+        val builder = AlertDialog.Builder(this)
+        val inflater = LayoutInflater.from(this)
+        val dialogView = inflater.inflate(R.layout.dialog_custom_import_file, null)
+        builder.setView(dialogView)
+
+        // Создаем и отображаем диалог
+        val dialog = builder.create()
+        dialog.show()
+
+        // Поиск кнопок и установка действий
+        val buttonAdd = dialogView.findViewById<Button>(R.id.button_add)
+        val buttonReplace = dialogView.findViewById<Button>(R.id.button_replace)
+        val buttonCancel = dialogView.findViewById<Button>(R.id.button_cancel)
+
+        buttonAdd.setOnClickListener {
+            openDocumentLauncherAdd.launch(arrayOf("*/*")) // Добавить
+            dialog.dismiss()
+        }
+
+        buttonReplace.setOnClickListener {
+            openDocumentLauncher.launch(arrayOf("*/*"))  // Заменить
+            dialog.dismiss()
+        }
+
+        buttonCancel.setOnClickListener {
+            dialog.dismiss()  // Отмена
+        }
+    }
+
 
     private fun showDeleteConfirmationDialog(position: Int, radioStations: MutableList<RadioStation>) {
         val alertDialog = AlertDialog.Builder(this)
