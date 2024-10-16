@@ -313,6 +313,7 @@ class MainActivity : AppCompatActivity() {
         buttonFav3 = findViewById(R.id.buttonFav3)
         buttonSettings  = findViewById(R.id.buttonSettings)
         blackLine  = this.findViewById(R.id.black_line)
+        blackLine.visibility = View.VISIBLE
     }
 
     private suspend fun initializeApp(nameFromFunc:String) {
@@ -724,7 +725,7 @@ class MainActivity : AppCompatActivity() {
         dimView.visibility = View.GONE
         blackView.visibility = View.GONE
         radioText.visibility = View.GONE
-        blackLine.visibility = View.GONE
+        blackLine.visibility = View.VISIBLE
         handler.removeCallbacks(moveTextRunnable)
         enableUIElements() // Включить элементы интерфейса
     }
