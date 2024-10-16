@@ -118,5 +118,6 @@
     <string name="linkGitHub" translatable="false">https://github.com/kaefik/AtRadio</string>
     <string name="emailAuthor" translatable="false">ilnursoft@gmail.com</string>
     <string name="linkDonate" translatable="false">https://www.donationalerts.com/r/iamatai</string>
+    <string name="reset_stations">Reset the station list</string>
 
 </resources>

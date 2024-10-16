@@ -110,4 +110,5 @@
     <string name="choose_email_clients">Выберите почтовый клиент</string>
     <string name="aboutTitle">О программе</string>
     <string name="aboutDialogAlert" >AtRadio создано для прослушивания онлайн радиостанций.\n\n\"Всё радио мира — у тебя в кармане\"\n\nВерсия:  </string>
+    <string name="reset_stations">Сбросить список станций</string>
 </resources>

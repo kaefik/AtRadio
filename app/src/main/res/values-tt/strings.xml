@@ -111,5 +111,6 @@
     <string name="choose_email_clients">Почта клиентын сайлагыз</string>
     <string name="aboutTitle">О программе</string>
     <string name="aboutDialogAlert">AtRadio онлайн радиостанцияләрне тыңлау өчен булдырылды.\n\n\"Бар дөнья радиосы — синең кесәңдә\"\n\nВерсия:</string>
+    <string name="reset_stations">Станцияләр исемлеген яңадан төзү</string>
 
 </resources>
