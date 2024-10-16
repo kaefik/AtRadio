@@ -203,9 +203,9 @@ class MainActivity : AppCompatActivity() {
     private var directionY = 1 // Направление по оси Y (1 - вниз, -1 - вверх)
     private var velocity = 5f // Скорость перемещения текста
 
-    private val dimDelay = 100_000L // 100 секунд
-    private val blackDelay = 60_000L // 60 секунд
-    private val moveDelay = 80_000L // 80 секунд
+    private val dimDelay = 10_000L // 100 секунд
+    private val blackDelay = 15_000L // 60 секунд
+    private val moveDelay = 20_000L // 80 секунд
 
     private val handler = Handler(Looper.getMainLooper())
     private val dimRunnable = Runnable {
@@ -217,7 +217,6 @@ class MainActivity : AppCompatActivity() {
         dimView.visibility = View.GONE
         blackView.visibility = View.VISIBLE
         radioText.visibility = View.VISIBLE
-        blackLine.visibility = View.VISIBLE
         var newText = getString(R.string.at_radio)
         if (appSettings.radioStations.isNotEmpty()){
             newText = appSettings.currentStation.name
@@ -227,6 +226,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         radioText.text = newText
+
         radioText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 100f)
         radioText.setTextColor(ContextCompat.getColor(this, R.color.gray))
         startMovingText()
@@ -280,7 +280,7 @@ class MainActivity : AppCompatActivity() {
 
         // заставка - сринсейвер
         dimView = findViewById(R.id.dim_view)
-        blackView = findViewById(R.id.black_line)
+        blackView = findViewById(R.id.black_view)
         radioText = findViewById(R.id.radio_text)
 
         resetTimers()
@@ -313,7 +313,6 @@ class MainActivity : AppCompatActivity() {
         buttonFav3 = findViewById(R.id.buttonFav3)
         buttonSettings  = findViewById(R.id.buttonSettings)
         blackLine  = this.findViewById(R.id.black_line)
-        blackLine.visibility = View.VISIBLE
     }
 
     private suspend fun initializeApp(nameFromFunc:String) {
@@ -725,7 +724,6 @@ class MainActivity : AppCompatActivity() {
         dimView.visibility = View.GONE
         blackView.visibility = View.GONE
         radioText.visibility = View.GONE
-        blackLine.visibility = View.VISIBLE
         handler.removeCallbacks(moveTextRunnable)
         enableUIElements() // Включить элементы интерфейса
     }

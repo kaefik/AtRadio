@@ -185,6 +185,15 @@
         android:background="@color/dim_color"
         android:visibility="gone" />
 
+    <View
+        android:id="@+id/black_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/black_color"
+        android:visibility="gone"
+        android:elevation="0dp"/>
+
+
     <TextView
         android:id="@+id/radio_text"
         android:layout_width="wrap_content"
@@ -195,5 +204,8 @@
         android:textSize="24sp"
         android:visibility="gone"
         tools:ignore="MissingConstraints" />
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
