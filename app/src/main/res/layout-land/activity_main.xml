@@ -156,7 +156,7 @@
 
     <TextView
         android:id="@+id/statusRadio"
-        android:layout_width="400sp"
+        android:layout_width="250sp"
         android:layout_height="48sp"
         android:ellipsize="end"
         android:maxLines="2"

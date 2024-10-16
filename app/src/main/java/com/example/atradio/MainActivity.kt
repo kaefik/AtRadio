@@ -203,9 +203,9 @@ class MainActivity : AppCompatActivity() {
     private var directionY = 1 // Направление по оси Y (1 - вниз, -1 - вверх)
     private var velocity = 5f // Скорость перемещения текста
 
-    private val dimDelay = 10_000L // 100 секунд
-    private val blackDelay = 15_000L // 60 секунд
-    private val moveDelay = 20_000L // 80 секунд
+    private val dimDelay = 100_000L // 100 секунд
+    private val blackDelay = 60_000L // 60 секунд
+    private val moveDelay = 80_000L // 80 секунд
 
     private val handler = Handler(Looper.getMainLooper())
     private val dimRunnable = Runnable {
