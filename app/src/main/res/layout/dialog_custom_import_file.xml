@@ -8,7 +8,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Загрузка списка станций из файла"
+        android:text="@string/title_import_file"
         android:textSize="18sp"
         android:textStyle="bold"
         android:textAlignment="center"
@@ -26,20 +26,20 @@
             android:id="@+id/button_add"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Добавить" />
+            android:text="@string/add" />
 
         <Button
             android:id="@+id/button_replace"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Заменить"
+            android:text="@string/replace"
             android:layout_marginTop="16dp" />
 
         <Button
             android:id="@+id/button_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Отмена"
+            android:text="@string/cancel"
             android:layout_marginTop="16dp" />
     </LinearLayout>
 </LinearLayout>

@@ -113,6 +113,8 @@
     <string name="aboutTitle">Программа тураһында</string>
     <string name="aboutDialogAlert">AtRadio онлайн радиостанциялар тыңлау өсөн булдырылды.\n\n\"Бөтә донъя радиолары — һинең кеҫәңдә\"\n\nВерсия:</string>
     <string name="reset_stations">Радиостанциялар исемлеген яңыртырға</string>
+    <string name="title_import_file">Файлдан радиостанциялар исемлеген йөкләү</string>
+    <string name="replace">Заменергә</string>
 
 
 </resources>

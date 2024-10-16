@@ -119,5 +119,7 @@
     <string name="emailAuthor" translatable="false">ilnursoft@gmail.com</string>
     <string name="linkDonate" translatable="false">https://www.donationalerts.com/r/iamatai</string>
     <string name="reset_stations">Reset the station list</string>
+    <string name="title_import_file">Loading the station list from a file</string>
+    <string name="replace">Replace</string>
 
 </resources>

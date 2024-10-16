@@ -111,4 +111,6 @@
     <string name="aboutTitle">О программе</string>
     <string name="aboutDialogAlert" >AtRadio создано для прослушивания онлайн радиостанций.\n\n\"Всё радио мира — у тебя в кармане\"\n\nВерсия:  </string>
     <string name="reset_stations">Сбросить список станций</string>
+    <string name="title_import_file">Загрузка списка станций из файла</string>
+    <string name="replace">Заменить</string>
 </resources>
