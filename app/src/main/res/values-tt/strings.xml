@@ -91,7 +91,7 @@
     <string name="help_list_station_title">Станцияләр исемлеге</string>
     <string name="help_list_station_description">Менә станцияләр исемлеге. Сез исемлектән башлый аласыз, өсти, бетерә, саклый һәм станцияләрне йөкли аласыз.</string>
 
-    <string name="help_settings_title">Көйләр</string>
+    <string name="help_settings_title">Көйләү</string>
     <string name="help_settings_description">Монда программаның көйләвен үзгәртергә мөмкин</string>
 
     <string name="help_add_station_title">Станцияләрне өстәү</string>
