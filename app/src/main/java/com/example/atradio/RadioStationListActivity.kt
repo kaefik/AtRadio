@@ -55,7 +55,7 @@ class RadioStationListActivity : AppCompatActivity() {
     // для добавления станции из файла
     @SuppressLint("NotifyDataSetChanged")
     val openDocumentLauncherAdd = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
-        uri?.let {
+        uri?.let { it ->
             val newStations = importRadioStationsFromFileUri(this, it)
 
             if (newStations.isEmpty()) {
