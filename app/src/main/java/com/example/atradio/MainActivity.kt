@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
-import android.widget.ProgressBar
 import android.view.View
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -343,7 +342,7 @@ class MainActivity : AppCompatActivity() {
         // Получаем данные из Intent
         val currentStation = intent.getParcelableExtra<RadioStation>("currentStation")
         Log.d("iAtRadio", "MainActivity $nameFromFunc -> initializeApp -> statusPlay = ${viewModel.statusPlay}")
-        Log.d("iAtRadio", "MainActivity $nameFromFunc -> initializeApp -> currentStation = ${currentStation}")
+        Log.d("iAtRadio", "MainActivity $nameFromFunc -> initializeApp -> currentStation = $currentStation")
         Log.d("iAtRadio", "MainActivity $nameFromFunc -> initializeApp -> appsettings.currentStation = ${appSettings.currentStation}")
 
         // Привязка к сервису плееера
@@ -948,18 +947,18 @@ class MainActivity : AppCompatActivity() {
             when {
                 ContextCompat.checkSelfPermission(
                     this,
-                    android.Manifest.permission.POST_NOTIFICATIONS
+                    Manifest.permission.POST_NOTIFICATIONS
                 ) == PackageManager.PERMISSION_GRANTED -> {
                     // Permission is already granted, proceed with your app logic
                     Log.d("iAtRadio", "MainActivity -> Notification permission already granted")
                 }
-                shouldShowRequestPermissionRationale(android.Manifest.permission.POST_NOTIFICATIONS) -> {
+                shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS) -> {
                     // Show an explanation to the user before requesting the permission
                     showPermissionRationaleDialog()
                 }
                 else -> {
                     // Request the permission
-                    requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 }
             }
         } else {
@@ -974,7 +973,7 @@ class MainActivity : AppCompatActivity() {
             .setMessage(getString(R.string.message_showPermissionRationaleDialog))
             .setPositiveButton(getString(R.string.positive_showPermissionRationaleDialog)) { _, _ ->
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    requestPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 }
             }
             .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
