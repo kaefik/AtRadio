@@ -3,7 +3,6 @@ package com.example.atradio
 import android.Manifest
 import android.app.*
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothClass
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothProfile
 import android.content.BroadcastReceiver
@@ -526,11 +525,6 @@ class RadioNotificationService : Service() {
         handler.removeCallbacks(retryRunnable) // Удалить все запланированные попытки
     }
 
-    // Метод для получения состояния проигрывания
-    fun isPlaying(): Boolean {
-        return mediaPlayer?.isPlaying == true
-    }
-
     // для управлением громкостью при потери звукового фокуса, например, если усть звук от навигатора
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -569,15 +563,11 @@ class RadioNotificationService : Service() {
         when (focusChange) {
             AudioManager.AUDIOFOCUS_LOSS_TRANSIENT -> {
                 // Временная потеря фокуса, снижаем громкость на 50%
-                mediaPlayer?.let {
-                    it.setVolume(originalVolume * 0.5f, originalVolume * 0.5f)
-                }
+                mediaPlayer?.setVolume(originalVolume * 0.5f, originalVolume * 0.5f)
             }
             AudioManager.AUDIOFOCUS_GAIN -> {
                 // Фокус возвращен, восстанавливаем громкость
-                mediaPlayer?.let {
-                    it.setVolume(originalVolume, originalVolume)
-                }
+                mediaPlayer?.setVolume(originalVolume, originalVolume)
             }
             AudioManager.AUDIOFOCUS_LOSS -> {
                 // Полная потеря фокуса, останавливаем воспроизведение
@@ -621,9 +611,7 @@ class RadioNotificationService : Service() {
         const val ACTION_STOP_PANEL  = "com.example.atradio.ACTION_STOP_PANEL"
         const val ACTION_CLOSE = "com.example.atradio.ACTION_CLOSE"
         const val ACTION_PREVIOUS = "com.example.atradio.ACTION_PREVIOUS"
-        const val ACTION_PREVIOUS_PANEL  = "com.example.atradio.ACTION_PREVIOUS_PANEL"
         const val ACTION_NEXT = "com.example.atradio.ACTION_NEXT"
-        const val ACTION_NEXT_PANEL  = "com.example.atradio.ACTION_NEXT_PANEL"
         const val ACTION_ERROR = "com.example.atradio.ERROR" // для отправки ошибок из сервиса
         const val ACTION_INFO = "com.example.atradio.INFO" // для отправки информации из сервиса
         const val EXTRA_STATION = "com.example.atradio.EXTRA_STATION"
