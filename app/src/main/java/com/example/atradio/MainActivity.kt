@@ -42,8 +42,8 @@ import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import android.provider.Settings
 import android.Manifest
+import android.icu.text.SimpleDateFormat
 import android.view.KeyEvent
-import android.widget.RemoteViews
 import androidx.activity.viewModels
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetView
@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity() {
     private val infoReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             val isPlayed = intent?.getSerializableExtra("PLAY") as? MusicStatus // Принимаем MusicStatus
-            val stationFromService = intent?.getStringExtra("STATION")
+//            val stationFromService = intent?.getStringExtra("STATION")
 
             Log.e("iAtRadio", "MainActivity -> infoReceiver -> isPlayed = $isPlayed")
             Log.e("iAtRadio", "MainActivity -> infoReceiver -> appSettings.currentStation = ${appSettings.currentStation}")
@@ -191,7 +191,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var buttonPlay: ImageButton
     private lateinit var statusRadio: TextView
-    private lateinit var progressBar: ProgressBar
     private lateinit var blackLine: View // просто линия
 
     //заставка - сринсейвер
@@ -217,19 +216,41 @@ class MainActivity : AppCompatActivity() {
         dimView.visibility = View.GONE
         blackView.visibility = View.VISIBLE
         radioText.visibility = View.VISIBLE
+
+        updateRadioTextWithTime()
+        startMovingText()
+
+        // Запускаем обновление времени каждые 60 секунд
+        handler.postDelayed(updateTimeRunnable, 60000)
+    }
+
+    // Runnable для обновления текста с текущим временем
+    private val updateTimeRunnable = object : Runnable {
+        override fun run() {
+            updateRadioTextWithTime()
+            handler.postDelayed(this, 60000) // Обновляем время каждые 60 секунд
+        }
+    }
+
+    // Функция для обновления текста с названием радиостанции и временем
+    private fun updateRadioTextWithTime() {
         var newText = getString(R.string.at_radio)
-        if (appSettings.radioStations.isNotEmpty()){
+        if (appSettings.radioStations.isNotEmpty()) {
             newText = appSettings.currentStation.name
             val newSizeText = 15
             if (newText.length > newSizeText) {
                 newText = newText.substring(0, newSizeText) + "..."
             }
         }
-        radioText.text = newText
 
+        // Получаем текущее время
+        val currentTime = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
+
+        // Объединяем название станции и время
+        val displayText = "$newText\n$currentTime"
+        radioText.text = displayText
         radioText.setTextSize(TypedValue.COMPLEX_UNIT_PX, 100f)
         radioText.setTextColor(ContextCompat.getColor(this, R.color.gray))
-        startMovingText()
     }
 
     private val moveTextRunnable = object : Runnable {
