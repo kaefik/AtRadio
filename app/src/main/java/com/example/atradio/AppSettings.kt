@@ -46,6 +46,7 @@ data class AppSettings(
     var currentStation: RadioStation, // текущая радиостанция
     var isHelpMain: Boolean, // флаг был ли инструктаж главного окна
     var isHelpList: Boolean, // флаг был ли инструктаж  окна списка станций
+    var isFullScreenApp: Boolean, // флаг полноэкранного режима
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         mutableListOf<RadioStation?>().apply {
@@ -60,6 +61,7 @@ data class AppSettings(
         parcel.readString() ?: "en", // чтение языка интерфейса с дефолтным значением
         parcel.readParcelable(RadioStation::class.java.classLoader) ?: RadioStation("", "",), // Чтение текущей станции с дефолтным значением
         parcel.readByte() != 0.toByte(),
+        parcel.readByte() != 0.toByte(),
         parcel.readByte() != 0.toByte())
 
 
@@ -73,6 +75,7 @@ data class AppSettings(
         parcel.writeString(language) // Сохраняем язык интерфейса
         parcel.writeParcelable(currentStation, flags) // Запись текущей станции
         parcel.writeByte(if (isHelpMain) 1 else 0)
+        parcel.writeByte(if (isHelpList) 1 else 0)
         parcel.writeByte(if (isHelpList) 1 else 0)
     }
 
@@ -132,7 +135,8 @@ fun initAppSettings(context: Context): AppSettings {
         language = "",
         currentStation = RadioStation("", ""), // По умолчанию пустая станция
         isHelpMain = false,
-        isHelpList = false
+        isHelpList = false,
+        isFullScreenApp = true
     )
 
     // Загрузка радиостанций из CSV
