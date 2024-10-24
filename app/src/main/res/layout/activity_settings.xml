@@ -1,119 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:gravity="start">
-    <!-- Горизонтальная строка для кнопки и текста -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="start|center_vertical">
+    android:orientation="vertical">
 
-        <ImageButton
-            android:id="@+id/buttonBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/back"
-            app:srcCompat="@drawable/back48" />
-
-
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:gravity="start"
-        android:text="@string/autoplay_last_station"
-        android:textSize="18sp"
-        android:layout_marginTop="16dp"
-        />
-
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/autoPlaySwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/enable_autoplay_settings"
-        android:layout_gravity="start"
-        android:layout_marginTop="8dp" />
-
-    <!-- Вторая строка с текстом и переключателем -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/screensaver_protect_display_settings"
-        android:textSize="18sp"
-        android:layout_marginTop="16dp"
-        android:gravity="start" />
-
-    <androidx.appcompat.widget.SwitchCompat
-        android:id="@+id/screenSaverSwitch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/enable_screensaver"
-        android:layout_gravity="start"
-        android:layout_marginTop="8dp" />
-
-    <!-- Спадающий список для выбора языка -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/language"
-        android:textSize="18sp"
-        android:layout_marginTop="16dp"
-        android:gravity="start" />
-
-    <Spinner
-        android:id="@+id/languageSpinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/reset_stations"
-        android:textSize="18sp"
-        android:layout_marginTop="16dp"
-        android:gravity="start" />
-
-
-    <Button
-        android:id="@+id/buttonChooseStations"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/choose_category"
-        android:layout_gravity=""
-        android:layout_marginTop="24dp" />
-
-
-    <!-- Кнопка сброса настроек
-    <Button
-        android:id="@+id/buttonResetAllSettings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/reset_all_settings"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="24dp" />
-        -->
-
-    <!-- Добавляем вес, чтобы пространство между кнопкой сброса и нижними кнопками расширялось -->
-    <View
+    <!-- Контейнер для прокручиваемого содержимого -->
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:fillViewport="true">
 
-    <!-- Новый горизонтальный LinearLayout для кнопок внизу -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Горизонтальная строка для кнопки и текста -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="start|center_vertical">
+
+                <ImageButton
+                    android:id="@+id/buttonBack"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/back"
+                    app:srcCompat="@drawable/back48" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:gravity="start"
+                android:text="@string/autoplay_last_station"
+                android:textSize="18sp"
+                android:layout_marginTop="16dp" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/autoPlaySwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/enable_autoplay_settings"
+                android:layout_gravity="start"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/screensaver_protect_display_settings"
+                android:textSize="18sp"
+                android:layout_marginTop="16dp"
+                android:gravity="start" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/screenSaverSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/enable_screensaver"
+                android:layout_gravity="start"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/language"
+                android:textSize="18sp"
+                android:layout_marginTop="16dp"
+                android:gravity="start" />
+
+            <Spinner
+                android:id="@+id/languageSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/reset_stations"
+                android:textSize="18sp"
+                android:layout_marginTop="16dp"
+                android:gravity="start" />
+
+            <Button
+                android:id="@+id/buttonChooseStations"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/choose_category"
+                android:layout_marginTop="24dp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Нижняя панель с кнопками (всегда внизу) -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center">
+        android:gravity="center"
+        android:padding="16dp">
 
         <ImageButton
             android:id="@+id/buttonGitHub"
@@ -151,5 +144,4 @@
             app:srcCompat="@drawable/about48" />
 
     </LinearLayout>
-
 </LinearLayout>
