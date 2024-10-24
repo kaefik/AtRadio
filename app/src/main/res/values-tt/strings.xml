@@ -114,5 +114,6 @@
     <string name="reset_stations">Станцияләр исемлеген яңадан төзү</string>
     <string name="title_import_file">Файлдан станцияләр исемлеген йөкләү</string>
     <string name="replace">Замену</string>
+    <string name="enableFullScreenApp">Тулы экран режимын кушырга</string>
 
 </resources>

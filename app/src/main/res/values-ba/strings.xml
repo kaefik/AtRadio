@@ -115,6 +115,7 @@
     <string name="reset_stations">Радиостанциялар исемлеген яңыртырға</string>
     <string name="title_import_file">Файлдан радиостанциялар исемлеген йөкләү</string>
     <string name="replace">Заменергә</string>
+    <string name="enableFullScreenApp">Тулы экран режимын ҡушырға</string>
 
 
 </resources>

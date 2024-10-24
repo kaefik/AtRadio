@@ -113,4 +113,5 @@
     <string name="reset_stations">Сбросить список станций</string>
     <string name="title_import_file">Загрузка списка станций из файла</string>
     <string name="replace">Заменить</string>
+    <string name="enableFullScreenApp">Включение полноэкранного режима</string>
 </resources>
