@@ -29,6 +29,7 @@ class SettingsActivity : AppCompatActivity() {
 
     private lateinit var autoPlaySwitch: SwitchCompat
     private lateinit var screenSaverSwitch: SwitchCompat
+    private lateinit var fullScreenApp: SwitchCompat
     private lateinit var appSettings: AppSettings
 //    private lateinit var buttonResetAllSettings: Button
     private lateinit var buttonChooseStations: Button
@@ -43,6 +44,7 @@ class SettingsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_settings)
 
         autoPlaySwitch = findViewById(R.id.autoPlaySwitch)
+        fullScreenApp = findViewById(R.id.fullScreenApp)
         screenSaverSwitch = findViewById(R.id.screenSaverSwitch)
 //        buttonResetAllSettings = findViewById(R.id.buttonResetAllSettings)
         buttonChooseStations = findViewById(R.id.buttonChooseStations)
@@ -107,6 +109,11 @@ class SettingsActivity : AppCompatActivity() {
         // Обработка изменения состояния переключателя
         autoPlaySwitch.setOnCheckedChangeListener { _, isChecked ->
             appSettings.isAutoPlayEnabled = isChecked
+            saveAppSettings(appSettings)
+        }
+
+        fullScreenApp.setOnCheckedChangeListener { _, isChecked ->
+            appSettings.isFullScreenApp = isChecked
             saveAppSettings(appSettings)
         }
 
@@ -182,6 +189,7 @@ class SettingsActivity : AppCompatActivity() {
     // добавить сюда когда добавляешь новый параметр
     private fun refreshSettings(){
         autoPlaySwitch.isChecked = appSettings.isAutoPlayEnabled
+        fullScreenApp.isChecked = appSettings.isFullScreenApp
         screenSaverSwitch.isChecked = appSettings.isScreenSaverEnabled
         languageSpinner.setSelection(getLanguageIndex(appSettings.language))
     }
