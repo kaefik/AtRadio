@@ -35,15 +35,6 @@
                     app:srcCompat="@drawable/back48" />
             </LinearLayout>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:gravity="start"
-                android:text="@string/autoplay_last_station"
-                android:textSize="18sp"
-                android:layout_marginTop="16dp" />
-
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/autoPlaySwitch"
                 android:layout_width="wrap_content"
@@ -52,16 +43,16 @@
                 android:layout_gravity="start"
                 android:layout_marginTop="8dp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/screensaver_protect_display_settings"
-                android:textSize="18sp"
-                android:layout_marginTop="16dp"
-                android:gravity="start" />
-
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/screenSaverSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/enable_screensaver"
+                android:layout_gravity="start"
+                android:layout_marginTop="8dp" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/fullScreenApp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/enable_screensaver"
