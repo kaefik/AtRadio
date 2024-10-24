@@ -287,6 +287,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.S)
     @SuppressLint("CutPasteId")
     private fun preInitializeApp(nameFromFunc:String) {
         Log.d("iAtRadio", "MainActivity $nameFromFunc -> preInitializeApp -> begin -> viewModel.statusPlay")
@@ -308,16 +309,37 @@ class MainActivity : AppCompatActivity() {
         // END заставка - сринсейвер
 
         // Скрытие строки статуса
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.insetsController?.hide(WindowInsets.Type.statusBars())
-            window.insetsController?.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        if(appSettings.isFullScreenApp) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                window.insetsController?.hide(WindowInsets.Type.statusBars())
+                window.insetsController?.systemBarsBehavior =
+                    WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            } else {
+                @Suppress("DEPRECATION")
+                window.setFlags(
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    WindowManager.LayoutParams.FLAG_FULLSCREEN
+                )
+            }
         } else {
-            @Suppress("DEPRECATION")
-            window.setFlags(
-                WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN
-            )
+            // TODO: переключение на обычный режим окна приложения
+            Log.d("iAtRadio", "MainActivity флаг полного экрана выключен ${appSettings.isFullScreenApp}")
+
+            Handler(Looper.getMainLooper()).postDelayed({
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    window.insetsController?.show(WindowInsets.Type.statusBars())
+                    window.insetsController?.systemBarsBehavior = WindowInsetsController.BEHAVIOR_DEFAULT
+                } else {
+                    @Suppress("DEPRECATION")
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+                }
+
+                // Включаем edge-to-edge только если не в полноэкранном режиме
+                enableEdgeToEdge()
+            }, 100)
         }
+
+
 
         volumeControl = VolumeControl(this)
 
