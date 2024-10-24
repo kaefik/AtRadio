@@ -55,7 +55,7 @@
                 android:id="@+id/fullScreenApp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/enable_screensaver"
+                android:text="@string/enableFullScreenApp"
                 android:layout_gravity="start"
                 android:layout_marginTop="8dp" />
 
