@@ -1104,13 +1104,30 @@ class MainActivity : AppCompatActivity() {
     private suspend fun chooseRadioStation(language: String): MutableList<RadioStation> = suspendCancellableCoroutine { continuation ->
         val baseFolder = if (language == "en") "en" else "ru"
 
-        val categories = mapOf(
-            getString(R.string.category_tatar) to "$baseFolder/radio_stations_tatar.csv",
-            getString(R.string.category_classic) to "$baseFolder/radio_stations_classic.csv",
-            getString(R.string.category_retro) to "$baseFolder/radio_stations_retro.csv",
-            getString(R.string.category_russian) to "$baseFolder/radio_stations_rus.csv",
-            getString(R.string.category_other) to "$baseFolder/radio_stations_other.csv"
+        var categories: Map<String, Int>? = null
+
+        val categories_en = mapOf(
+            getString(R.string.category_tatar) to R.raw.en_radio_stations_tatar,
+            getString(R.string.category_classic) to R.raw.en_radio_stations_classic,
+            getString(R.string.category_retro) to R.raw.en_radio_stations_retro,
+            getString(R.string.category_russian) to R.raw.en_radio_stations_rus,
+            getString(R.string.category_other) to R.raw.en_radio_stations_other
         )
+
+        val categories_ru = mapOf(
+            getString(R.string.category_tatar) to R.raw.ru_radio_stations_tatar,
+            getString(R.string.category_classic) to R.raw.ru_radio_stations_classic,
+            getString(R.string.category_retro) to R.raw.ru_radio_stations_retro,
+            getString(R.string.category_russian) to R.raw.ru_radio_stations_rus,
+            getString(R.string.category_other) to R.raw.ru_radio_stations_other
+        )
+
+        if (language == "en")
+            categories = categories_en
+        else
+            categories = categories_ru
+
+
 
         val categoryNames = categories.keys.toTypedArray()
         val checkedItems = BooleanArray(categoryNames.size) { true } // Все категории выбраны по умолчанию
@@ -1138,15 +1155,15 @@ class MainActivity : AppCompatActivity() {
 
 
     @SuppressLint("DiscouragedApi")
-    private fun combineSelectedFiles(selectedCategories: List<String>, categories: Map<String, String>): MutableList<RadioStation> {
+    private fun combineSelectedFiles(selectedCategories: List<String>, categories: Map<String, Int>): MutableList<RadioStation> {
         val combinedData = StringBuilder()
 
         for (category in selectedCategories) {
-            val fileName = categories[category]
-            if (fileName != null) {
+            val resourceId = categories[category]
+            if (resourceId != null) {
                 try {
-                    // Используем AssetManager для чтения файла
-                    val inputStream = assets.open(fileName)
+                    // Используем Resources для чтения файла из папки raw
+                    val inputStream = resources.openRawResource(resourceId)
                     val lines = inputStream.bufferedReader().readLines()
 
                     // Исключаем первую строку
@@ -1154,7 +1171,7 @@ class MainActivity : AppCompatActivity() {
                         combinedData.append(lines.drop(1).joinToString("\n")).append("\n")
                     }
                 } catch (e: IOException) {
-                    Log.e("iAtRadio", "combineSelectedFiles -> Не удалось открыть файл: $fileName", e)
+                    Log.e("iAtRadio", "combineSelectedFiles -> Не удалось открыть файл с ID: $resourceId", e)
                 }
             }
         }
@@ -1164,6 +1181,7 @@ class MainActivity : AppCompatActivity() {
         // После объединения файлов можно загружать их в программу
         return loadDataToApp(combinedData.toString())
     }
+
 
 
 
