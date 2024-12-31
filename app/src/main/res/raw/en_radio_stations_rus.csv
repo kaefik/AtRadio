@@ -1,23 +1,24 @@
 Name;URL
 Khaypovye Dvadtsatye (Russkoe radio);https://rr-20.hostingradio.ru/rr2096.aacp
 Russkie Kavery (Russkoe radio);https://rr-covers.hostingradio.ru/rrcovers96.aacp
-Russkij Rok (Russkoe radio);https://rr-russkijrok.hostingradio.ru/russkijrok96.aacp
+Russkiy Rok (Russkoe radio);https://rr-russkijrok.hostingradio.ru/russkijrok96.aacp
 Radio 7 na semi kholmakh;https://hls-01-regions.emgsound.ru/13_msk/playlist.m3u8
 Enerdzhi Radio;http://ic5.101.ru:8000/v1_1
-Detskoe radio (Deti FM);http://ic5.101.ru:8000/v14_1
-Detskij Kanal (Russkoe radio);https://rr-detskijkanal.hostingradio.ru/detskijkanal96.aacp
+Detskoye Radio (Deti FM);http://ic5.101.ru:8000/v14_1
+Detskiy Kanal (Russkoe radio);https://rr-detskijkanal.hostingradio.ru/detskijkanal96.aacp
+Detskoye Radio (Staroye radio);http://server.audiopedia.su:8000/detskoe128
 Monte Karlo;https://montecarlo.hostingradio.ru/montecarlo128.mp3
 Radio Ermitazh;https://hermitage.hostingradio.ru/hermitage128.mp3
 Bim Radio Kazan;https://av.bimradio.ru/bim_mp3_128k
-Dorozhnoe radio (88,9 FM) Kazan;https://hls-01-regions.emgsound.ru/15_kazan/playlist.m3u8
-Russkoe radio (90.7) Kazan;https://rusradio.hostingradio.ru/rusradio96.aacp
+Dorozhnoye Radio (88.9 FM) Kazan;https://hls-01-regions.emgsound.ru/15_kazan/playlist.m3u8
+Russkoye Radio (90.7) Kazan;https://rusradio.hostingradio.ru/rusradio96.aacp
 Yumor FM Kazan;https://srv12.gpmradio.ru:8443/stream/air/aac/64/102
 Studio21 (khip khop) Kazan;https://hls.studio21.ru/studio21/playlist.m3u8
-Nashe radio (96.8) Kazan;https://nashe1.hostingradio.ru:80/nashe-128.mp3
+Nashe Radio (96.8) Kazan;https://nashe1.hostingradio.ru:80/nashe-128.mp3
 Radio Rekord Kazan;https://hls-01-radiorecord.hostingradio.ru/record/112/playlist.m3u8
 Avtoradio Kazan;https://srv21.gpmradio.ru:8443/stream/air/aac/64/100
 Relax FM Kazan;https://srv02.gpmradio.ru:8443/stream/reg/mp3/128/region_relax_9
-Militsejskaya volna;https://radiomv.hostingradio.ru:80/radiomv128.mp3
+Militseyskaya Volna;https://radiomv.hostingradio.ru:80/radiomv128.mp3
 Evropa Plyus;https://hls-01-regions.emgsound.ru/11_kazan/playlist.m3u8
 D FM;https://dfm.hostingradio.ru/dfm96.aacp
 Radio Shanson (89.7) Kazan;https://online2.gkvr.ru:8001/chanson_kaz_64.aac
@@ -25,3 +26,4 @@ Radio Gordost (97.2) Kazan;https://rgordost.hostingradio.ru/rgordost128.aacp
 Radio Love (107.8) Kazan;https://stream2.n340.com/12_love_64_reg_44?type=aac&UID=8EE86F9F7653C544191435A1D5C33263
 Piratskaya Stantsiya (radio Rekord);https://radiorecord.hostingradio.ru/ps96.aacp
 Chilaut (Wow Music);http://stream.vyshka24.ru/wowchillout
+
