@@ -122,5 +122,6 @@
     <string name="title_import_file">Loading the station list from a file</string>
     <string name="replace">Replace</string>
     <string name="enableFullScreenApp">Enable fullscreen mode</string>
+    <string name="find_station">Find the station</string>
 
 </resources>

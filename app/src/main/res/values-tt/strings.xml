@@ -115,5 +115,6 @@
     <string name="title_import_file">Файлдан станцияләр исемлеген йөкләү</string>
     <string name="replace">Замену</string>
     <string name="enableFullScreenApp">Тулы экран режимын кушырга</string>
+    <string name="find_station">Станцияны тап</string>
 
 </resources>
