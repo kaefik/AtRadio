@@ -6,22 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- RecyclerView с гибкой высотой и шириной -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewRadioStations"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@+id/buttonAddStation"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:ignore="MissingConstraints"
-        android:layout_marginTop="15dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        />
-
-    <!-- ImageButtons равномерно распределены по горизонтали -->
+    <!-- Кнопки равномерно распределены по горизонтали -->
     <ImageButton
         android:id="@+id/buttonAddStation"
         android:layout_width="wrap_content"
@@ -29,12 +14,10 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/add"
         android:src="@drawable/add48"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerViewRadioStations"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/buttonSaveShareStations"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="15dp"
-        />
+        android:layout_marginTop="15dp" />
 
     <ImageButton
         android:id="@+id/buttonSaveShareStations"
@@ -43,11 +26,10 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/share"
         android:src="@drawable/share48"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerViewRadioStations"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@+id/buttonAddStation"
         app:layout_constraintEnd_toStartOf="@+id/buttonImportStationsFromFile"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="15dp"/>
+        android:layout_marginTop="15dp" />
 
     <ImageButton
         android:id="@+id/buttonImportStationsFromFile"
@@ -56,12 +38,10 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/import_str"
         android:src="@drawable/import48"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerViewRadioStations"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@+id/buttonSaveShareStations"
         app:layout_constraintEnd_toStartOf="@+id/buttonBack"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="15dp"
-        />
+        android:layout_marginTop="15dp" />
 
     <ImageButton
         android:id="@+id/buttonBack"
@@ -70,11 +50,33 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:contentDescription="@string/back"
         android:src="@drawable/back48"
-        app:layout_constraintBottom_toTopOf="@+id/recyclerViewRadioStations"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/buttonImportStationsFromFile"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/buttonImportStationsFromFile"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="15dp" />
+
+    <!-- Поиск -->
+    <androidx.appcompat.widget.SearchView
+        android:id="@+id/searchView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/buttonAddStation"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="15dp"
-        />
+        android:layout_marginHorizontal="10dp"
+        android:queryHint="Найти станцию" />
+
+    <!-- RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewRadioStations"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@+id/searchView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="15dp"
+        android:layout_marginHorizontal="10dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -18,6 +18,7 @@ import android.net.Uri
 import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.ImageButton
+import androidx.appcompat.widget.SearchView
 import com.getkeepsafe.taptargetview.TapTarget
 import com.getkeepsafe.taptargetview.TapTargetView
 import com.google.gson.Gson
@@ -35,6 +36,8 @@ class RadioStationListActivity : AppCompatActivity() {
     private val gson = Gson()
     private lateinit var radioStations: MutableList<RadioStation>
 
+    private lateinit var filteredRadioStations: MutableList<RadioStation>
+    private lateinit var searchView: SearchView
 
     @SuppressLint("NotifyDataSetChanged")
     val openDocumentLauncher = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri: Uri? ->
@@ -97,14 +100,19 @@ class RadioStationListActivity : AppCompatActivity() {
         radioStations = intent.getParcelableArrayListExtra<RadioStation>("radioStations")?.toMutableList()
             ?: mutableListOf()
 
+
+        // Инициализация адаптера
+        filteredRadioStations = mutableListOf()
+        filteredRadioStations.addAll(radioStations)
+
         radioStationAdapter = RadioStationAdapter(
             this,
-            radioStations,
-            { position -> showDeleteConfirmationDialog(position, radioStations) },
+            filteredRadioStations,
+            { position -> showDeleteConfirmationDialog(position, filteredRadioStations) },
             { selectedStation ->
                 val resultIntent = Intent()
                 resultIntent.putExtra("selectedStation", selectedStation)
-                resultIntent.putParcelableArrayListExtra("radioStations", ArrayList(radioStations))
+                resultIntent.putParcelableArrayListExtra("radioStations", ArrayList(filteredRadioStations))
                 setResult(RESULT_OK, resultIntent)
                 finish()
             }
@@ -113,6 +121,21 @@ class RadioStationListActivity : AppCompatActivity() {
         val recyclerView: RecyclerView = findViewById(R.id.recyclerViewRadioStations)
         recyclerView.layoutManager = LinearLayoutManager(this)
         recyclerView.adapter = radioStationAdapter
+
+        // Настройка SearchView
+        searchView = findViewById(R.id.searchView)
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterStations(newText)
+                return true
+            }
+        })
+
+
 
         // Регистрация callback для обработки результата из AddRadioStationActivity
         val addRadioStationLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -159,6 +182,22 @@ class RadioStationListActivity : AppCompatActivity() {
             saveAppSettings(appSettings)
         }
 
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun filterStations(query: String?) {
+        val searchText = query?.lowercase()?.trim() ?: ""
+        filteredRadioStations.clear()
+
+        if (searchText.isEmpty()) {
+            filteredRadioStations.addAll(radioStations)
+        } else {
+            filteredRadioStations.addAll(
+                radioStations.filter { it.name.lowercase().contains(searchText) }
+            )
+        }
+
+        radioStationAdapter.notifyDataSetChanged()
     }
 
     private fun showCustomDialogImportFile() {
