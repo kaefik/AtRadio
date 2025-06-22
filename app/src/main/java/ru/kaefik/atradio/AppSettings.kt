@@ -1,12 +1,10 @@
-package com.example.atradio
+package ru.kaefik.atradio
 import android.os.Parcel
 import android.os.Parcelable
 
 import android.content.Context
 import java.io.BufferedReader
 import java.io.InputStreamReader
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 
 // Определение радиостанций
 data class RadioStation(val name: String, val url: String) : Parcelable {
@@ -24,12 +22,12 @@ data class RadioStation(val name: String, val url: String) : Parcelable {
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<RadioStation> {
-        override fun createFromParcel(parcel: Parcel): RadioStation {
-            return RadioStation(parcel)
+    companion object CREATOR : Parcelable.Creator<ru.kaefik.atradio.RadioStation> {
+        override fun createFromParcel(parcel: Parcel): ru.kaefik.atradio.RadioStation {
+            return ru.kaefik.atradio.RadioStation(parcel)
         }
 
-        override fun newArray(size: Int): Array<RadioStation?> {
+        override fun newArray(size: Int): Array<ru.kaefik.atradio.RadioStation?> {
             return arrayOfNulls(size)
         }
     }
@@ -37,29 +35,32 @@ data class RadioStation(val name: String, val url: String) : Parcelable {
 
 // Класс для хранения настроек приложения
 data class AppSettings(
-    var favoriteStations: MutableList<RadioStation?>, // список избранных станций
+    var favoriteStations: MutableList<ru.kaefik.atradio.RadioStation?>, // список избранных станций
     var isAutoPlayEnabled: Boolean,    // флаг автозапуска
     var isScreenSaverEnabled: Boolean, // флаг включения скринсейвера
     var lastRadioStationIndex: Int,     // номер последней проигранной станции
-    var radioStations: MutableList<RadioStation>, // список станций
+    var radioStations: MutableList<ru.kaefik.atradio.RadioStation>, // список станций
     var language: String, // язык интерфейса
-    var currentStation: RadioStation, // текущая радиостанция
+    var currentStation: ru.kaefik.atradio.RadioStation, // текущая радиостанция
     var isHelpMain: Boolean, // флаг был ли инструктаж главного окна
     var isHelpList: Boolean, // флаг был ли инструктаж  окна списка станций
     var isFullScreenApp: Boolean, // флаг полноэкранного режима
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
-        mutableListOf<RadioStation?>().apply {
-            parcel.readTypedList(this, RadioStation.CREATOR)  // Исправлено для чтения списка радиостанций
+        mutableListOf<ru.kaefik.atradio.RadioStation?>().apply {
+            parcel.readTypedList(this, ru.kaefik.atradio.RadioStation.CREATOR)  // Исправлено для чтения списка радиостанций
         },
         parcel.readByte() != 0.toByte(),
         parcel.readByte() != 0.toByte(),
         parcel.readInt(),
-        mutableListOf<RadioStation>().apply {
-            parcel.readTypedList(this, RadioStation.CREATOR) // Исправлено для чтения списка радиостанций
+        mutableListOf<ru.kaefik.atradio.RadioStation>().apply {
+            parcel.readTypedList(this, ru.kaefik.atradio.RadioStation.CREATOR) // Исправлено для чтения списка радиостанций
         },
         parcel.readString() ?: "en", // чтение языка интерфейса с дефолтным значением
-        parcel.readParcelable(RadioStation::class.java.classLoader) ?: RadioStation("", "",), // Чтение текущей станции с дефолтным значением
+        parcel.readParcelable(ru.kaefik.atradio.RadioStation::class.java.classLoader) ?: ru.kaefik.atradio.RadioStation(
+            "",
+            "",
+        ), // Чтение текущей станции с дефолтным значением
         parcel.readByte() != 0.toByte(),
         parcel.readByte() != 0.toByte(),
         parcel.readByte() != 0.toByte())
@@ -83,12 +84,12 @@ data class AppSettings(
         return 0
     }
 
-    companion object CREATOR : Parcelable.Creator<AppSettings> {
-        override fun createFromParcel(parcel: Parcel): AppSettings {
-            return AppSettings(parcel)
+    companion object CREATOR : Parcelable.Creator<ru.kaefik.atradio.AppSettings> {
+        override fun createFromParcel(parcel: Parcel): ru.kaefik.atradio.AppSettings {
+            return ru.kaefik.atradio.AppSettings(parcel)
         }
 
-        override fun newArray(size: Int): Array<AppSettings?> {
+        override fun newArray(size: Int): Array<ru.kaefik.atradio.AppSettings?> {
             return arrayOfNulls(size)
         }
     }
@@ -96,8 +97,8 @@ data class AppSettings(
 
 
 // Функция для загрузки радиостанций из CSV
-fun loadRadioStationsFromRaw(context: Context, resourceId: Int): MutableList<RadioStation> {
-    val radioStations = mutableListOf<RadioStation>()
+fun loadRadioStationsFromRaw(context: Context, resourceId: Int): MutableList<ru.kaefik.atradio.RadioStation> {
+    val radioStations = mutableListOf<ru.kaefik.atradio.RadioStation>()
 
     // Открываем файл из папки raw
     context.resources.openRawResource(resourceId).use { inputStream ->
@@ -114,7 +115,7 @@ fun loadRadioStationsFromRaw(context: Context, resourceId: Int): MutableList<Rad
                     if (tokens.size >= 2) {
                         val name = tokens[0]
                         val url = tokens[1]
-                        radioStations.add(RadioStation(name, url))
+                        radioStations.add(ru.kaefik.atradio.RadioStation(name, url))
                     }
                 }
             }
@@ -125,15 +126,15 @@ fun loadRadioStationsFromRaw(context: Context, resourceId: Int): MutableList<Rad
 }
 
 // Ваша основная активность или место, где вы инициализируете AppSettings
-fun initAppSettings(context: Context): AppSettings {
-    val appSettings = AppSettings(
+fun initAppSettings(context: Context): ru.kaefik.atradio.AppSettings {
+    val appSettings = ru.kaefik.atradio.AppSettings(
         favoriteStations = mutableListOf(null, null, null), // Пустые избранные станции
         isAutoPlayEnabled = false, // Значение по умолчанию
         isScreenSaverEnabled = true, // Значение по умолчанию
         lastRadioStationIndex = 0, // Первая радиостанция в списке
         radioStations = mutableListOf(), // Пустой список радиостанций
         language = "",
-        currentStation = RadioStation("", ""), // По умолчанию пустая станция
+        currentStation = ru.kaefik.atradio.RadioStation("", ""), // По умолчанию пустая станция
         isHelpMain = false,
         isHelpList = false,
         isFullScreenApp = true
@@ -141,7 +142,12 @@ fun initAppSettings(context: Context): AppSettings {
 
     // Загрузка радиостанций из CSV
     appSettings.radioStations.clear()
-    appSettings.radioStations.addAll(loadRadioStationsFromRaw(context, R.raw.radio_stations_default))
+    appSettings.radioStations.addAll(
+        ru.kaefik.atradio.loadRadioStationsFromRaw(
+            context,
+            ru.kaefik.atradio.R.raw.radio_stations_default
+        )
+    )
 
     // Если список радиостанций не пуст, устанавливаем первую станцию как текущую
 //    if (appSettings.radioStations.isNotEmpty()) {

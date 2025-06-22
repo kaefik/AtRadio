@@ -1,4 +1,4 @@
-package com.example.atradio
+package ru.kaefik.atradio
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -120,7 +120,7 @@ class MainActivity : AppCompatActivity() {
 
     private val listRadioStationLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            val updatedRadioStations = result.data?.getParcelableArrayListExtra<RadioStation>("radioStations")?.toMutableList()
+            val updatedRadioStations = result.data?.getParcelableArrayListExtra<ru.kaefik.atradio.RadioStation>("radioStations")?.toMutableList()
 
             appSettings = loadAppSettings()
 
@@ -136,7 +136,7 @@ class MainActivity : AppCompatActivity() {
                 viewModel.statusPlay = MusicStatus.STOPPED
                 updateUIForStopped()
                 statusRadio.text = getString(R.string.empty_list_stations)
-                appSettings.currentStation = RadioStation("", "")
+                appSettings.currentStation = ru.kaefik.atradio.RadioStation("", "")
 
             } else {
                 if (appSettings.lastRadioStationIndex >= appSettings.radioStations.size) {
@@ -146,7 +146,7 @@ class MainActivity : AppCompatActivity() {
                 statusRadio.text = appSettings.currentStation.name
             }
 
-            val selectedStation = result.data?.getParcelableExtra<RadioStation>("selectedStation")
+            val selectedStation = result.data?.getParcelableExtra<ru.kaefik.atradio.RadioStation>("selectedStation")
             if (selectedStation != null) {
                 appSettings.lastRadioStationIndex = appSettings.radioStations.indexOf(selectedStation)
                 appSettings.currentStation = selectedStation
@@ -175,7 +175,7 @@ class MainActivity : AppCompatActivity() {
     private val REQUEST_BLUETOOTH_PERMISSIONS = 1
 
     private lateinit var volumeControl: VolumeControl
-    private lateinit var appSettings: AppSettings
+    private lateinit var appSettings: ru.kaefik.atradio.AppSettings
     private val gson = Gson()
 
     private lateinit var buttonVolUp: ImageButton
@@ -362,7 +362,7 @@ class MainActivity : AppCompatActivity() {
         Log.d("iAtRadio", "MainActivity $nameFromFunc -> initializeApp -> begin")
 
         // Получаем данные из Intent
-        val currentStation = intent.getParcelableExtra<RadioStation>("currentStation")
+        val currentStation = intent.getParcelableExtra<ru.kaefik.atradio.RadioStation>("currentStation")
         Log.d("iAtRadio", "MainActivity $nameFromFunc -> initializeApp -> statusPlay = ${viewModel.statusPlay}")
         Log.d("iAtRadio", "MainActivity $nameFromFunc -> initializeApp -> currentStation = $currentStation")
         Log.d("iAtRadio", "MainActivity $nameFromFunc -> initializeApp -> appsettings.currentStation = ${appSettings.currentStation}")
@@ -436,7 +436,7 @@ class MainActivity : AppCompatActivity() {
         if (appSettings.radioStations.isEmpty()) {
             // Загрузка радиостанций из CSV
             appSettings.radioStations.addAll(
-                loadRadioStationsFromRaw(
+                ru.kaefik.atradio.loadRadioStationsFromRaw(
                     this,
                     R.raw.radio_stations_default
                 )
@@ -563,7 +563,7 @@ class MainActivity : AppCompatActivity() {
             if (appSettings.radioStations.isEmpty()) {
                 appSettings.lastRadioStationIndex = 0
                 statusRadio.text = getString(R.string.empty_list_stations)
-                appSettings.currentStation = RadioStation("empty", "empty")
+                appSettings.currentStation = ru.kaefik.atradio.RadioStation("empty", "empty")
                 viewModel.statusPlay = MusicStatus.STOPPED
                 updateUIForStopped()
                 stopPlayback()
@@ -669,7 +669,7 @@ class MainActivity : AppCompatActivity() {
 
     // сохранение настроек приложения
 
-    private fun saveAppSettings(settings: AppSettings) {
+    private fun saveAppSettings(settings: ru.kaefik.atradio.AppSettings) {
         val sharedPreferences = getSharedPreferences("AppSettings", MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         val json = gson.toJson(settings)
@@ -677,15 +677,15 @@ class MainActivity : AppCompatActivity() {
         editor.apply()
     }
 
-    private fun loadAppSettings(): AppSettings {
+    private fun loadAppSettings(): ru.kaefik.atradio.AppSettings {
         val sharedPreferences = getSharedPreferences("AppSettings", MODE_PRIVATE)
         val json = sharedPreferences.getString("AppSettingsData", null)
         return if (json != null) {
-            val type = object : TypeToken<AppSettings>() {}.type
+            val type = object : TypeToken<ru.kaefik.atradio.AppSettings>() {}.type
             gson.fromJson(json, type)
         } else {
             // Возвращаем настройки по умолчанию, если они отсутствуют
-           initAppSettings(this)
+            ru.kaefik.atradio.initAppSettings(this)
         }
     }
 
@@ -897,7 +897,7 @@ class MainActivity : AppCompatActivity() {
     // упраление проигрыванием станций
 
     // передаем текущую радиостанцию в сервис
-    private fun setStationNotification(station: RadioStation) {
+    private fun setStationNotification(station: ru.kaefik.atradio.RadioStation) {
         val intent = Intent(this, RadioNotificationService::class.java).apply {
             action = RadioNotificationService.ACTION_CURRENT_STATION
             putExtra(RadioNotificationService.EXTRA_STATION, station)
@@ -907,7 +907,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun playStation(station: RadioStation) {
+    private fun playStation(station: ru.kaefik.atradio.RadioStation) {
         val intent = Intent(this, RadioNotificationService::class.java).apply {
             action = RadioNotificationService.ACTION_PLAY
             putExtra(RadioNotificationService.EXTRA_STATION, station)
@@ -933,7 +933,7 @@ class MainActivity : AppCompatActivity() {
         startService(intent)
     }
 
-    private fun statusPlayFromService(station: RadioStation) {
+    private fun statusPlayFromService(station: ru.kaefik.atradio.RadioStation) {
         val intent = Intent(this, RadioNotificationService::class.java).apply {
             action = RadioNotificationService.ACTION_INFO
             putExtra(RadioNotificationService.EXTRA_STATION, station)
@@ -942,7 +942,7 @@ class MainActivity : AppCompatActivity() {
         startService(intent)
     }
 
-    private fun nextPlayback(station: RadioStation) {
+    private fun nextPlayback(station: ru.kaefik.atradio.RadioStation) {
         val intent = Intent(this, RadioNotificationService::class.java).apply {
             action = RadioNotificationService.ACTION_NEXT
             putExtra(RadioNotificationService.EXTRA_STATION, station)
@@ -951,7 +951,7 @@ class MainActivity : AppCompatActivity() {
         startService(intent)
     }
 
-    private fun prevPlayback(station: RadioStation) {
+    private fun prevPlayback(station: ru.kaefik.atradio.RadioStation) {
         val intent = Intent(this, RadioNotificationService::class.java).apply {
             action = RadioNotificationService.ACTION_PREVIOUS
             putExtra(RadioNotificationService.EXTRA_STATION, station)
@@ -1027,7 +1027,7 @@ class MainActivity : AppCompatActivity() {
     }
     // END запрос разрешения на уведомления от приложения
 
-    private fun updateUI(station: RadioStation?, isPlaying: MusicStatus) {
+    private fun updateUI(station: ru.kaefik.atradio.RadioStation?, isPlaying: MusicStatus) {
         Log.d("iAtRadio", "MainActivity ->  updateUI -> station = $station  ->  isPlaying = $isPlaying")
         // Обновите UI и логику на основе переданных данных
         if(station != null) {
@@ -1101,7 +1101,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     // мастер выбора радистанций при первом запуске программы
-    private suspend fun chooseRadioStation(language: String): MutableList<RadioStation> = suspendCancellableCoroutine { continuation ->
+    private suspend fun chooseRadioStation(language: String): MutableList<ru.kaefik.atradio.RadioStation> = suspendCancellableCoroutine { continuation ->
         val baseFolder = if (language == "en") "en" else "ru"
 
         var categories: Map<String, Int>? = null
@@ -1155,7 +1155,7 @@ class MainActivity : AppCompatActivity() {
 
 
     @SuppressLint("DiscouragedApi")
-    private fun combineSelectedFiles(selectedCategories: List<String>, categories: Map<String, Int>): MutableList<RadioStation> {
+    private fun combineSelectedFiles(selectedCategories: List<String>, categories: Map<String, Int>): MutableList<ru.kaefik.atradio.RadioStation> {
         val combinedData = StringBuilder()
 
         for (category in selectedCategories) {
@@ -1185,8 +1185,8 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    private fun loadDataToApp(data: String): MutableList<RadioStation> {
-        val radioStations = mutableListOf<RadioStation>()
+    private fun loadDataToApp(data: String): MutableList<ru.kaefik.atradio.RadioStation> {
+        val radioStations = mutableListOf<ru.kaefik.atradio.RadioStation>()
 
         // Разбиваем данные на строки (каждая строка — это радиостанция)
         val lines = data.split("\n").filter { it.isNotBlank() }
@@ -1199,7 +1199,7 @@ class MainActivity : AppCompatActivity() {
                 val url = tokens[1].trim()    // Второе поле - URL станции
 
                 // Создаем объект RadioStation и добавляем его в список
-                val station = RadioStation(name, url)
+                val station = ru.kaefik.atradio.RadioStation(name, url)
                 radioStations.add(station)
             }
         }

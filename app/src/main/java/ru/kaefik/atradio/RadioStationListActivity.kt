@@ -1,4 +1,4 @@
-package com.example.atradio
+package ru.kaefik.atradio
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -33,7 +33,7 @@ class RadioStationListActivity : AppCompatActivity() {
 
     private lateinit var radioStationAdapter: RadioStationAdapter
     private val gson = Gson()
-    private lateinit var radioStations: MutableList<RadioStation>
+    private lateinit var radioStations: MutableList<ru.kaefik.atradio.RadioStation>
 
 
     @SuppressLint("NotifyDataSetChanged")
@@ -94,7 +94,7 @@ class RadioStationListActivity : AppCompatActivity() {
         val buttonImportStationsFromFile: ImageButton = findViewById(R.id.buttonImportStationsFromFile)
 
         // Получение списка радиостанций из Intent
-        radioStations = intent.getParcelableArrayListExtra<RadioStation>("radioStations")?.toMutableList()
+        radioStations = intent.getParcelableArrayListExtra<ru.kaefik.atradio.RadioStation>("radioStations")?.toMutableList()
             ?: mutableListOf()
 
         radioStationAdapter = RadioStationAdapter(
@@ -121,7 +121,7 @@ class RadioStationListActivity : AppCompatActivity() {
                 val url = result.data?.getStringExtra("radioUrl")
 
                 if (name != null && url != null) {
-                    val newStation = RadioStation(name, url)
+                    val newStation = ru.kaefik.atradio.RadioStation(name, url)
                     radioStations.add(newStation)
                     radioStationAdapter.notifyDataSetChanged()
                     Toast.makeText(this, getString(R.string.radio_station_added), Toast.LENGTH_SHORT).show()
@@ -193,7 +193,7 @@ class RadioStationListActivity : AppCompatActivity() {
     }
 
 
-    private fun showDeleteConfirmationDialog(position: Int, radioStations: MutableList<RadioStation>) {
+    private fun showDeleteConfirmationDialog(position: Int, radioStations: MutableList<ru.kaefik.atradio.RadioStation>) {
         val alertDialog = AlertDialog.Builder(this)
             .setTitle(getString(R.string.radio_deletion_title))
             .setMessage(getString(R.string.radio_deletion_message))
@@ -209,7 +209,7 @@ class RadioStationListActivity : AppCompatActivity() {
         alertDialog.show()
     }
 
-    private fun saveAndShareRadioStations(context: Context, fileName: String, radioStations: MutableList<RadioStation>) {
+    private fun saveAndShareRadioStations(context: Context, fileName: String, radioStations: MutableList<ru.kaefik.atradio.RadioStation>) {
         try {
             val file = File(context.filesDir, fileName)
             val writer = OutputStreamWriter(file.outputStream())
@@ -243,8 +243,8 @@ class RadioStationListActivity : AppCompatActivity() {
         }
     }
 
-    private fun importRadioStationsFromFileUri(context: Context, uri: Uri): List<RadioStation> {
-        val radioStations = mutableListOf<RadioStation>()
+    private fun importRadioStationsFromFileUri(context: Context, uri: Uri): List<ru.kaefik.atradio.RadioStation> {
+        val radioStations = mutableListOf<ru.kaefik.atradio.RadioStation>()
         var isValidFile = true
 
         try {
@@ -266,7 +266,7 @@ class RadioStationListActivity : AppCompatActivity() {
                             val url = columns[1].trim()
 
                             if (name.isNotEmpty() && url.isNotEmpty()) {
-                                radioStations.add(RadioStation(name, url))
+                                radioStations.add(ru.kaefik.atradio.RadioStation(name, url))
                             } else {
 //                                isValidFile = false
                                 Toast.makeText(context, getString(R.string.incorrect_data, line), Toast.LENGTH_SHORT).show()
@@ -369,7 +369,7 @@ class RadioStationListActivity : AppCompatActivity() {
 
 
     // настройки программы
-    private fun saveAppSettings(settings: AppSettings) {
+    private fun saveAppSettings(settings: ru.kaefik.atradio.AppSettings) {
         val sharedPreferences = getSharedPreferences("AppSettings", MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         val json = gson.toJson(settings)
@@ -377,15 +377,15 @@ class RadioStationListActivity : AppCompatActivity() {
         editor.apply()
     }
 
-    private fun loadAppSettings(): AppSettings {
+    private fun loadAppSettings(): ru.kaefik.atradio.AppSettings {
         val sharedPreferences = getSharedPreferences("AppSettings", MODE_PRIVATE)
         val json = sharedPreferences.getString("AppSettingsData", null)
         return if (json != null) {
-            val type = object : TypeToken<AppSettings>() {}.type
+            val type = object : TypeToken<ru.kaefik.atradio.AppSettings>() {}.type
             gson.fromJson(json, type)
         } else {
             // Возвращаем настройки по умолчанию, если они отсутствуют
-            initAppSettings(this)
+            ru.kaefik.atradio.initAppSettings(this)
         }
     }
 

@@ -1,4 +1,4 @@
-package com.example.atradio
+package ru.kaefik.atradio
 
 import android.app.Activity
 import android.content.Intent

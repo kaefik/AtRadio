@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.atradio"
+    namespace = "ru.kaefik.atradio"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.atradio"
+        applicationId = "ru.kaefik.atradio"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

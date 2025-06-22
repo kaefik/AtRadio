@@ -1,4 +1,4 @@
-package com.example.atradio
+package ru.kaefik.atradio
 
 import android.Manifest
 import android.app.*
@@ -32,7 +32,7 @@ import com.google.gson.Gson
 
 class RadioNotificationService : Service() {
     private var mediaPlayer: MediaPlayer? = null
-    private var currentStation: RadioStation? = null
+    private var currentStation: ru.kaefik.atradio.RadioStation? = null
 
     private var currentStartId: Int = 0
     private var isTaskRunning: Boolean = false // для того чтобы была запущена одна задача
@@ -174,14 +174,14 @@ class RadioNotificationService : Service() {
         currentStartId = startId
         when (intent?.action) {
             ACTION_CURRENT_STATION -> {
-                val station = intent.getParcelableExtra<RadioStation>(EXTRA_STATION)
+                val station = intent.getParcelableExtra<ru.kaefik.atradio.RadioStation>(EXTRA_STATION)
                 station?.let {
                     currentStation = it
                     Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_CURRENT_STATION -> станция: $it")
                 }
             }
             ACTION_INFO -> {
-                val station = intent.getParcelableExtra<RadioStation>(EXTRA_STATION)
+                val station = intent.getParcelableExtra<ru.kaefik.atradio.RadioStation>(EXTRA_STATION)
                 station?.let {
                     Log.d("iAtRadio", "RadioService -> onStartCommand -> ACTION_INFO -> станция: $it")
                     currentStation = it
@@ -190,7 +190,7 @@ class RadioNotificationService : Service() {
 
             }
             ACTION_PLAY -> {  // данное действие получается от вызвающего активити
-                val station = intent.getParcelableExtra<RadioStation>(EXTRA_STATION)
+                val station = intent.getParcelableExtra<ru.kaefik.atradio.RadioStation>(EXTRA_STATION)
                 station?.let {
                     currentStation = it
                     isPlaying = MusicStatus.LOADING
@@ -204,7 +204,7 @@ class RadioNotificationService : Service() {
             }
 
             ACTION_PLAY_PANEL -> {  // данное действие получается от панели управления плеером
-                val station = intent.getParcelableExtra<RadioStation>(EXTRA_STATION)
+                val station = intent.getParcelableExtra<ru.kaefik.atradio.RadioStation>(EXTRA_STATION)
                 station?.let {
                     currentStation = it
                     isPlaying = MusicStatus.LOADING
@@ -297,7 +297,7 @@ class RadioNotificationService : Service() {
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun playStation(station: RadioStation) { //, flagSendInfoBroadcast: Boolean) {
+    private fun playStation(station: ru.kaefik.atradio.RadioStation) { //, flagSendInfoBroadcast: Boolean) {
         // flagSendInfoBroadcast - флаг который говорит что нужно послать инфо откуда вызывали
         Log.d("iAtRadio", "RadioService -> playStation запуск станции $station")
         try {
@@ -579,7 +579,7 @@ class RadioNotificationService : Service() {
     // END для управлением громкостью при потери звукового фокуса, например, если усть звук от навигатора
 
 
-    private fun saveAppSettings(settings: AppSettings) {
+    private fun saveAppSettings(settings: ru.kaefik.atradio.AppSettings) {
         val gson = Gson()
         val sharedPreferences = getSharedPreferences("AppSettings", MODE_PRIVATE)
         val editor = sharedPreferences.edit()
@@ -588,16 +588,16 @@ class RadioNotificationService : Service() {
         editor.apply()
     }
 
-    private fun loadAppSettings(): AppSettings {
+    private fun loadAppSettings(): ru.kaefik.atradio.AppSettings {
         val gson = Gson()
         val sharedPreferences = getSharedPreferences("AppSettings", MODE_PRIVATE)
         val json = sharedPreferences.getString("AppSettingsData", null)
         return if (json != null) {
-            val type = object : TypeToken<AppSettings>() {}.type
+            val type = object : TypeToken<ru.kaefik.atradio.AppSettings>() {}.type
             gson.fromJson(json, type)
         } else {
             // Возвращаем настройки по умолчанию, если они отсутствуют
-            initAppSettings(this)
+            ru.kaefik.atradio.initAppSettings(this)
         }
     }
 

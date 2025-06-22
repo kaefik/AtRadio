@@ -1,4 +1,4 @@
-package com.example.atradio
+package ru.kaefik.atradio
 
 import org.junit.Test
 

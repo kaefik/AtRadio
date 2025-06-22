@@ -1,4 +1,4 @@
-package com.example.atradio
+package ru.kaefik.atradio
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -30,7 +30,7 @@ class SettingsActivity : AppCompatActivity() {
     private lateinit var autoPlaySwitch: SwitchCompat
     private lateinit var screenSaverSwitch: SwitchCompat
     private lateinit var fullScreenApp: SwitchCompat
-    private lateinit var appSettings: AppSettings
+    private lateinit var appSettings: ru.kaefik.atradio.AppSettings
 //    private lateinit var buttonResetAllSettings: Button
     private lateinit var buttonChooseStations: Button
     private lateinit var buttonBack: ImageButton
@@ -205,7 +205,7 @@ class SettingsActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveAppSettings(settings: AppSettings) {
+    private fun saveAppSettings(settings: ru.kaefik.atradio.AppSettings) {
         val sharedPreferences = getSharedPreferences("AppSettings", MODE_PRIVATE)
         val editor = sharedPreferences.edit()
         val json = gson.toJson(settings)
@@ -213,16 +213,16 @@ class SettingsActivity : AppCompatActivity() {
         editor.apply()
     }
 
-    private fun loadAppSettings(): AppSettings {
+    private fun loadAppSettings(): ru.kaefik.atradio.AppSettings {
         val sharedPreferences = getSharedPreferences("AppSettings", MODE_PRIVATE)
         val json = sharedPreferences.getString("AppSettingsData", null)
         return if (json != null) {
-            val type = object : TypeToken<AppSettings>() {}.type
+            val type = object : TypeToken<ru.kaefik.atradio.AppSettings>() {}.type
             gson.fromJson(json, type)
         } else {
             // Возвращаем настройки по умолчанию, если они отсутствуют
             // TODO: заменить здесь и в MainActivity данный блок единым . пока не придумал каким
-            initAppSettings(this)
+            ru.kaefik.atradio.initAppSettings(this)
         }
     }
 
@@ -242,7 +242,7 @@ class SettingsActivity : AppCompatActivity() {
 //    }
 
     // мастер выбора радистанций при первом запуске программы
-    private suspend fun chooseRadioStation(language: String): MutableList<RadioStation> = suspendCancellableCoroutine { continuation ->
+    private suspend fun chooseRadioStation(language: String): MutableList<ru.kaefik.atradio.RadioStation> = suspendCancellableCoroutine { continuation ->
         val baseFolder = if (language == "en") "en" else "ru"
 
         val categories = mapOf(
@@ -277,7 +277,7 @@ class SettingsActivity : AppCompatActivity() {
             .show()
     }
     @SuppressLint("DiscouragedApi")
-    private fun combineSelectedFiles(selectedCategories: List<String>, categories: Map<String, String>): MutableList<RadioStation> {
+    private fun combineSelectedFiles(selectedCategories: List<String>, categories: Map<String, String>): MutableList<ru.kaefik.atradio.RadioStation> {
         val combinedData = StringBuilder()
 
         for (category in selectedCategories) {
@@ -303,8 +303,8 @@ class SettingsActivity : AppCompatActivity() {
         // После объединения файлов можно загружать их в программу
         return loadDataToApp(combinedData.toString())
     }
-    private fun loadDataToApp(data: String): MutableList<RadioStation> {
-        val radioStations = mutableListOf<RadioStation>()
+    private fun loadDataToApp(data: String): MutableList<ru.kaefik.atradio.RadioStation> {
+        val radioStations = mutableListOf<ru.kaefik.atradio.RadioStation>()
 
         // Разбиваем данные на строки (каждая строка — это радиостанция)
         val lines = data.split("\n").filter { it.isNotBlank() }
@@ -317,7 +317,7 @@ class SettingsActivity : AppCompatActivity() {
                 val url = tokens[1].trim()    // Второе поле - URL станции
 
                 // Создаем объект RadioStation и добавляем его в список
-                val station = RadioStation(name, url)
+                val station = ru.kaefik.atradio.RadioStation(name, url)
                 radioStations.add(station)
             }
         }

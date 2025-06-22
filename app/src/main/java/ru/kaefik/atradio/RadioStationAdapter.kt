@@ -1,4 +1,4 @@
-package com.example.atradio
+package ru.kaefik.atradio
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.RecyclerView
 
 class RadioStationAdapter(
     private val context: Context,
-    private val radioStations: MutableList<RadioStation>,
+    private val radioStations: MutableList<ru.kaefik.atradio.RadioStation>,
     private val onDeleteClick: (Int) -> Unit,
-    private val onItemClick: (RadioStation) -> Unit // Новый параметр для клика по элементу
+    private val onItemClick: (ru.kaefik.atradio.RadioStation) -> Unit // Новый параметр для клика по элементу
 ) : RecyclerView.Adapter<RadioStationAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
